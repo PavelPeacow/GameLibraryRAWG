@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SearchViewController.swift
 //  GameLibraryRAWG
 //
 //  Created by Павел Кай on 25.08.2022.
@@ -7,14 +7,15 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class SearchViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .white
+
+        view.backgroundColor = .orange
     }
+    
+
 
 
 }
-
