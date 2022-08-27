@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */; };
+		B559E09728BA525000B26A0B /* LoadImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09628BA525000B26A0B /* LoadImage.swift */; };
+		B559E09B28BA5C0A00B26A0B /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B559E09A28BA5C0A00B26A0B /* SDWebImage */; };
 		B5D7A5CF28B77445000504BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5CE28B77445000504BE /* AppDelegate.swift */; };
 		B5D7A5D128B77445000504BE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5D028B77445000504BE /* SceneDelegate.swift */; };
 		B5D7A5D328B77445000504BE /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5D228B77445000504BE /* MainTabBarController.swift */; };
@@ -20,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCollectionViewCell.swift; sourceTree = "<group>"; };
+		B559E09628BA525000B26A0B /* LoadImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadImage.swift; sourceTree = "<group>"; };
 		B5D7A5CB28B77445000504BE /* GameLibraryRAWG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameLibraryRAWG.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5D7A5CE28B77445000504BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B5D7A5D028B77445000504BE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -39,12 +44,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B559E09B28BA5C0A00B26A0B /* SDWebImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B559E09828BA525500B26A0B /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				B559E09628BA525000B26A0B /* LoadImage.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		B58FABA628B9034B00E356B1 /* Main */ = {
 			isa = PBXGroup;
 			children = (
@@ -75,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				B5D7A5E628B77631000504BE /* App */,
+				B559E09828BA525500B26A0B /* Helpers */,
 				B5D7A5EB28B77FDE000504BE /* APIManager */,
 				B5D7A5E428B775FC000504BE /* Model */,
 				B5D7A5E328B775F9000504BE /* Views */,
@@ -96,6 +111,7 @@
 		B5D7A5E328B775F9000504BE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -143,6 +159,9 @@
 			dependencies = (
 			);
 			name = GameLibraryRAWG;
+			packageProductDependencies = (
+				B559E09A28BA5C0A00B26A0B /* SDWebImage */,
+			);
 			productName = GameLibraryRAWG;
 			productReference = B5D7A5CB28B77445000504BE /* GameLibraryRAWG.app */;
 			productType = "com.apple.product-type.application";
@@ -171,6 +190,9 @@
 				Base,
 			);
 			mainGroup = B5D7A5C228B77445000504BE;
+			packageReferences = (
+				B559E09928BA5C0A00B26A0B /* XCRemoteSwiftPackageReference "SDWebImage" */,
+			);
 			productRefGroup = B5D7A5CC28B77445000504BE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -198,10 +220,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5D7A5EA28B77E29000504BE /* SearchViewController.swift in Sources */,
+				B559E09728BA525000B26A0B /* LoadImage.swift in Sources */,
 				B5D7A5EF28B780AF000504BE /* APIConstants.swift in Sources */,
 				B5D7A5ED28B77FFE000504BE /* APICaller.swift in Sources */,
 				B5D7A5D328B77445000504BE /* MainTabBarController.swift in Sources */,
 				B5D7A5CF28B77445000504BE /* AppDelegate.swift in Sources */,
+				B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */,
 				B5D7A5F128B784FD000504BE /* GameModel.swift in Sources */,
 				B5D7A5D128B77445000504BE /* SceneDelegate.swift in Sources */,
 				B5D7A5E828B77CA2000504BE /* HomeViewController.swift in Sources */,
@@ -412,6 +436,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B559E09928BA5C0A00B26A0B /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B559E09A28BA5C0A00B26A0B /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B559E09928BA5C0A00B26A0B /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B5D7A5C328B77445000504BE /* Project object */;
 }

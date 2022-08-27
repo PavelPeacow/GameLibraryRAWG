@@ -7,13 +7,25 @@
 
 import UIKit
 
+enum Sections: Int {
+    case mustPlay = 0
+    case popular = 1
+}
+
 class HomeViewController: UIViewController {
     
     private var games = [Game]()
     
-    private var collectionView: UITableView = {
-        let collectionView = UITableView(frame: .zero, style: .grouped)
-        collectionView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+    private let sectionTitles = ["Must Play", "Popular"]
+    
+    private var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 200, height: 200)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 20
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(GameCollectionViewCell.self, forCellWithReuseIdentifier: GameCollectionViewCell.identifier)
         return collectionView
     }()
 
@@ -24,19 +36,9 @@ class HomeViewController: UIViewController {
         setDelegates()
         
         view.backgroundColor = .systemBackground
+        collectionView.collectionViewLayout = createLayout()
         
-        APICaller.shared.fetchGames { [weak self] result in
-            
-                switch result {
-                case .success(let games):
-                    DispatchQueue.main.async {
-                        self?.games = games
-                        self?.collectionView.reloadData()
-                    }
-                case .failure(let error):
-                    print(error.localizedDescription)
-            }
-        }
+        fetchGames()
     }
     
     override func viewDidLayoutSubviews() {
@@ -49,21 +51,49 @@ class HomeViewController: UIViewController {
         collectionView.dataSource = self
     }
     
+    private func createLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(0.5))
+        
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(200.0))
+        
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        
+        return layout
+    }
+    
+    private func fetchGames() {
+        APICaller.shared.fetchGames { [weak self] result in
+            switch result {
+            case .success(let games):
+                DispatchQueue.main.async {
+                    self?.games = games
+                    self?.collectionView.reloadData()
+                }
+               
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
 }
 
-extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         games.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = collectionView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = games[indexPath.row].name
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCollectionViewCell.identifier, for: indexPath) as? GameCollectionViewCell else { return UICollectionViewCell() }
+        cell.configure(with: games[indexPath.item])
         return cell
     }
-    
-
-    
     
 }
