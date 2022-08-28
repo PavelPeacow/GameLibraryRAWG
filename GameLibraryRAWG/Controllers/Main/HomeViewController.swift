@@ -10,16 +10,20 @@ import UIKit
 enum Sections: Int {
     case mustPlay = 0
     case popular = 1
+    case upcoming = 2
+    case test = 3
 }
 
 class HomeViewController: UIViewController {
     
     private var games = [Game]()
     private var mustPlay = [Game]()
+    private var recent = [Game]()
+    private var test = [Game]()
     
-    private let sectionTitles = ["Metacritic's choice", "Popular This Year"]
+    private let sectionTitles = ["Metacritic's choice", "Popular This Year", "Most Anticipated Upcoming Games", "Test"]
     
-    private var collectionView: UICollectionView = {
+    private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout.createLayout())
         collectionView.register(GameCollectionViewCell.self, forCellWithReuseIdentifier: GameCollectionViewCell.identifier)
         
@@ -37,6 +41,8 @@ class HomeViewController: UIViewController {
         
         fetchGames()
         fetchMustPlayGames()
+        fetchUpcomingGames()
+        fetchTestGames()
     }
     
     override func viewDidLayoutSubviews() {
@@ -79,6 +85,34 @@ class HomeViewController: UIViewController {
         }
     }
     
+    private func fetchUpcomingGames() {
+        APICaller.shared.fetchUpcomingGames { [weak self] result in
+            switch result {
+            case .success(let games):
+                DispatchQueue.main.async {
+                    self?.recent = games
+                    self?.collectionView.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    private func fetchTestGames() {
+        APICaller.shared.fetchUpcomingGames { [weak self] result in
+            switch result {
+            case .success(let games):
+                DispatchQueue.main.async {
+                    self?.test = games
+                    self?.collectionView.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
 }
 
 
@@ -86,7 +120,7 @@ class HomeViewController: UIViewController {
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        2
+        4
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -98,11 +132,15 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch section {
-        case Sections.mustPlay.rawValue:
+        switch Sections(rawValue: section) {
+        case .mustPlay:
             return mustPlay.count
-        case Sections.popular.rawValue:
+        case .popular:
             return games.count
+        case .upcoming:
+            return recent.count
+        case .test:
+            return test.count
         default:
             return 0
         }
@@ -111,11 +149,15 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCollectionViewCell.identifier, for: indexPath) as? GameCollectionViewCell else { return UICollectionViewCell() }
         
-        switch indexPath.section {
-        case Sections.mustPlay.rawValue:
+        switch Sections(rawValue: indexPath.section) {
+        case .mustPlay:
             cell.configure(with: mustPlay[indexPath.item])
-        case Sections.popular.rawValue:
+        case .popular:
             cell.configure(with: games[indexPath.item])
+        case .upcoming:
+            cell.configure(with: recent[indexPath.item])
+        case .test:
+            cell.configure(with: test[indexPath.item])
         default:
             cell.configure(with: games.first!)
         }
@@ -137,7 +179,11 @@ extension UICollectionViewCompositionalLayout {
             case .mustPlay:
                 return .mustPlaySection()
             case .popular:
-                return .popularThisYearSection()
+                return .regularSection()
+            case .upcoming:
+                return .mostUpcomingGames()
+            case .test:
+                return .testGames()
             default:
                 return .none
             }
@@ -154,7 +200,7 @@ extension NSCollectionLayoutSection {
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets.trailing = 15
-        
+        item.contentInsets.leading = 15
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(300), heightDimension: .absolute(200))
         
@@ -164,21 +210,22 @@ extension NSCollectionLayoutSection {
         
         section.orthogonalScrollingBehavior = .continuous
         
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50))
+        let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50))
         
-        section.boundarySupplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
+        section.boundarySupplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
         
         return section
     }
     
     //Second section layout setup
-    static func popularThisYearSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(0.5))
+    static func regularSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets.trailing = 15
+        item.contentInsets.leading = 15
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.8), heightDimension: .fractionalHeight(0.5))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(0.2))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
@@ -186,9 +233,56 @@ extension NSCollectionLayoutSection {
         
         section.orthogonalScrollingBehavior = .continuous
         
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
+        let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
         
-        section.boundarySupplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
+        section.boundarySupplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
+        
+        return section
+    }
+    
+    //Third section layout setup
+    static func mostUpcomingGames() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.5))
+        
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.orthogonalScrollingBehavior = .paging
+        
+        let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
+        
+        section.boundarySupplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
+        
+        return section
+    }
+    
+    //Four section layout setup
+    static func testGames() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.3), heightDimension: .fractionalHeight(0.4))
+        
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        item.contentInsets.trailing = 10
+        item.contentInsets.top = 10
+
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(500))
+        
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets.leading = 20
+        section.contentInsets.trailing = -20
+        
+        let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
+        
+        section.boundarySupplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
         
         return section
     }

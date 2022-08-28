@@ -11,13 +11,13 @@ class SearchViewController: UIViewController {
     
     private var games = [Game]()
     
-    private var searchTable: UITableView = {
+    private let searchTable: UITableView = {
         let searchTable = UITableView(frame: .zero, style: .grouped)
         searchTable.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return searchTable
     }()
     
-    private var seacrhController: UISearchController = {
+    private let seacrhController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         return searchController
     }()

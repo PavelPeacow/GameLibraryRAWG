@@ -22,7 +22,7 @@ class GameCollectionViewCell: UICollectionViewCell {
     private let metacriticLabel: UILabel = {
         let metacriticLabel = UILabel()
         metacriticLabel.translatesAutoresizingMaskIntoConstraints = false
-        metacriticLabel.backgroundColor = .black
+        metacriticLabel.backgroundColor = .systemBackground
         metacriticLabel.layer.cornerRadius = 25
         metacriticLabel.layer.borderColor = UIColor.yellow.cgColor
         metacriticLabel.layer.borderWidth = 2
@@ -37,7 +37,8 @@ class GameCollectionViewCell: UICollectionViewCell {
         gameLabel.textAlignment = .center
         gameLabel.numberOfLines = 2
         gameLabel.adjustsFontSizeToFitWidth = true
-        gameLabel.backgroundColor = .black.withAlphaComponent(0.5)
+        gameLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        gameLabel.backgroundColor = .systemBackground.withAlphaComponent(0.5)
         return gameLabel
     }()
     
@@ -69,9 +70,11 @@ class GameCollectionViewCell: UICollectionViewCell {
         gameLabel.text = model.name
         
         if let metacritic = model.metacritic {
+            //strange bug appears when i dont use isHiddin = false
+            metacriticLabel.isHidden = false
             metacriticLabel.text = "\(metacritic)"
         } else {
-            metacriticLabel.text = "?"
+            metacriticLabel.isHidden = true
         }
         
     }
