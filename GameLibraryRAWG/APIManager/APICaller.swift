@@ -36,6 +36,49 @@ final class APICaller {
     }
     
     
+    func fetchPopularGames(onCompletion: @escaping (Result<[Game], Error>) -> Void) {
+        guard let url = URL(string: "\(APIConstants.BASE_URL)/games?key=\(APIConstants.API_KEY)&dates=2022-01-01,2022-12-31&ordering=-added") else { return }
+        
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            
+            guard let data = data, error == nil else {
+                print("data was nil")
+                return
+            }
+            
+            guard let results = try? JSONDecoder().decode(GamesResponse.self, from: data) else {
+                onCompletion(.failure(APIError.failedToGetData))
+                return
+            }
+
+            onCompletion(.success(results.results))
+            
+        }
+        task.resume()
+    }
+    
+    
+    func fetchMustPlayGames(onCompletion: @escaping (Result<[Game], Error>) -> Void) {
+        guard let url = URL(string: "\(APIConstants.BASE_URL)/games?key=\(APIConstants.API_KEY)&dates=2000-01-01,2022-12-31&ordering=-metacritic&page_size=50") else { return }
+        
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            
+            guard let data = data, error == nil else {
+                print("data was nil")
+                return
+            }
+            
+            guard let results = try? JSONDecoder().decode(GamesResponse.self, from: data) else {
+                onCompletion(.failure(APIError.failedToGetData))
+                return
+            }
+
+            onCompletion(.success(results.results))
+            
+        }
+        task.resume()
+    }
+    
     func searchGames(with query: String, onCompletion: @escaping (Result<[Game], Error>) -> Void) {
         
         guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else { return }

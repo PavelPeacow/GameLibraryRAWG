@@ -19,10 +19,16 @@ class GameCollectionViewCell: UICollectionViewCell {
         return gameCover
     }()
     
-    private let metaCriticLabel: UILabel = {
-        let metaCriticLabel = UILabel()
-        metaCriticLabel.translatesAutoresizingMaskIntoConstraints = false
-        return metaCriticLabel
+    private let metacriticLabel: UILabel = {
+        let metacriticLabel = UILabel()
+        metacriticLabel.translatesAutoresizingMaskIntoConstraints = false
+        metacriticLabel.backgroundColor = .black
+        metacriticLabel.layer.cornerRadius = 25
+        metacriticLabel.layer.borderColor = UIColor.yellow.cgColor
+        metacriticLabel.layer.borderWidth = 2
+        metacriticLabel.clipsToBounds = true
+        metacriticLabel.textAlignment = .center
+        return metacriticLabel
     }()
     
     private let gameLabel: UILabel = {
@@ -39,6 +45,7 @@ class GameCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         contentView.addSubview(gameCover)
+        contentView.addSubview(metacriticLabel)
         contentView.addSubview(gameLabel)
         
         setConstraints()
@@ -60,6 +67,13 @@ class GameCollectionViewCell: UICollectionViewCell {
         gameCover.sd_setImage(with: url)
         
         gameLabel.text = model.name
+        
+        if let metacritic = model.metacritic {
+            metacriticLabel.text = "\(metacritic)"
+        } else {
+            metacriticLabel.text = "?"
+        }
+        
     }
     
     
@@ -69,9 +83,13 @@ extension GameCollectionViewCell {
     
     func setConstraints() {
         NSLayoutConstraint.activate([
-            gameLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            gameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            gameLabel.heightAnchor.constraint(equalToConstant: 40),
+            metacriticLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            metacriticLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            metacriticLabel.heightAnchor.constraint(equalToConstant: 50),
+            metacriticLabel.widthAnchor.constraint(equalToConstant: 50),
+            
+            gameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            gameLabel.heightAnchor.constraint(equalToConstant: 20),
             gameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor)
         ])
     }

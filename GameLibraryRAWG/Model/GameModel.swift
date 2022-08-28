@@ -16,6 +16,7 @@ struct GamesResponse: Codable {
 struct Game: Codable {
     let name: String
     let background_image: String
+    let metacritic: Int?
     let ratings: [Rating]
 }
 
