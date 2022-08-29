@@ -10,6 +10,8 @@
 		B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */; };
 		B559E09B28BA5C0A00B26A0B /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B559E09A28BA5C0A00B26A0B /* SDWebImage */; };
 		B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */; };
+		B5C89E1728BCF9E300B5F0DA /* GameDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C89E1628BCF9E300B5F0DA /* GameDetailModel.swift */; };
+		B5C89E1928BCFBED00B5F0DA /* GameDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C89E1828BCFBED00B5F0DA /* GameDetailViewController.swift */; };
 		B5D7A5CF28B77445000504BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5CE28B77445000504BE /* AppDelegate.swift */; };
 		B5D7A5D128B77445000504BE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5D028B77445000504BE /* SceneDelegate.swift */; };
 		B5D7A5D328B77445000504BE /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5D228B77445000504BE /* MainTabBarController.swift */; };
@@ -25,6 +27,8 @@
 /* Begin PBXFileReference section */
 		B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCollectionViewCell.swift; sourceTree = "<group>"; };
 		B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
+		B5C89E1628BCF9E300B5F0DA /* GameDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailModel.swift; sourceTree = "<group>"; };
+		B5C89E1828BCFBED00B5F0DA /* GameDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailViewController.swift; sourceTree = "<group>"; };
 		B5D7A5CB28B77445000504BE /* GameLibraryRAWG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameLibraryRAWG.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5D7A5CE28B77445000504BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B5D7A5D028B77445000504BE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -104,6 +108,7 @@
 			children = (
 				B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */,
 				B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */,
+				B5C89E1828BCFBED00B5F0DA /* GameDetailViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -112,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				B5D7A5F028B784FD000504BE /* GameModel.swift */,
+				B5C89E1628BCF9E300B5F0DA /* GameDetailModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -212,12 +218,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5D7A5EA28B77E29000504BE /* SearchViewController.swift in Sources */,
+				B5C89E1928BCFBED00B5F0DA /* GameDetailViewController.swift in Sources */,
 				B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */,
 				B5D7A5EF28B780AF000504BE /* APIConstants.swift in Sources */,
 				B5D7A5ED28B77FFE000504BE /* APICaller.swift in Sources */,
 				B5D7A5D328B77445000504BE /* MainTabBarController.swift in Sources */,
 				B5D7A5CF28B77445000504BE /* AppDelegate.swift in Sources */,
 				B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */,
+				B5C89E1728BCF9E300B5F0DA /* GameDetailModel.swift in Sources */,
 				B5D7A5F128B784FD000504BE /* GameModel.swift in Sources */,
 				B5D7A5D128B77445000504BE /* SceneDelegate.swift in Sources */,
 				B5D7A5E828B77CA2000504BE /* HomeViewController.swift in Sources */,

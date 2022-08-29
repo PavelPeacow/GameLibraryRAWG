@@ -126,6 +126,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         4
     }
     
+    //MARK: Header
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionReusableView.identifier, for: indexPath) as! HeaderCollectionReusableView
         
@@ -134,6 +135,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         return header
     }
     
+    //MARK: Number of items
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Sections(rawValue: section) {
         case .mustPlay:
@@ -149,6 +151,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         }
     }
     
+    //MARK: Cell
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCollectionViewCell.identifier, for: indexPath) as? GameCollectionViewCell else { return UICollectionViewCell() }
         
@@ -162,10 +165,74 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         case .discover:
             cell.configure(with: discover[indexPath.item])
         default:
-            cell.configure(with: mustPlay.first!)
+            fatalError("why cell is not setup?")
         }
         
         return cell
+    }
+    
+    //MARK: DID Select
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let vc = GameDetailViewController()
+        
+        switch Sections(rawValue: indexPath.section) {
+        case .mustPlay:
+            APICaller.shared.fetchGameDetails(with: mustPlay[indexPath.item].slug) { [weak self]result in
+                switch result {
+                case .success(let gameDetail):
+                    DispatchQueue.main.async {
+                        vc.configure(with: gameDetail)
+                        self?.navigationController?.pushViewController(vc, animated: true)
+                        print(gameDetail)
+                    }
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        case .popular:
+            APICaller.shared.fetchGameDetails(with: popular[indexPath.item].slug) { [weak self]result in
+                switch result {
+                case .success(let gameDetail):
+                    DispatchQueue.main.async {
+                        vc.configure(with: gameDetail)
+                        self?.navigationController?.pushViewController(vc, animated: true)
+                        print(gameDetail)
+                    }
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        case .upcoming:
+            APICaller.shared.fetchGameDetails(with: upcoming[indexPath.item].slug) { [weak self]result in
+                switch result {
+                case .success(let gameDetail):
+                    DispatchQueue.main.async {
+                        vc.configure(with: gameDetail)
+                        self?.navigationController?.pushViewController(vc, animated: true)
+                        print(gameDetail)
+                    }
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        case .discover:
+            APICaller.shared.fetchGameDetails(with: discover[indexPath.item].slug) { [weak self]result in
+                switch result {
+                case .success(let gameDetail):
+                    DispatchQueue.main.async {
+                        vc.configure(with: gameDetail)
+                        self?.navigationController?.pushViewController(vc, animated: true)
+                        print(gameDetail)
+                    }
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        default:
+            fatalError("why touching don't work?")
+        }
+        
     }
     
 }
@@ -188,7 +255,7 @@ extension UICollectionViewCompositionalLayout {
             case .discover:
                 return .discoverGames()
             default:
-                return .none
+                fatalError("why there more section than needed?")
             }
         }
     }
