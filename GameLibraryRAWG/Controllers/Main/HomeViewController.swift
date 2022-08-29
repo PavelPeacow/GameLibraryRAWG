@@ -11,15 +11,15 @@ enum Sections: Int {
     case mustPlay = 0
     case popular = 1
     case upcoming = 2
-    case test = 3
+    case discover = 3
 }
 
 class HomeViewController: UIViewController {
     
-    private var games = [Game]()
     private var mustPlay = [Game]()
-    private var recent = [Game]()
-    private var test = [Game]()
+    private var popular = [Game]()
+    private var upcoming = [Game]()
+    private var discover = [Game]()
     
     private let sectionTitles = ["Metacritic's choice", "Popular This Year", "Most Anticipated Upcoming Games", "More games to discover"]
     
@@ -39,10 +39,11 @@ class HomeViewController: UIViewController {
         view.addSubview(collectionView)
         setDelegates()
         
-        fetchGames()
+        fetchPopularGames()
         fetchMustPlayGames()
         fetchUpcomingGames()
-        fetchTestGames()
+        fetchDiscoverMoreGames()
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -55,42 +56,17 @@ class HomeViewController: UIViewController {
         collectionView.dataSource = self
     }
     
-    private func fetchGames() {
-        APICaller.shared.fetchPopularGames { [weak self] result in
-            switch result {
-            case .success(let games):
-                DispatchQueue.main.async {
-                    self?.games = games
-                    self?.collectionView.reloadData()
-                }
-                
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
+}
+
+//MARK: API Results
+extension HomeViewController {
     
-    private func fetchMustPlayGames() {
-        APICaller.shared.fetchMustPlayGames { [weak self] result in
+    func fetchMustPlayGames() {
+        APICaller.shared.fetch(url: APIConstants.METACRITIC_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
-            case .success(let games):
+            case .success(let response):
                 DispatchQueue.main.async {
-                    self?.mustPlay = games
-                    self?.collectionView.reloadData()
-                }
-                
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
-    
-    private func fetchUpcomingGames() {
-        APICaller.shared.fetchUpcomingGames { [weak self] result in
-            switch result {
-            case .success(let games):
-                DispatchQueue.main.async {
-                    self?.recent = games
+                    self?.mustPlay = response.results
                     self?.collectionView.reloadData()
                 }
             case .failure(let error):
@@ -99,12 +75,12 @@ class HomeViewController: UIViewController {
         }
     }
     
-    private func fetchTestGames() {
-        APICaller.shared.fetchGames { [weak self] result in
+    func fetchPopularGames() {
+        APICaller.shared.fetch(url: APIConstants.POPULAR_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
-            case .success(let games):
+            case .success(let response):
                 DispatchQueue.main.async {
-                    self?.test = games
+                    self?.popular = response.results
                     self?.collectionView.reloadData()
                 }
             case .failure(let error):
@@ -113,6 +89,33 @@ class HomeViewController: UIViewController {
         }
     }
     
+    func fetchUpcomingGames() {
+        APICaller.shared.fetch(url: APIConstants.UPCOMING_URL, expecting: GamesResponse.self) { [weak self] result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    self?.upcoming = response.results
+                    self?.collectionView.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    func fetchDiscoverMoreGames() {
+        APICaller.shared.fetch(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self) { [weak self] result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    self?.discover = response.results
+                    self?.collectionView.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
 }
 
 
@@ -136,11 +139,11 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         case .mustPlay:
             return mustPlay.count
         case .popular:
-            return games.count
+            return popular.count
         case .upcoming:
-            return recent.count
-        case .test:
-            return test.count
+            return upcoming.count
+        case .discover:
+            return discover.count
         default:
             return 0
         }
@@ -153,15 +156,15 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         case .mustPlay:
             cell.configure(with: mustPlay[indexPath.item])
         case .popular:
-            cell.configure(with: games[indexPath.item])
+            cell.configure(with: popular[indexPath.item])
         case .upcoming:
-            cell.configure(with: recent[indexPath.item])
-        case .test:
-            cell.configure(with: test[indexPath.item])
+            cell.configure(with: upcoming[indexPath.item])
+        case .discover:
+            cell.configure(with: discover[indexPath.item])
         default:
-            cell.configure(with: games.first!)
+            cell.configure(with: mustPlay.first!)
         }
-    
+        
         return cell
     }
     
@@ -182,8 +185,8 @@ extension UICollectionViewCompositionalLayout {
                 return .regularSection()
             case .upcoming:
                 return .mostUpcomingGames()
-            case .test:
-                return .testGames()
+            case .discover:
+                return .discoverGames()
             default:
                 return .none
             }
@@ -268,18 +271,18 @@ extension NSCollectionLayoutSection {
     }
     
     //Four section layout setup
-    static func testGames() -> NSCollectionLayoutSection {
+    static func discoverGames() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.3), heightDimension: .fractionalHeight(0.4))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets.trailing = 10
         item.contentInsets.bottom = 10
-
+        
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(500))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-
+        
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets.leading = 20

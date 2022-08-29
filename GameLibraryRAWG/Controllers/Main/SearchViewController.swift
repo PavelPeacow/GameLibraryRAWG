@@ -46,14 +46,13 @@ class SearchViewController: UIViewController {
     }
     
     private func fetchGames() {
-        APICaller.shared.fetchGames { [weak self] result in
+        APICaller.shared.fetch(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
-            case .success(let games):
+            case .success(let response):
                 DispatchQueue.main.async {
-                    self?.games = games
+                    self?.games = response.results
                     self?.searchTable.reloadData()
                 }
-               
             case .failure(let error):
                 print(error)
             }
