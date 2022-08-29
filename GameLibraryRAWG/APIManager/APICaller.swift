@@ -15,7 +15,7 @@ final class APICaller {
     static let shared = APICaller()
     
     func fetchGames(onCompletion: @escaping (Result<[Game], Error>) -> Void) {
-        guard let url = URL(string: "\(APIConstants.BASE_URL)/games?key=\(APIConstants.API_KEY)&page_size=20") else { return }
+        guard let url = URL(string: "\(APIConstants.BASE_URL)/games?key=\(APIConstants.API_KEY)&ordering=-added&page_size=40") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             

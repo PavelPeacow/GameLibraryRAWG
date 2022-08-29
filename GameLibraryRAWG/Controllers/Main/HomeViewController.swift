@@ -21,7 +21,7 @@ class HomeViewController: UIViewController {
     private var recent = [Game]()
     private var test = [Game]()
     
-    private let sectionTitles = ["Metacritic's choice", "Popular This Year", "Most Anticipated Upcoming Games", "Test"]
+    private let sectionTitles = ["Metacritic's choice", "Popular This Year", "Most Anticipated Upcoming Games", "More games to discover"]
     
     private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout.createLayout())
@@ -100,7 +100,7 @@ class HomeViewController: UIViewController {
     }
     
     private func fetchTestGames() {
-        APICaller.shared.fetchUpcomingGames { [weak self] result in
+        APICaller.shared.fetchGames { [weak self] result in
             switch result {
             case .success(let games):
                 DispatchQueue.main.async {
@@ -199,18 +199,19 @@ extension NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets.trailing = 15
-        item.contentInsets.leading = 15
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(300), heightDimension: .absolute(200))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets.trailing = 15
+        section.contentInsets.leading = 15
+        section.interGroupSpacing = 15
         
         section.orthogonalScrollingBehavior = .continuous
         
-        let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50))
+        let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
         
         section.boundarySupplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
         
@@ -222,14 +223,16 @@ extension NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets.trailing = 15
-        item.contentInsets.leading = 15
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(0.2))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
+        
         let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets.trailing = 15
+        section.contentInsets.leading = 15
+        section.interGroupSpacing = 15
         
         section.orthogonalScrollingBehavior = .continuous
         
@@ -246,13 +249,16 @@ extension NSCollectionLayoutSection {
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.5))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.85), heightDimension: .fractionalHeight(0.55))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        group.contentInsets.leading = 15
         
         let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15)
         
-        section.orthogonalScrollingBehavior = .paging
+        section.orthogonalScrollingBehavior = .groupPaging
+        
         
         let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
         
@@ -266,9 +272,8 @@ extension NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.3), heightDimension: .fractionalHeight(0.4))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
         item.contentInsets.trailing = 10
-        item.contentInsets.top = 10
+        item.contentInsets.bottom = 10
 
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(500))
