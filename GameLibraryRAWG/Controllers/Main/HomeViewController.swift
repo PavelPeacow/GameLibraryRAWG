@@ -51,6 +51,11 @@ class HomeViewController: UIViewController {
         collectionView.frame = view.bounds
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        //prevent double tapping, it causing pushViewController appear twice
+        view.isUserInteractionEnabled = true
+    }
+    
     private func setDelegates() {
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -175,6 +180,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let vc = GameDetailViewController()
+        //prevent double tapping, it causing pushViewController appear twice
+        view.isUserInteractionEnabled = false
         
         switch Sections(rawValue: indexPath.section) {
         case .mustPlay:
