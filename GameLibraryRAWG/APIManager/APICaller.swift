@@ -56,9 +56,9 @@ final class APICaller {
     }
     
     
-    func fetchGameDetails(with id: String, onCompletion: @escaping (Result<GameDetail, Error>) -> Void) {
+    func fetchMainGameDetails(with gameId: String, onCompletion: @escaping (Result<GameDetail, Error>) -> Void) {
         
-        guard let url = URL(string: "\(APIConstants.BASE_URL)/games/\(id)?key=\(APIConstants.API_KEY)") else { return }
+        guard let url = URL(string: "\(APIConstants.BASE_URL)/games/\(gameId)?key=\(APIConstants.API_KEY)") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else {
@@ -75,21 +75,22 @@ final class APICaller {
         task.resume()
     }
     
-    func fetchGameScreenshots(with id: String, onCompletion: @escaping (Result<[GameScreenshot], Error>) -> Void) {
+    
+    func fetchSpecificGameDetails<T: Codable>(with gameId: String, endpoint: APIEndpoints, expecting: T.Type, onCompletion: @escaping (Result<T, Error>) -> Void) {
         
-        guard let url = URL(string: "\(APIConstants.BASE_URL)/games/\(id)/screenshots?key=\(APIConstants.API_KEY)") else { return }
+        guard let url = URL(string: "\(APIConstants.BASE_URL)/games/\(gameId)/\(endpoint)?key=\(APIConstants.API_KEY)") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else {
                 return
             }
 
-            guard let results = try? JSONDecoder().decode(GameScreenshotResponse.self, from: data) else {
+            guard let results = try? JSONDecoder().decode(T.self, from: data) else {
                 onCompletion(.failure(APIError.failedToGetData))
                 return
             }
             
-            onCompletion(.success(results.results))
+            onCompletion(.success(results))
         }
         task.resume()
     }

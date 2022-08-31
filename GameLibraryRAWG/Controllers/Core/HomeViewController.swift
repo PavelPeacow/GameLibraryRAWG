@@ -185,7 +185,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         switch Sections(rawValue: indexPath.section) {
         case .mustPlay:
-            APICaller.shared.fetchGameDetails(with: mustPlay[indexPath.item].slug) { [weak self]result in
+            APICaller.shared.fetchMainGameDetails(with: mustPlay[indexPath.item].slug) { [weak self]result in
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
@@ -198,7 +198,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 }
             }
         case .popular:
-            APICaller.shared.fetchGameDetails(with: popular[indexPath.item].slug) { [weak self]result in
+            APICaller.shared.fetchMainGameDetails(with: popular[indexPath.item].slug) { [weak self]result in
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
@@ -211,7 +211,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 }
             }
         case .upcoming:
-            APICaller.shared.fetchGameDetails(with: upcoming[indexPath.item].slug) { [weak self]result in
+            APICaller.shared.fetchMainGameDetails(with: upcoming[indexPath.item].slug) { [weak self]result in
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
@@ -224,7 +224,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 }
             }
         case .discover:
-            APICaller.shared.fetchGameDetails(with: discover[indexPath.item].slug) { [weak self]result in
+            APICaller.shared.fetchMainGameDetails(with: discover[indexPath.item].slug) { [weak self]result in
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {

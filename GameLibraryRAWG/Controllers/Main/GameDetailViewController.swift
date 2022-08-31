@@ -126,11 +126,11 @@ class GameDetailViewController: UIViewController {
         
         gameCover.sd_setImage(with: url)
         
-        APICaller.shared.fetchGameScreenshots(with: model.slug) { [weak self] result in
+        APICaller.shared.fetchSpecificGameDetails(with: model.slug, endpoint: APIEndpoints.screenshots, expecting: GameScreenshotResponse.self) { [weak self] result in
             switch result {
-            case .success(let screenshot):
+            case .success(let response):
                 DispatchQueue.main.async {
-                    self?.screenshots = screenshot
+                    self?.screenshots = response.results
                     self?.imageCollectionSlider.reloadData()
                 }
             case .failure(let error):

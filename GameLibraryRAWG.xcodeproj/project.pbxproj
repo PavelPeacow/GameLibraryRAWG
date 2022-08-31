@@ -15,6 +15,7 @@
 		B5C89E1928BCFBED00B5F0DA /* GameDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C89E1828BCFBED00B5F0DA /* GameDetailViewController.swift */; };
 		B5D050C628BF8A65008DF07C /* SliderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D050C528BF8A65008DF07C /* SliderCollectionViewCell.swift */; };
 		B5D050C828BF8BB6008DF07C /* GameScreenshotModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D050C728BF8BB6008DF07C /* GameScreenshotModel.swift */; };
+		B5D050CA28BFA9DF008DF07C /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D050C928BFA9DE008DF07C /* APIEndpoints.swift */; };
 		B5D7A5CF28B77445000504BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5CE28B77445000504BE /* AppDelegate.swift */; };
 		B5D7A5D128B77445000504BE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5D028B77445000504BE /* SceneDelegate.swift */; };
 		B5D7A5D328B77445000504BE /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5D228B77445000504BE /* MainTabBarController.swift */; };
@@ -36,6 +37,7 @@
 		B5C89E1828BCFBED00B5F0DA /* GameDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailViewController.swift; sourceTree = "<group>"; };
 		B5D050C528BF8A65008DF07C /* SliderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderCollectionViewCell.swift; sourceTree = "<group>"; };
 		B5D050C728BF8BB6008DF07C /* GameScreenshotModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScreenshotModel.swift; sourceTree = "<group>"; };
+		B5D050C928BFA9DE008DF07C /* APIEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoints.swift; sourceTree = "<group>"; };
 		B5D7A5CB28B77445000504BE /* GameLibraryRAWG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameLibraryRAWG.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5D7A5CE28B77445000504BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B5D7A5D028B77445000504BE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 			children = (
 				B5D7A5EC28B77FFE000504BE /* APICaller.swift */,
 				B5D7A5EE28B780AF000504BE /* APIConstants.swift */,
+				B5D050C928BFA9DE008DF07C /* APIEndpoints.swift */,
 			);
 			path = APIManager;
 			sourceTree = "<group>";
@@ -258,6 +261,7 @@
 				B5C89E1928BCFBED00B5F0DA /* GameDetailViewController.swift in Sources */,
 				B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */,
 				B5D7A5EF28B780AF000504BE /* APIConstants.swift in Sources */,
+				B5D050CA28BFA9DF008DF07C /* APIEndpoints.swift in Sources */,
 				B5BD12E428BDFF5A00BACD4D /* GameFutureView.swift in Sources */,
 				B5D7A5ED28B77FFE000504BE /* APICaller.swift in Sources */,
 				B5D7A5D328B77445000504BE /* MainTabBarController.swift in Sources */,
