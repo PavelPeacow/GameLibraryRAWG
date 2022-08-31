@@ -9,6 +9,7 @@ import Foundation
 
 struct GameDetail: Codable {
     let name: String?
+    let slug: String
     let background_image: String?
     let description_raw: String?
     let metacritic: Int?

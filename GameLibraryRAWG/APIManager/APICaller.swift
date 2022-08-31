@@ -74,5 +74,24 @@ final class APICaller {
         }
         task.resume()
     }
+    
+    func fetchGameScreenshots(with id: String, onCompletion: @escaping (Result<[GameScreenshot], Error>) -> Void) {
+        
+        guard let url = URL(string: "\(APIConstants.BASE_URL)/games/\(id)/screenshots?key=\(APIConstants.API_KEY)") else { return }
+        
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            guard let data = data, error == nil else {
+                return
+            }
+
+            guard let results = try? JSONDecoder().decode(GameScreenshotResponse.self, from: data) else {
+                onCompletion(.failure(APIError.failedToGetData))
+                return
+            }
+            
+            onCompletion(.success(results.results))
+        }
+        task.resume()
+    }
 
 }
