@@ -1,5 +1,5 @@
 //
-//  CreateStoreButton.swift
+//  StoreButton.swift
 //  GameLibraryRAWG
 //
 //  Created by Павел Кай on 02.09.2022.
@@ -14,11 +14,11 @@ class StoreButton: UIButton {
         super.init(frame: frame)
     }
     
-    init(with image: Stores) {
+    init(with image: Stores, action: UIAction) {
         super.init(frame: .zero)
         
         setImage(UIImage(named: image.rawValue), for: .normal)
-        
+        addAction(action, for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {

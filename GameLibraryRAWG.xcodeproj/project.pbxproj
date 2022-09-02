@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B52EE29128C22E1C00EB54E8 /* CreateStoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52EE29028C22E1C00EB54E8 /* CreateStoreButton.swift */; };
+		B52EE29128C22E1C00EB54E8 /* StoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52EE29028C22E1C00EB54E8 /* StoreButton.swift */; };
 		B52EE29328C22E5E00EB54E8 /* StoresEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */; };
 		B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */; };
 		B559E09B28BA5C0A00B26A0B /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B559E09A28BA5C0A00B26A0B /* SDWebImage */; };
@@ -30,10 +30,11 @@
 		B5D7A5EF28B780AF000504BE /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5EE28B780AF000504BE /* APIConstants.swift */; };
 		B5D7A5F128B784FD000504BE /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5F028B784FD000504BE /* GameModel.swift */; };
 		B5D7AC9F28BE074E00859B03 /* GameFutureViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7AC9E28BE074E00859B03 /* GameFutureViewModel.swift */; };
+		B5FE7EA828C245E3008B15B8 /* StoreWebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B52EE29028C22E1C00EB54E8 /* CreateStoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateStoreButton.swift; sourceTree = "<group>"; };
+		B52EE29028C22E1C00EB54E8 /* StoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreButton.swift; sourceTree = "<group>"; };
 		B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoresEnum.swift; sourceTree = "<group>"; };
 		B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCollectionViewCell.swift; sourceTree = "<group>"; };
 		B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
@@ -57,6 +58,7 @@
 		B5D7A5EE28B780AF000504BE /* APIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		B5D7A5F028B784FD000504BE /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		B5D7AC9E28BE074E00859B03 /* GameFutureViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFutureViewModel.swift; sourceTree = "<group>"; };
+		B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreWebViewViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +76,6 @@
 		B52EE28F28C22C0E00EB54E8 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				B52EE29028C22E1C00EB54E8 /* CreateStoreButton.swift */,
 				B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */,
 			);
 			path = Helpers;
@@ -142,8 +143,10 @@
 		B5D7A5E328B775F9000504BE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B5FE7EA928C24E46008B15B8 /* Subclasses */,
 				B5D7ACA128BE2D0000859B03 /* CollectionViews */,
 				B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */,
+				B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -203,6 +206,14 @@
 				B5C89E1828BCFBED00B5F0DA /* GameDetailViewController.swift */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		B5FE7EA928C24E46008B15B8 /* Subclasses */ = {
+			isa = PBXGroup;
+			children = (
+				B52EE29028C22E1C00EB54E8 /* StoreButton.swift */,
+			);
+			path = Subclasses;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -294,13 +305,14 @@
 				B59D107F28C10F3F0077DFAD /* GameStoreModel.swift in Sources */,
 				B5D7A5CF28B77445000504BE /* AppDelegate.swift in Sources */,
 				B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */,
+				B5FE7EA828C245E3008B15B8 /* StoreWebViewViewController.swift in Sources */,
 				B5C89E1728BCF9E300B5F0DA /* GameDetailModel.swift in Sources */,
 				B5D7A5F128B784FD000504BE /* GameModel.swift in Sources */,
 				B5D7AC9F28BE074E00859B03 /* GameFutureViewModel.swift in Sources */,
 				B5D050C828BF8BB6008DF07C /* GameScreenshotModel.swift in Sources */,
 				B5D7A5D128B77445000504BE /* SceneDelegate.swift in Sources */,
 				B5D7A5E828B77CA2000504BE /* HomeViewController.swift in Sources */,
-				B52EE29128C22E1C00EB54E8 /* CreateStoreButton.swift in Sources */,
+				B52EE29128C22E1C00EB54E8 /* StoreButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -199,43 +199,49 @@ class GameDetailViewController: UIViewController {
         gamePublisher.configure(with: gamePublisherModel)
     }
     
-    private func storesCheck(with i: String) {
-        if i.contains(Stores.steam.rawValue) {
+    //MARK: check stores
+    private func storesCheck(with storeURL: String) {
+        switch storeURL {
             
-            storesStackView.addArrangedSubview(StoreButton(with: Stores.steam))
+        case _ where storeURL.contains(Stores.steam.rawValue):
+            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.steam))
+        
+        case _ where storeURL.contains(Stores.microsoft.rawValue):
+            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.microsoft))
             
-        } else if i.contains(Stores.microsoft.rawValue) {
+        case _ where storeURL.contains(Stores.playstation.rawValue):
+            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.playstation))
             
-            storesStackView.addArrangedSubview(StoreButton(with: Stores.microsoft))
+        case _ where storeURL.contains(Stores.nintendo.rawValue):
+            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.nintendo))
             
-        } else if i.contains(Stores.playstation.rawValue) {
+        case _ where storeURL.contains(Stores.gog.rawValue):
+            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.gog))
             
-            storesStackView.addArrangedSubview(StoreButton(with: Stores.playstation))
+        case _ where storeURL.contains(Stores.appleStore.rawValue):
+            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.appleStore))
             
-        } else if i.contains(Stores.nintendo.rawValue) {
+        case _ where storeURL.contains(Stores.googleStore.rawValue):
+            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.googleStore))
             
-            storesStackView.addArrangedSubview(StoreButton(with: Stores.nintendo))
+        case _ where storeURL.contains(Stores.epicgames.rawValue):
+            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.epicgames))
             
-        } else if i.contains(Stores.gog.rawValue) {
-            
-            storesStackView.addArrangedSubview(StoreButton(with: Stores.gog))
-            
-        } else if i.contains(Stores.appleStore.rawValue) {
-            
-            storesStackView.addArrangedSubview(StoreButton(with: Stores.appleStore))
-            
-        } else if i.contains(Stores.googleStore.rawValue) {
-            
-            storesStackView.addArrangedSubview(StoreButton(with: Stores.googleStore))
-            
-        } else if i.contains(Stores.epicgames.rawValue) {
-            
-            storesStackView.addArrangedSubview(StoreButton(with: Stores.epicgames))
-            
+        default:
+            fatalError("There is no such url")
         }
     }
-
-
+    
+    //MARK: Create store buttons with action
+    private func createStoreButton(storeUrl: String, storeImage: Stores) -> UIButton {
+        let btn = StoreButton(with: storeImage, action: UIAction(handler: { [weak self] _ in
+            let vc = StoreWebViewViewController()
+            vc.storeUrl = storeUrl
+            self?.present(vc, animated: true)
+        }))
+        
+        return btn
+    }
 }
 
 //MARK: Constraints
@@ -274,7 +280,6 @@ extension GameDetailViewController {
             storesStackView.topAnchor.constraint(equalTo: whereToBuyLabel.bottomAnchor, constant: 30),
             storesStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             storesStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-            storesStackView.heightAnchor.constraint(equalToConstant: 300),
             
             //container with game futures inside
             gameAboutContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
