@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "5365-xbox_102593.png",
+      "filename" : "icons8-xbox-48(@1x).png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "icons8-xbox-96(@2x).png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "icons8-xbox-144(@3x).png",
       "idiom" : "universal",
       "scale" : "3x"
     }

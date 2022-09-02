@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "icons8-epic-games-48.png",
+      "filename" : "icons8-playstation-48(@1x).png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "icons8-playstation-96(@2x).png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "icons8-playstation-144(@3x).png",
       "idiom" : "universal",
       "scale" : "3x"
     }

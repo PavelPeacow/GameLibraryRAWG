@@ -209,6 +209,9 @@ class GameDetailViewController: UIViewController {
         case _ where storeURL.contains(Stores.microsoft.rawValue):
             storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.microsoft))
             
+        case _ where storeURL.contains(Stores.xbox.rawValue):
+            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.xbox))
+            
         case _ where storeURL.contains(Stores.playstation.rawValue):
             storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.playstation))
             

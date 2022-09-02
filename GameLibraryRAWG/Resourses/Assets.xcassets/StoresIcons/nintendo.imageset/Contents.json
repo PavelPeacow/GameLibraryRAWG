@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "icons8-gog-galaxy-48.png",
+      "filename" : "icons8-nintendo-switch-logo-48(@1x).png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "icons8-nintendo-switch-logo-96(@2x).png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "icons8-nintendo-switch-logo-144(@3x).png",
       "idiom" : "universal",
       "scale" : "3x"
     }

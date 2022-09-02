@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "icons8-nintendo-switch-logo-48.png",
+      "filename" : "icons8-apple-app-store-48(@1x).png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "icons8-apple-app-store-96(@2x).png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "icons8-apple-app-store-144(@3x).png",
       "idiom" : "universal",
       "scale" : "3x"
     }
