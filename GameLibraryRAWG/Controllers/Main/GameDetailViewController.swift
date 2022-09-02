@@ -87,6 +87,23 @@ class GameDetailViewController: UIViewController {
         imageCollectionSlider.register(SliderCollectionViewCell.self, forCellWithReuseIdentifier: SliderCollectionViewCell.identifier)
         return imageCollectionSlider
     }()
+    
+    private let whereToBuyLabel: UILabel = {
+        let whereToBuyLabel = UILabel()
+        whereToBuyLabel.translatesAutoresizingMaskIntoConstraints = false
+        whereToBuyLabel.isHidden = true
+        whereToBuyLabel.text = "Where to buy"
+        return whereToBuyLabel
+    }()
+    
+    private let storesStackView: UIStackView = {
+        let storeStackView = UIStackView()
+        storeStackView.translatesAutoresizingMaskIntoConstraints = false
+        storeStackView.axis = .horizontal
+        storeStackView.distribution = .equalCentering
+        storeStackView.spacing = 5
+        return storeStackView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,6 +115,9 @@ class GameDetailViewController: UIViewController {
         scrollView.addSubview(gameDescription)
         scrollView.addSubview(gameAboutContainer)
         scrollView.addSubview(imageCollectionSlider)
+        
+        scrollView.addSubview(whereToBuyLabel)
+        scrollView.addSubview(storesStackView)
 
         gameAboutContainer.addSubview(gameRelease)
         gameAboutContainer.addSubview(gameRating)
@@ -138,6 +158,28 @@ class GameDetailViewController: UIViewController {
             }
         }
         
+        APICaller.shared.fetchSpecificGameDetails(with: model.slug, endpoint: APIEndpoints.stores, expecting: GameStoreResponse.self) { [weak self] result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    
+                    if !response.results.isEmpty {
+                        self?.whereToBuyLabel.isHidden = false
+                        let urls = response.results.map({ $0.url })
+                        print("some urls epta \(urls)")
+                        
+                        for store in urls {
+                            print(store)
+                            self?.storesCheck(with: store)
+                        }
+                    }
+                }
+               
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
         gameName.text = model.name
         gameDescription.text = model.description_raw
         
@@ -155,6 +197,42 @@ class GameDetailViewController: UIViewController {
         
         let gamePublisherModel = GameFutureViewModel(gameFutureTitle: "Publisher", gameFutureDescr: model.publishers.map({ $0.name}).joined(separator: ", "))
         gamePublisher.configure(with: gamePublisherModel)
+    }
+    
+    private func storesCheck(with i: String) {
+        if i.contains(Stores.steam.rawValue) {
+            
+            storesStackView.addArrangedSubview(StoreButton(with: Stores.steam))
+            
+        } else if i.contains(Stores.microsoft.rawValue) {
+            
+            storesStackView.addArrangedSubview(StoreButton(with: Stores.microsoft))
+            
+        } else if i.contains(Stores.playstation.rawValue) {
+            
+            storesStackView.addArrangedSubview(StoreButton(with: Stores.playstation))
+            
+        } else if i.contains(Stores.nintendo.rawValue) {
+            
+            storesStackView.addArrangedSubview(StoreButton(with: Stores.nintendo))
+            
+        } else if i.contains(Stores.gog.rawValue) {
+            
+            storesStackView.addArrangedSubview(StoreButton(with: Stores.gog))
+            
+        } else if i.contains(Stores.appleStore.rawValue) {
+            
+            storesStackView.addArrangedSubview(StoreButton(with: Stores.appleStore))
+            
+        } else if i.contains(Stores.googleStore.rawValue) {
+            
+            storesStackView.addArrangedSubview(StoreButton(with: Stores.googleStore))
+            
+        } else if i.contains(Stores.epicgames.rawValue) {
+            
+            storesStackView.addArrangedSubview(StoreButton(with: Stores.epicgames))
+            
+        }
     }
 
 
@@ -189,9 +267,18 @@ extension GameDetailViewController {
             imageCollectionSlider.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             imageCollectionSlider.heightAnchor.constraint(equalToConstant: 200),
             
+            whereToBuyLabel.topAnchor.constraint(equalTo: imageCollectionSlider.bottomAnchor, constant: 15),
+            whereToBuyLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            whereToBuyLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            
+            storesStackView.topAnchor.constraint(equalTo: whereToBuyLabel.bottomAnchor, constant: 30),
+            storesStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            storesStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            storesStackView.heightAnchor.constraint(equalToConstant: 300),
+            
             //container with game futures inside
             gameAboutContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            gameAboutContainer.topAnchor.constraint(equalTo: imageCollectionSlider.bottomAnchor, constant: 10),
+            gameAboutContainer.topAnchor.constraint(equalTo: storesStackView.bottomAnchor, constant: 10),
             gameAboutContainer.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             gameAboutContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             gameAboutContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
