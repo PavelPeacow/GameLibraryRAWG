@@ -8,7 +8,7 @@
 import Foundation
 
 enum Stores: String {
-    case steam = "steampowered"
+    case steam = "steam"
     case microsoft = "microsoft"
     case xbox = "xbox"
     case playstation = "playstation"

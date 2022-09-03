@@ -10,6 +10,7 @@ import UIKit
 class GameDetailViewController: UIViewController {
     
     private var screenshots = [GameScreenshot]()
+    private var gamesStoresLinks = [String]()
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -45,7 +46,7 @@ class GameDetailViewController: UIViewController {
         gameAboutContainer.translatesAutoresizingMaskIntoConstraints = false
         return gameAboutContainer
     }()
-        
+    
     private let gameRelease: GameFutureView = {
         let gameRelease = GameFutureView()
         gameRelease.translatesAutoresizingMaskIntoConstraints = false
@@ -57,7 +58,7 @@ class GameDetailViewController: UIViewController {
         gameRating.translatesAutoresizingMaskIntoConstraints = false
         return gameRating
     }()
-   
+    
     private let gameGenre: GameFutureView = {
         let gameGenre = GameFutureView()
         gameGenre.translatesAutoresizingMaskIntoConstraints = false
@@ -88,28 +89,33 @@ class GameDetailViewController: UIViewController {
         return imageCollectionSlider
     }()
     
+    private let storeCollection: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.itemSize = CGSize(width: 110, height: 100)
+        
+        let storeCollection = DynamicCollectionView(frame: .zero, collectionViewLayout: layout)
+        storeCollection.translatesAutoresizingMaskIntoConstraints = false
+        storeCollection.isScrollEnabled = false
+        storeCollection.register(GameStoreCollectionViewCell.self, forCellWithReuseIdentifier: GameStoreCollectionViewCell.identifier)
+        return storeCollection
+    }()
+    
     private let whereToBuyLabel: UILabel = {
         let whereToBuyLabel = UILabel()
         whereToBuyLabel.translatesAutoresizingMaskIntoConstraints = false
         whereToBuyLabel.isHidden = true
         whereToBuyLabel.text = "Where to buy"
+        whereToBuyLabel.font = UIFont.boldSystemFont(ofSize: 18)
         return whereToBuyLabel
     }()
     
-    private let storesStackView: UIStackView = {
-        let storeStackView = UIStackView()
-        storeStackView.translatesAutoresizingMaskIntoConstraints = false
-        storeStackView.axis = .horizontal
-        storeStackView.distribution = .equalCentering
-        storeStackView.spacing = 5
-        return storeStackView
-    }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(scrollView)
-
+        
         scrollView.addSubview(gameCover)
         scrollView.addSubview(gameName)
         scrollView.addSubview(gameDescription)
@@ -117,8 +123,8 @@ class GameDetailViewController: UIViewController {
         scrollView.addSubview(imageCollectionSlider)
         
         scrollView.addSubview(whereToBuyLabel)
-        scrollView.addSubview(storesStackView)
-
+        scrollView.addSubview(storeCollection)
+        
         gameAboutContainer.addSubview(gameRelease)
         gameAboutContainer.addSubview(gameRating)
         gameAboutContainer.addSubview(gameGenre)
@@ -135,10 +141,13 @@ class GameDetailViewController: UIViewController {
         super.viewDidLayoutSubviews()
         scrollView.frame = view.bounds
     }
-    
+        
     private func setDelegates() {
         imageCollectionSlider.delegate = self
         imageCollectionSlider.dataSource = self
+        
+        storeCollection.delegate = self
+        storeCollection.dataSource = self
     }
     
     public func configure(with model: GameDetail) {
@@ -168,13 +177,13 @@ class GameDetailViewController: UIViewController {
                         let urls = response.results.map({ $0.url })
                         print("some urls epta \(urls)")
                         
-                        for store in urls {
-                            print(store)
-                            self?.storesCheck(with: store)
-                        }
+                        self?.gamesStoresLinks = urls
+                        self?.storeCollection.reloadData()
+                    } else {
+                        self?.storeCollection.removeFromSuperview()
                     }
                 }
-               
+                
             case .failure(let error):
                 print(error)
             }
@@ -200,50 +209,72 @@ class GameDetailViewController: UIViewController {
     }
     
     //MARK: check stores
-    private func storesCheck(with storeURL: String) {
+    private func storesCheck(with storeURL: String) -> String {
+        
+        let store: String
+        print(storeURL)
+        
         switch storeURL {
             
         case _ where storeURL.contains(Stores.steam.rawValue):
-            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.steam))
-        
+            store = Stores.steam.rawValue
+            
         case _ where storeURL.contains(Stores.microsoft.rawValue):
-            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.microsoft))
+            store = Stores.microsoft.rawValue
             
         case _ where storeURL.contains(Stores.xbox.rawValue):
-            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.xbox))
+            store = Stores.xbox.rawValue
             
         case _ where storeURL.contains(Stores.playstation.rawValue):
-            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.playstation))
+            store = Stores.playstation.rawValue
             
         case _ where storeURL.contains(Stores.nintendo.rawValue):
-            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.nintendo))
+            store = Stores.nintendo.rawValue
             
         case _ where storeURL.contains(Stores.gog.rawValue):
-            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.gog))
+            store = Stores.gog.rawValue
             
         case _ where storeURL.contains(Stores.appleStore.rawValue):
-            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.appleStore))
+            store = Stores.appleStore.rawValue
             
         case _ where storeURL.contains(Stores.googleStore.rawValue):
-            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.googleStore))
+            store = Stores.googleStore.rawValue
             
         case _ where storeURL.contains(Stores.epicgames.rawValue):
-            storesStackView.addArrangedSubview(createStoreButton(storeUrl: storeURL, storeImage: Stores.epicgames))
+            store = Stores.epicgames.rawValue
             
         default:
             fatalError("There is no such url")
         }
+        
+        return store
     }
     
     //MARK: Create store buttons with action
-    private func createStoreButton(storeUrl: String, storeImage: Stores) -> UIButton {
-        let btn = StoreButton(with: storeImage, action: UIAction(handler: { [weak self] _ in
+    private func createStoreButton(storeUrl: String, storeImage: Stores, title: String) -> UIButton {
+        
+        var config = UIButton.Configuration.plain()
+        config.imagePlacement = .top
+        config.title = title
+        config.image = UIImage(named: storeImage.rawValue)
+        config.titleAlignment = .center
+        
+        let button = UIButton(configuration: config, primaryAction: UIAction(handler: { [weak self] _ in
             let vc = StoreWebViewViewController()
             vc.storeUrl = storeUrl
             self?.present(vc, animated: true)
         }))
         
-        return btn
+        return button
+    }
+}
+
+extension NSLayoutConstraint
+{
+    func withPriority(_ priority: UILayoutPriority) -> NSLayoutConstraint
+    {
+        self.priority = priority
+        return self
     }
 }
 
@@ -280,13 +311,15 @@ extension GameDetailViewController {
             whereToBuyLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             whereToBuyLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             
-            storesStackView.topAnchor.constraint(equalTo: whereToBuyLabel.bottomAnchor, constant: 30),
-            storesStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
-            storesStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            storeCollection.topAnchor.constraint(equalTo: whereToBuyLabel.bottomAnchor, constant: 30),
+            storeCollection.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            storeCollection.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             
+        
             //container with game futures inside
             gameAboutContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            gameAboutContainer.topAnchor.constraint(equalTo: storesStackView.bottomAnchor, constant: 10),
+            gameAboutContainer.topAnchor.constraint(equalTo: storeCollection.bottomAnchor, constant: 10),
+            gameAboutContainer.topAnchor.constraint(equalTo: imageCollectionSlider.bottomAnchor, constant: 10).withPriority(.defaultLow),
             gameAboutContainer.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             gameAboutContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             gameAboutContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
@@ -325,12 +358,40 @@ extension GameDetailViewController {
 //MARK: Collection slider settings
 extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        screenshots.count
+        if collectionView == imageCollectionSlider {
+            return screenshots.count
+        } else {
+            return gamesStoresLinks.count
+        }
+           
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SliderCollectionViewCell.identifier, for: indexPath) as! SliderCollectionViewCell
-        cell.configure(with: screenshots[indexPath.item].image)
-        return cell
+        if collectionView == imageCollectionSlider {
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SliderCollectionViewCell.identifier, for: indexPath) as! SliderCollectionViewCell
+            
+            cell.configure(with: screenshots[indexPath.item].image)
+            return cell
+        } else {
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameStoreCollectionViewCell.identifier, for: indexPath) as! GameStoreCollectionViewCell
+            
+            let verifiedStore = storesCheck(with: gamesStoresLinks[indexPath.item])
+
+            cell.configure(store: verifiedStore)
+            return cell
+            
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == storeCollection {
+            
+            let vc = StoreWebViewViewController()
+            vc.storeUrl = gamesStoresLinks[indexPath.item]
+            present(vc, animated: true)
+            
+        }
     }
 }

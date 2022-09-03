@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B52EE29128C22E1C00EB54E8 /* StoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52EE29028C22E1C00EB54E8 /* StoreButton.swift */; };
 		B52EE29328C22E5E00EB54E8 /* StoresEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */; };
 		B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */; };
 		B559E09B28BA5C0A00B26A0B /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B559E09A28BA5C0A00B26A0B /* SDWebImage */; };
 		B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */; };
+		B591DD0C28C3914200548335 /* GameStoreCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */; };
+		B591DD0E28C3A45C00548335 /* DynamicCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B591DD0D28C3A45C00548335 /* DynamicCollectionView.swift */; };
 		B59D107F28C10F3F0077DFAD /* GameStoreModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59D107E28C10F3F0077DFAD /* GameStoreModel.swift */; };
 		B5BD12E428BDFF5A00BACD4D /* GameFutureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */; };
 		B5C89E1728BCF9E300B5F0DA /* GameDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C89E1628BCF9E300B5F0DA /* GameDetailModel.swift */; };
@@ -34,10 +35,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B52EE29028C22E1C00EB54E8 /* StoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreButton.swift; sourceTree = "<group>"; };
 		B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoresEnum.swift; sourceTree = "<group>"; };
 		B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCollectionViewCell.swift; sourceTree = "<group>"; };
 		B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
+		B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStoreCollectionViewCell.swift; sourceTree = "<group>"; };
+		B591DD0D28C3A45C00548335 /* DynamicCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicCollectionView.swift; sourceTree = "<group>"; };
 		B59D107E28C10F3F0077DFAD /* GameStoreModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStoreModel.swift; sourceTree = "<group>"; };
 		B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFutureView.swift; sourceTree = "<group>"; };
 		B5C89E1628BCF9E300B5F0DA /* GameDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailModel.swift; sourceTree = "<group>"; };
@@ -99,6 +101,14 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
+		B591DD0F28C3A4CB00548335 /* Subclasses */ = {
+			isa = PBXGroup;
+			children = (
+				B591DD0D28C3A45C00548335 /* DynamicCollectionView.swift */,
+			);
+			path = Subclasses;
+			sourceTree = "<group>";
+		};
 		B5D7A5C228B77445000504BE = {
 			isa = PBXGroup;
 			children = (
@@ -143,7 +153,7 @@
 		B5D7A5E328B775F9000504BE /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B5FE7EA928C24E46008B15B8 /* Subclasses */,
+				B591DD0F28C3A4CB00548335 /* Subclasses */,
 				B5D7ACA128BE2D0000859B03 /* CollectionViews */,
 				B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */,
 				B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */,
@@ -196,6 +206,7 @@
 				B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */,
 				B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */,
 				B5D050C528BF8A65008DF07C /* SliderCollectionViewCell.swift */,
+				B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */,
 			);
 			path = CollectionViews;
 			sourceTree = "<group>";
@@ -206,14 +217,6 @@
 				B5C89E1828BCFBED00B5F0DA /* GameDetailViewController.swift */,
 			);
 			path = Main;
-			sourceTree = "<group>";
-		};
-		B5FE7EA928C24E46008B15B8 /* Subclasses */ = {
-			isa = PBXGroup;
-			children = (
-				B52EE29028C22E1C00EB54E8 /* StoreButton.swift */,
-			);
-			path = Subclasses;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -298,6 +301,7 @@
 				B5C89E1928BCFBED00B5F0DA /* GameDetailViewController.swift in Sources */,
 				B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */,
 				B5D7A5EF28B780AF000504BE /* APIConstants.swift in Sources */,
+				B591DD0E28C3A45C00548335 /* DynamicCollectionView.swift in Sources */,
 				B5D050CA28BFA9DF008DF07C /* APIEndpoints.swift in Sources */,
 				B5BD12E428BDFF5A00BACD4D /* GameFutureView.swift in Sources */,
 				B5D7A5ED28B77FFE000504BE /* APICaller.swift in Sources */,
@@ -306,13 +310,13 @@
 				B5D7A5CF28B77445000504BE /* AppDelegate.swift in Sources */,
 				B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */,
 				B5FE7EA828C245E3008B15B8 /* StoreWebViewViewController.swift in Sources */,
+				B591DD0C28C3914200548335 /* GameStoreCollectionViewCell.swift in Sources */,
 				B5C89E1728BCF9E300B5F0DA /* GameDetailModel.swift in Sources */,
 				B5D7A5F128B784FD000504BE /* GameModel.swift in Sources */,
 				B5D7AC9F28BE074E00859B03 /* GameFutureViewModel.swift in Sources */,
 				B5D050C828BF8BB6008DF07C /* GameScreenshotModel.swift in Sources */,
 				B5D7A5D128B77445000504BE /* SceneDelegate.swift in Sources */,
 				B5D7A5E828B77CA2000504BE /* HomeViewController.swift in Sources */,
-				B52EE29128C22E1C00EB54E8 /* StoreButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

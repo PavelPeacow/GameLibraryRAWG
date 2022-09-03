@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "microsoft_store_icon_220699.png",
+      "filename" : "icons8-microsoft-store-24(@1x).png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "icons8-microsoft-store-48(@2x).png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "icons8-microsoft-store-72(@3x).png",
       "idiom" : "universal",
       "scale" : "3x"
     }
