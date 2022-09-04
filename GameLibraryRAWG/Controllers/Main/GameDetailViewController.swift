@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class GameDetailViewController: UIViewController {
     
@@ -153,6 +154,7 @@ class GameDetailViewController: UIViewController {
     public func configure(with model: GameDetail) {
         guard let url = URL(string: model.background_image ?? "") else { return }
         
+        gameCover.sd_imageIndicator = SDWebImageActivityIndicator.large
         gameCover.sd_setImage(with: url)
         
         APICaller.shared.fetchSpecificGameDetails(with: model.slug, endpoint: APIEndpoints.screenshots, expecting: GameScreenshotResponse.self) { [weak self] result in
@@ -244,7 +246,7 @@ class GameDetailViewController: UIViewController {
             store = Stores.epicgames.rawValue
             
         default:
-            fatalError("There is no such url")
+            store = "unknown store"
         }
         
         return store

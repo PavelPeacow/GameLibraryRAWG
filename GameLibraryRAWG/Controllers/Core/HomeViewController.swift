@@ -111,7 +111,11 @@ extension HomeViewController {
     }
     
     func fetchDiscoverMoreGames(with page: Int) {
+        loadingIndicator()
         APICaller.shared.fetchGamesWithPage(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self, pageNumber: page) { [weak self] result in
+            
+            self?.removeLoadingIndicatior()
+            
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {

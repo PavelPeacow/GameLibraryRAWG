@@ -64,7 +64,7 @@ class GameCollectionViewCell: UICollectionViewCell {
     public func configure(with model: Game) {
         guard let url = URL(string: model.background_image) else { return }
         
-        gameCover.sd_imageIndicator = SDWebImageActivityIndicator.whiteLarge
+        gameCover.sd_imageIndicator = SDWebImageActivityIndicator.large
         gameCover.sd_setImage(with: url)
         
         gameLabel.text = model.name

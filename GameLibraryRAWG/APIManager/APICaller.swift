@@ -34,7 +34,7 @@ final class APICaller {
     }
     
     func fetchGamesWithPage<T: Codable>(url: String, expecting: T.Type, pageNumber: Int, onCompletion: @escaping (Result<T, Error>) -> Void) {
-        guard let url = URL(string: "\(APIConstants.BASE_URL)/games?key=\(APIConstants.API_KEY)&ordering=-added&page_size=40&page=\(pageNumber)") else { return }
+        guard let url = URL(string: "\(APIConstants.BASE_URL)/games?key=\(APIConstants.API_KEY)&ordering=-added&page_size=20&page=\(pageNumber)") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             
