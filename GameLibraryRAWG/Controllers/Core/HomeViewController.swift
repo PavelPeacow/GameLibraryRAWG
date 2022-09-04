@@ -21,6 +21,8 @@ class HomeViewController: UIViewController {
     private var upcoming = [Game]()
     private var discover = [Game]()
     
+    private var page = 1
+    
     private let sectionTitles = ["Metacritic's choice", "Popular This Year", "Most Anticipated Upcoming Games", "More games to discover"]
     
     private let collectionView: UICollectionView = {
@@ -42,7 +44,7 @@ class HomeViewController: UIViewController {
         fetchPopularGames()
         fetchMustPlayGames()
         fetchUpcomingGames()
-        fetchDiscoverMoreGames()
+        fetchDiscoverMoreGames(with: page)
         
     }
     
@@ -67,7 +69,7 @@ class HomeViewController: UIViewController {
 extension HomeViewController {
     
     func fetchMustPlayGames() {
-        APICaller.shared.fetch(url: APIConstants.METACRITIC_URL, expecting: GamesResponse.self) { [weak self] result in
+        APICaller.shared.fetchGames(url: APIConstants.METACRITIC_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
@@ -81,7 +83,7 @@ extension HomeViewController {
     }
     
     func fetchPopularGames() {
-        APICaller.shared.fetch(url: APIConstants.POPULAR_URL, expecting: GamesResponse.self) { [weak self] result in
+        APICaller.shared.fetchGames(url: APIConstants.POPULAR_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
@@ -95,7 +97,7 @@ extension HomeViewController {
     }
     
     func fetchUpcomingGames() {
-        APICaller.shared.fetch(url: APIConstants.UPCOMING_URL, expecting: GamesResponse.self) { [weak self] result in
+        APICaller.shared.fetchGames(url: APIConstants.UPCOMING_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
@@ -108,12 +110,12 @@ extension HomeViewController {
         }
     }
     
-    func fetchDiscoverMoreGames() {
-        APICaller.shared.fetch(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self) { [weak self] result in
+    func fetchDiscoverMoreGames(with page: Int) {
+        APICaller.shared.fetchGamesWithPage(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self, pageNumber: page) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    self?.discover = response.results
+                    self?.discover += response.results
                     self?.collectionView.reloadData()
                 }
             case .failure(let error):
@@ -240,6 +242,21 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             fatalError("why touching don't work?")
         }
         
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+        
+        print("offset = \(offsetY)")
+        print("contentHeight = \(contentHeight)")
+        print("height = \(height)")
+        
+        if offsetY > contentHeight - height {
+            page += 1
+            fetchDiscoverMoreGames(with: page)
+        }
     }
     
 }

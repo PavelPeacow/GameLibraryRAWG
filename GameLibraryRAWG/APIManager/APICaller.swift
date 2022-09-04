@@ -14,8 +14,27 @@ enum APIError: Error {
 final class APICaller {
     static let shared = APICaller()
     
-    func fetch<T: Codable>(url: String, expecting: T.Type, onCompletion: @escaping (Result<T, Error>) -> Void) {
+    func fetchGames<T: Codable>(url: String, expecting: T.Type, onCompletion: @escaping (Result<T, Error>) -> Void) {
         guard let url = URL(string: url) else { return }
+        
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            
+            guard let data = data, error == nil else {
+                return
+            }
+            
+            guard let results = try? JSONDecoder().decode(expecting.self, from: data) else {
+                onCompletion(.failure(APIError.failedToGetData))
+                return
+            }
+            
+            onCompletion(.success(results))
+        }
+        task.resume()
+    }
+    
+    func fetchGamesWithPage<T: Codable>(url: String, expecting: T.Type, pageNumber: Int, onCompletion: @escaping (Result<T, Error>) -> Void) {
+        guard let url = URL(string: "\(APIConstants.BASE_URL)/games?key=\(APIConstants.API_KEY)&ordering=-added&page_size=40&page=\(pageNumber)") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             

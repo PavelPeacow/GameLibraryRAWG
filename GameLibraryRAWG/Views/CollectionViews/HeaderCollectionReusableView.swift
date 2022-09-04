@@ -14,6 +14,7 @@ class HeaderCollectionReusableView: UICollectionReusableView {
     private let label: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.numberOfLines = 0
         return label
     }()
     
