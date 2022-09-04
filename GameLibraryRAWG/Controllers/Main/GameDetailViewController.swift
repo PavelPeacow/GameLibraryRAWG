@@ -252,23 +252,23 @@ class GameDetailViewController: UIViewController {
         return store
     }
     
-    //MARK: Create store buttons with action
-    private func createStoreButton(storeUrl: String, storeImage: Stores, title: String) -> UIButton {
-        
-        var config = UIButton.Configuration.plain()
-        config.imagePlacement = .top
-        config.title = title
-        config.image = UIImage(named: storeImage.rawValue)
-        config.titleAlignment = .center
-        
-        let button = UIButton(configuration: config, primaryAction: UIAction(handler: { [weak self] _ in
-            let vc = StoreWebViewViewController()
-            vc.storeUrl = storeUrl
-            self?.present(vc, animated: true)
-        }))
-        
-        return button
-    }
+//    //MARK: Create store buttons with action
+//    private func createStoreButton(storeUrl: String, storeImage: Stores, title: String) -> UIButton {
+//
+//        var config = UIButton.Configuration.plain()
+//        config.imagePlacement = .top
+//        config.title = title
+//        config.image = UIImage(named: storeImage.rawValue)
+//        config.titleAlignment = .center
+//
+//        let button = UIButton(configuration: config, primaryAction: UIAction(handler: { [weak self] _ in
+//            let vc = StoreWebViewViewController()
+//            vc.storeUrl = storeUrl
+//            self?.present(vc, animated: true)
+//        }))
+//
+//        return button
+//    }
 }
 
 extension NSLayoutConstraint
@@ -388,12 +388,23 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == storeCollection {
+        
+        switch collectionView {
             
+        case storeCollection:
             let vc = StoreWebViewViewController()
             vc.storeUrl = gamesStoresLinks[indexPath.item]
+            navigationController?.pushViewController(vc, animated: true)
+            
+        case imageCollectionSlider:
+            let vc = ScreenshotPreviewViewController()
+            vc.configure(with: screenshots[indexPath.item].image)
             present(vc, animated: true)
             
+        default:
+            fatalError("there no more collectionViews")
         }
+        
+        
     }
 }
