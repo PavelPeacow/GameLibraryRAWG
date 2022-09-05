@@ -78,6 +78,23 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        APICaller.shared.fetchMainGameDetails(with: games[indexPath.row].slug) { [weak self] result in
+            switch result {
+            case .success(let gameDetails):
+                DispatchQueue.main.async {
+                    let vc = GameDetailViewController()
+                    vc.configure(with: gameDetails)
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+       
+    }
 }
 
 extension SearchViewController: UISearchResultsUpdating {
