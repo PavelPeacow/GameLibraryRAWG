@@ -10,4 +10,5 @@ import Foundation
 enum APIEndpoints: String {
     case screenshots = "screenshots"
     case stores = "stores"
+    case movies = "movies"
 }

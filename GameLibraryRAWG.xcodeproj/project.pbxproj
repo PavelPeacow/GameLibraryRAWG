@@ -11,6 +11,8 @@
 		B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */; };
 		B559E09B28BA5C0A00B26A0B /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B559E09A28BA5C0A00B26A0B /* SDWebImage */; };
 		B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */; };
+		B55BDC6228C7952900EC7DC1 /* GameTrailerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55BDC6128C7952900EC7DC1 /* GameTrailerModel.swift */; };
+		B55BDC6428C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55BDC6328C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift */; };
 		B591DD0C28C3914200548335 /* GameStoreCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */; };
 		B591DD0E28C3A45C00548335 /* DynamicCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B591DD0D28C3A45C00548335 /* DynamicCollectionView.swift */; };
 		B591DD1128C47E3400548335 /* LoadingNewPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B591DD1028C47E3400548335 /* LoadingNewPage.swift */; };
@@ -40,6 +42,8 @@
 		B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoresEnum.swift; sourceTree = "<group>"; };
 		B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCollectionViewCell.swift; sourceTree = "<group>"; };
 		B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
+		B55BDC6128C7952900EC7DC1 /* GameTrailerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTrailerModel.swift; sourceTree = "<group>"; };
+		B55BDC6328C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTrailerCollectionViewCell.swift; sourceTree = "<group>"; };
 		B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStoreCollectionViewCell.swift; sourceTree = "<group>"; };
 		B591DD0D28C3A45C00548335 /* DynamicCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicCollectionView.swift; sourceTree = "<group>"; };
 		B591DD1028C47E3400548335 /* LoadingNewPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingNewPage.swift; sourceTree = "<group>"; };
@@ -182,6 +186,7 @@
 				B5C89E1628BCF9E300B5F0DA /* GameDetailModel.swift */,
 				B5D050C728BF8BB6008DF07C /* GameScreenshotModel.swift */,
 				B59D107E28C10F3F0077DFAD /* GameStoreModel.swift */,
+				B55BDC6128C7952900EC7DC1 /* GameTrailerModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -221,6 +226,7 @@
 				B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */,
 				B5D050C528BF8A65008DF07C /* SliderCollectionViewCell.swift */,
 				B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */,
+				B55BDC6328C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift */,
 			);
 			path = CollectionViews;
 			sourceTree = "<group>";
@@ -311,11 +317,13 @@
 			files = (
 				B591DD1128C47E3400548335 /* LoadingNewPage.swift in Sources */,
 				B52EE29328C22E5E00EB54E8 /* StoresEnum.swift in Sources */,
+				B55BDC6428C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift in Sources */,
 				B5D050C628BF8A65008DF07C /* SliderCollectionViewCell.swift in Sources */,
 				B5D7A5EA28B77E29000504BE /* SearchViewController.swift in Sources */,
 				B5C89E1928BCFBED00B5F0DA /* GameDetailViewController.swift in Sources */,
 				B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */,
 				B5D7A5EF28B780AF000504BE /* APIConstants.swift in Sources */,
+				B55BDC6228C7952900EC7DC1 /* GameTrailerModel.swift in Sources */,
 				B591DD0E28C3A45C00548335 /* DynamicCollectionView.swift in Sources */,
 				B5D050CA28BFA9DF008DF07C /* APIEndpoints.swift in Sources */,
 				B5BD12E428BDFF5A00BACD4D /* GameFutureView.swift in Sources */,

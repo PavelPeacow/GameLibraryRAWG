@@ -7,10 +7,13 @@
 
 import UIKit
 import SDWebImage
+import AVFoundation
+import AVKit
 
 class GameDetailViewController: UIViewController {
     
     private var screenshots = [GameScreenshot]()
+    private var gameTrailers = [GameTrailerModel]()
     private var gamesStoresLinks = [String]()
     
     private let scrollView: UIScrollView = {
@@ -90,6 +93,18 @@ class GameDetailViewController: UIViewController {
         return imageCollectionSlider
     }()
     
+    private let gameTrailersCollection: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 260, height: 200)
+        
+        let gameTrailersCollection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        gameTrailersCollection.translatesAutoresizingMaskIntoConstraints = false
+        gameTrailersCollection.showsHorizontalScrollIndicator = false
+        gameTrailersCollection.register(GameTrailerCollectionViewCell.self, forCellWithReuseIdentifier: GameTrailerCollectionViewCell.identifier)
+        return gameTrailersCollection
+    }()
+    
     private let storeCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -121,6 +136,9 @@ class GameDetailViewController: UIViewController {
         scrollView.addSubview(gameName)
         scrollView.addSubview(gameDescription)
         scrollView.addSubview(gameAboutContainer)
+        
+        scrollView.addSubview(gameTrailersCollection)
+        
         scrollView.addSubview(imageCollectionSlider)
         
         scrollView.addSubview(whereToBuyLabel)
@@ -149,6 +167,9 @@ class GameDetailViewController: UIViewController {
         
         storeCollection.delegate = self
         storeCollection.dataSource = self
+        
+        gameTrailersCollection.delegate = self
+        gameTrailersCollection.dataSource = self
     }
     
     public func configure(with model: GameDetail) {
@@ -186,6 +207,24 @@ class GameDetailViewController: UIViewController {
                     }
                 }
                 
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
+        APICaller.shared.fetchSpecificGameDetails(with: model.slug, endpoint: APIEndpoints.movies, expecting: GameTrailerResponse.self) { result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async { [weak self] in
+                    if !response.results.isEmpty {
+                        print(response.results)
+                        self?.gameTrailers = response.results
+                        self?.gameTrailersCollection.reloadData()
+                    } else {
+                        self?.gameTrailersCollection.removeFromSuperview()
+                    }
+                   
+                }
             case .failure(let error):
                 print(error)
             }
@@ -303,16 +342,25 @@ extension GameDetailViewController {
             gameDescription.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             gameDescription.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             
+            
+            gameTrailersCollection.topAnchor.constraint(equalTo: gameDescription.bottomAnchor, constant: 30),
+            gameTrailersCollection.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            gameTrailersCollection.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            gameTrailersCollection.heightAnchor.constraint(equalToConstant: 200),
+            
+            
             //slider
-            imageCollectionSlider.topAnchor.constraint(equalTo: gameDescription.bottomAnchor, constant: 30),
+            imageCollectionSlider.topAnchor.constraint(equalTo: gameTrailersCollection.bottomAnchor, constant: 30),
+            imageCollectionSlider.topAnchor.constraint(equalTo: gameDescription.bottomAnchor, constant: 30).withPriority(.defaultLow),
             imageCollectionSlider.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             imageCollectionSlider.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             imageCollectionSlider.heightAnchor.constraint(equalToConstant: 200),
             
+            whereToBuyLabel.topAnchor.constraint(equalTo: gameTrailersCollection.bottomAnchor, constant: 15).withPriority(.defaultLow),
             whereToBuyLabel.topAnchor.constraint(equalTo: imageCollectionSlider.bottomAnchor, constant: 15),
             whereToBuyLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             whereToBuyLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-            
+
             storeCollection.topAnchor.constraint(equalTo: whereToBuyLabel.bottomAnchor, constant: 30),
             storeCollection.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             storeCollection.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
@@ -362,8 +410,10 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == imageCollectionSlider {
             return screenshots.count
-        } else {
+        } else if collectionView == storeCollection {
             return gamesStoresLinks.count
+        } else {
+            return gameTrailers.count
         }
            
     }
@@ -375,7 +425,7 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
             
             cell.configure(with: screenshots[indexPath.item].image)
             return cell
-        } else {
+        } else if collectionView == storeCollection {
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameStoreCollectionViewCell.identifier, for: indexPath) as! GameStoreCollectionViewCell
             
@@ -384,6 +434,12 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
             cell.configure(store: verifiedStore)
             return cell
             
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameTrailerCollectionViewCell.identifier, for: indexPath) as! GameTrailerCollectionViewCell
+            
+            cell.configure(with: gameTrailers[indexPath.item])
+            
+            return cell
         }
     }
     
@@ -399,7 +455,18 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
         case imageCollectionSlider:
             let vc = ScreenshotPreviewViewController()
             vc.configure(with: screenshots[indexPath.item].image)
+            print("looooooooh: \(gameTrailers)")
             present(vc, animated: true)
+            
+        case gameTrailersCollection:
+            let videoURL = URL(string: gameTrailers[indexPath.item].data.max)
+            let player = AVPlayer(url: videoURL!)
+            let playerViewController = AVPlayerViewController()
+            playerViewController.player = player
+            self.present(playerViewController, animated: true) {
+                playerViewController.player!.play()
+                player.volume = 0.0
+            }
             
         default:
             fatalError("there no more collectionViews")
