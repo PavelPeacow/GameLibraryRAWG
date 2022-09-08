@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ProfileAuthorizationViewController: UIViewController {
     
@@ -36,7 +37,7 @@ class ProfileAuthorizationViewController: UIViewController {
     private let signInButton: UIButton = {
         let signInButton = UIButton(configuration: UIButton.Configuration.filled())
         signInButton.setTitle("Sign In", for: .normal)
-
+        
         signInButton.translatesAutoresizingMaskIntoConstraints = false
         return signInButton
     }()
@@ -53,7 +54,8 @@ class ProfileAuthorizationViewController: UIViewController {
         title = "Profile"
         navigationController?.navigationBar.prefersLargeTitles = true
         
-
+        addActionToSignInButton()
+        
         setConstraints()
         setDelegates()
         
@@ -67,6 +69,47 @@ class ProfileAuthorizationViewController: UIViewController {
     private func setDelegates() {
         emailTextField.delegate = self
         passwordTextField.delegate = self
+    }
+    
+    private func addActionToSignInButton() {
+        signInButton.addAction(UIAction(handler: { [weak self] _ in
+            self?.didTapSignInButton()
+        }), for: .touchUpInside)
+    }
+    
+    private func didTapSignInButton() {
+        guard let email = emailTextField.text, !email.isEmpty,
+              let password = passwordTextField.text, !password.isEmpty else { return }
+        
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+            guard error == nil else {
+                self?.showCreateAccount(email: email, password: password)
+                return
+            }
+            
+            print("signed")
+            self?.showSignInAlert()
+        }
+    }
+    
+    private func showCreateAccount(email: String, password: String) {
+        let ac = UIAlertController(title: "Create account", message: "You need create an account", preferredStyle: .alert)
+        
+        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { result, error in
+                print("User created")
+            }
+        }))
+        
+        ac.addAction(UIAlertAction(title: "NO", style: .cancel))
+        present(ac, animated: true)
+    }
+    
+    private func showSignInAlert() {
+        let ac = UIAlertController(title: "Nice", message: "You are sign in!", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "hooray!", style: .default))
+                     
+        present(ac, animated: true)
     }
     
     private func setConstraints() {
