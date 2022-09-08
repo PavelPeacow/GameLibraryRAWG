@@ -15,15 +15,19 @@ class MainTabBarController: UITabBarController {
         let home = UINavigationController(rootViewController: HomeViewController())
         let seacrh = UINavigationController(rootViewController: SearchViewController())
         
+        let profile = UINavigationController(rootViewController: ProfileAuthorizationViewController())
+        
         home.tabBarItem.title = "Home"
         seacrh.tabBarItem.title = "Seacrh"
+        profile.tabBarItem.title = "Profile"
         
         home.tabBarItem.image = UIImage(systemName: "house.fill")
         seacrh.tabBarItem.image = UIImage(systemName: "magnifyingglass")
+        profile.tabBarItem.image = UIImage(systemName: "person")
         
         tabBarController?.tabBar.tintColor = .systemBackground
         
-        setViewControllers([home, seacrh], animated: true)
+        setViewControllers([home, seacrh, profile], animated: true)
         
         
     }
