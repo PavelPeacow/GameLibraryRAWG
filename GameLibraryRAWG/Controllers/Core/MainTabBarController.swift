@@ -15,7 +15,7 @@ class MainTabBarController: UITabBarController {
         let home = UINavigationController(rootViewController: HomeViewController())
         let seacrh = UINavigationController(rootViewController: SearchViewController())
         
-        let profile = UINavigationController(rootViewController: ProfileAuthorizationViewController())
+        let profile = UINavigationController(rootViewController: ProfileMainViewController())
         
         home.tabBarItem.title = "Home"
         seacrh.tabBarItem.title = "Seacrh"

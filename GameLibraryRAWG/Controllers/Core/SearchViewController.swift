@@ -86,7 +86,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
             case .success(let gameDetails):
                 DispatchQueue.main.async {
                     let vc = GameDetailViewController()
-                    vc.configure(with: gameDetails)
+                    vc.configure(with: gameDetails, game: self!.games[indexPath.row])
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
             case .failure(let error):

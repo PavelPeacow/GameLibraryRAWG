@@ -12,6 +12,7 @@ import AVKit
 
 class GameDetailViewController: UIViewController {
     
+    var game: Game!
     private var screenshots = [GameScreenshot]()
     private var gameTrailers = [GameTrailerModel]()
     private var gamesStoresLinks = [String]()
@@ -130,6 +131,8 @@ class GameDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationController?.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveGameToFavourite))
+        
         view.addSubview(scrollView)
         
         scrollView.addSubview(gameCover)
@@ -160,6 +163,10 @@ class GameDetailViewController: UIViewController {
         super.viewDidLayoutSubviews()
         scrollView.frame = view.bounds
     }
+    
+    @objc func saveGameToFavourite() {
+        
+    }
         
     private func setDelegates() {
         imageCollectionSlider.delegate = self
@@ -172,11 +179,13 @@ class GameDetailViewController: UIViewController {
         gameTrailersCollection.dataSource = self
     }
     
-    public func configure(with model: GameDetail) {
+    public func configure(with model: GameDetail, game: Game) {
         guard let url = URL(string: model.background_image ?? "") else { return }
         
         gameCover.sd_imageIndicator = SDWebImageActivityIndicator.large
         gameCover.sd_setImage(with: url)
+        
+        self.game = game
         
         APICaller.shared.fetchSpecificGameDetails(with: model.slug, endpoint: APIEndpoints.screenshots, expecting: GameScreenshotResponse.self) { [weak self] result in
             switch result {

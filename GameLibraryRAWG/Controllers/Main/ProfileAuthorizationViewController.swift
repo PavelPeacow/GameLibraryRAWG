@@ -113,7 +113,7 @@ class ProfileAuthorizationViewController: UIViewController {
     private func showSignInAlert() {
         let ac = UIAlertController(title: "Nice", message: "You are sign in!", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "hooray!", style: .default, handler: { [weak self] _ in
-            let vc = UIViewController()
+            let vc = ProfileMainViewController()
             self?.navigationController?.setViewControllers([vc], animated: true)
         }))
                      

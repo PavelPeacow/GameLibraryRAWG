@@ -195,7 +195,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
-                        vc.configure(with: gameDetail)
+                        vc.configure(with: gameDetail, game: self!.mustPlay[indexPath.item])
                         self?.navigationController?.pushViewController(vc, animated: true)
                         print(gameDetail)
                     }
@@ -208,7 +208,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
-                        vc.configure(with: gameDetail)
+                        vc.configure(with: gameDetail, game:  self!.popular[indexPath.item])
                         self?.navigationController?.pushViewController(vc, animated: true)
                         print(gameDetail)
                     }
@@ -221,7 +221,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
-                        vc.configure(with: gameDetail)
+                        vc.configure(with: gameDetail, game:  self!.upcoming[indexPath.item])
                         self?.navigationController?.pushViewController(vc, animated: true)
                         print(gameDetail)
                     }
@@ -234,7 +234,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
-                        vc.configure(with: gameDetail)
+                        vc.configure(with: gameDetail, game:  self!.discover[indexPath.item])
                         self?.navigationController?.pushViewController(vc, animated: true)
                         print(gameDetail)
                     }
