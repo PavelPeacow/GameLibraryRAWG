@@ -251,49 +251,7 @@ class GameDetailViewController: UIViewController {
         let gamePublisherModel = GameFutureViewModel(gameFutureTitle: "Publisher", gameFutureDescr: model.publishers.map({ $0.name}).joined(separator: ", "))
         gamePublisher.configure(with: gamePublisherModel)
     }
-    
-    //MARK: check stores
-    private func storesCheck(with storeURL: String) -> String {
         
-        let store: String
-        print(storeURL)
-        
-        switch storeURL {
-            
-        case _ where storeURL.contains(Stores.steam.rawValue):
-            store = Stores.steam.rawValue
-            
-        case _ where storeURL.contains(Stores.microsoft.rawValue):
-            store = Stores.microsoft.rawValue
-            
-        case _ where storeURL.contains(Stores.xbox.rawValue):
-            store = Stores.xbox.rawValue
-            
-        case _ where storeURL.contains(Stores.playstation.rawValue):
-            store = Stores.playstation.rawValue
-            
-        case _ where storeURL.contains(Stores.nintendo.rawValue):
-            store = Stores.nintendo.rawValue
-            
-        case _ where storeURL.contains(Stores.gog.rawValue):
-            store = Stores.gog.rawValue
-            
-        case _ where storeURL.contains(Stores.appleStore.rawValue):
-            store = Stores.appleStore.rawValue
-            
-        case _ where storeURL.contains(Stores.googleStore.rawValue):
-            store = Stores.googleStore.rawValue
-            
-        case _ where storeURL.contains(Stores.epicgames.rawValue):
-            store = Stores.epicgames.rawValue
-            
-        default:
-            store = "unknown store"
-        }
-        
-        return store
-    }
-    
 }
 
 //MARK: Constraints
@@ -387,39 +345,50 @@ extension GameDetailViewController {
 extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == imageCollectionSlider {
-            return screenshots.count
-        } else if collectionView == storeCollection {
-            return gamesStoresLinks.count
-        } else {
+        
+        switch collectionView {
+            
+        case gameTrailersCollection:
             return gameTrailers.count
+            
+        case imageCollectionSlider:
+            return screenshots.count
+            
+        case storeCollection:
+            return gamesStoresLinks.count
+            
+        default: fatalError("GameDetailView count")
         }
-           
+
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == imageCollectionSlider {
+        
+        switch collectionView {
             
+        case gameTrailersCollection:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameTrailerCollectionViewCell.identifier, for: indexPath) as! GameTrailerCollectionViewCell
+            
+            cell.configure(with: gameTrailers[indexPath.item])
+            return cell
+            
+        case imageCollectionSlider:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SliderCollectionViewCell.identifier, for: indexPath) as! SliderCollectionViewCell
             
             cell.configure(with: screenshots[indexPath.item].image)
             return cell
-        } else if collectionView == storeCollection {
             
+        case storeCollection:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameStoreCollectionViewCell.identifier, for: indexPath) as! GameStoreCollectionViewCell
             
-            let verifiedStore = storesCheck(with: gamesStoresLinks[indexPath.item])
+            let verifiedStore = checkStores(with: gamesStoresLinks[indexPath.item])
 
             cell.configure(store: verifiedStore)
             return cell
             
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameTrailerCollectionViewCell.identifier, for: indexPath) as! GameTrailerCollectionViewCell
-            
-            cell.configure(with: gameTrailers[indexPath.item])
-            
-            return cell
+        default: fatalError("GameDetailView collections")
         }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

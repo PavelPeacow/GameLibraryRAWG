@@ -127,13 +127,9 @@ extension ProfileAuthorizationViewController: UITextFieldDelegate {
         if textField == emailTextField {
             passwordTextField.becomeFirstResponder()
         } else {
-            emailTextField.becomeFirstResponder()
+            passwordTextField.resignFirstResponder()
         }
         return true
-    }
-    
-    override func resignFirstResponder() -> Bool {
-        true
     }
     
 }

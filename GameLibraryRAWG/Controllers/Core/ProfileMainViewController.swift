@@ -106,6 +106,10 @@ class ProfileMainViewController: UIViewController {
         }
     }
     
+}
+
+extension ProfileMainViewController {
+    
     private func setConstraints() {
         NSLayoutConstraint.activate([
             profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
@@ -125,8 +129,6 @@ class ProfileMainViewController: UIViewController {
             gamesFavouritesCollection.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
         ])
     }
-    
-    
 }
 
 extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewDataSource {

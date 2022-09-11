@@ -42,6 +42,7 @@ class ProfileRegisterNewUserViewController: UIViewController {
     private func setDelegates() {
         emailTextField.delegate = self
         passwordTextField.delegate = self
+        repeatPasswordTextField.delegate = self
     }
     
     private func addActiontoRegisterButton() {
@@ -111,15 +112,20 @@ extension ProfileRegisterNewUserViewController {
 extension ProfileRegisterNewUserViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == emailTextField {
+        
+        switch textField {
+        case emailTextField:
             passwordTextField.becomeFirstResponder()
-        } else {
-            emailTextField.becomeFirstResponder()
+            
+        case passwordTextField:
+            repeatPasswordTextField.becomeFirstResponder()
+            
+        case repeatPasswordTextField:
+            repeatPasswordTextField.resignFirstResponder()
+            
+        default: return false
         }
         return true
     }
     
-    override func resignFirstResponder() -> Bool {
-        true
-    }
 }
