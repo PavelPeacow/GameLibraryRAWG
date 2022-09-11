@@ -11,7 +11,7 @@ import WebKit
 class StoreWebViewViewController: UIViewController {
     
     private var webView = WKWebView()
-    var storeUrl: String?
+    public var storeUrl: String?
     
     override func loadView() {
         view = webView

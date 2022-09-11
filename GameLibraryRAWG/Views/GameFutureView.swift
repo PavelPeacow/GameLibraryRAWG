@@ -31,6 +31,8 @@ class GameFutureView: UIView {
         addSubview(futureTitle)
         addSubview(futureDescr)
         
+        self.translatesAutoresizingMaskIntoConstraints = false
+        
         setConstraints()
     }
     
@@ -46,6 +48,7 @@ class GameFutureView: UIView {
 }
 
 extension GameFutureView {
+    
     func setConstraints() {
         NSLayoutConstraint.activate([
             futureTitle.topAnchor.constraint(equalTo: self.topAnchor),

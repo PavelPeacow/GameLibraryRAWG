@@ -44,7 +44,7 @@ class GameTrailerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configure(with model: GameTrailerModel) {
+    public func configure(with model: GameTrailer) {
         guard let url = URL(string: model.preview) else { return }
         
         name.text = model.name
@@ -53,7 +53,12 @@ class GameTrailerCollectionViewCell: UICollectionViewCell {
         imageTrailer.sd_setImage(with: url)
     }
  
-    func setConstraints() {
+
+}
+
+extension GameTrailerCollectionViewCell {
+    
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             imageTrailer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageTrailer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),

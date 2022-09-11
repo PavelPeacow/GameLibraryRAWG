@@ -10,44 +10,13 @@ import FirebaseAuth
 
 class ProfileAuthorizationViewController: UIViewController {
     
-    private let emailTextField: UITextField = {
-        let emailTextField = UITextField()
-        emailTextField.placeholder = "Email"
-        emailTextField.borderStyle = .roundedRect
-        emailTextField.clearButtonMode = .whileEditing
-        emailTextField.autocorrectionType = .no
-        emailTextField.keyboardType = .emailAddress
-        emailTextField.enablesReturnKeyAutomatically = true
-        emailTextField.translatesAutoresizingMaskIntoConstraints = false
-        return emailTextField
-    }()
+    private let emailTextField: EmailTextField = EmailTextField()
     
-    private let passwordTextField: UITextField = {
-        let passwordTextField = UITextField()
-        passwordTextField.placeholder = "Password"
-        passwordTextField.clearButtonMode = .whileEditing
-        passwordTextField.borderStyle = .roundedRect
-        passwordTextField.autocorrectionType = .no
-        passwordTextField.isSecureTextEntry = true
-        passwordTextField.enablesReturnKeyAutomatically = true
-        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
-        return passwordTextField
-    }()
+    private let passwordTextField: PasswordTextField = PasswordTextField(placeholder: "Password")
     
-    private let signInButton: UIButton = {
-        let signInButton = UIButton(configuration: UIButton.Configuration.filled())
-        signInButton.setTitle("Sign In", for: .normal)
-        
-        signInButton.translatesAutoresizingMaskIntoConstraints = false
-        return signInButton
-    }()
+    private let signInButton: ProfileButton = ProfileButton(configuration: .filled(), title: "Sign in")
     
-    private let dontHaveAccountButton: UIButton = {
-        let dontHaveAccountButton = UIButton(configuration: UIButton.Configuration.bordered())
-        dontHaveAccountButton.setTitle("Don't have an account?", for: .normal)
-        dontHaveAccountButton.translatesAutoresizingMaskIntoConstraints = false
-        return dontHaveAccountButton
-    }()
+    private let dontHaveAccountButton: ProfileButton = ProfileButton(configuration: .bordered(), title: "Don't have an account?")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,8 +28,7 @@ class ProfileAuthorizationViewController: UIViewController {
         view.addSubview(signInButton)
         view.addSubview(dontHaveAccountButton)
         
-        title = "Profile"
-        navigationController?.navigationBar.prefersLargeTitles = true
+        configureNavBar()
         
         addActionToSignInButton()
         addActionToDontHaveAccountButton()
@@ -78,6 +46,11 @@ class ProfileAuthorizationViewController: UIViewController {
     private func setDelegates() {
         emailTextField.delegate = self
         passwordTextField.delegate = self
+    }
+    
+    private func configureNavBar() {
+        title = "Profile"
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     private func addActionToSignInButton() {
@@ -118,6 +91,10 @@ class ProfileAuthorizationViewController: UIViewController {
         present(ac, animated: true)
     }
     
+}
+
+extension ProfileAuthorizationViewController {
+    
     private func setConstraints() {
         NSLayoutConstraint.activate([
             
@@ -142,7 +119,6 @@ class ProfileAuthorizationViewController: UIViewController {
             dontHaveAccountButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
         ])
     }
-    
 }
 
 extension ProfileAuthorizationViewController: UITextFieldDelegate {

@@ -12,9 +12,9 @@ import AVKit
 
 class GameDetailViewController: UIViewController {
     
-    var game: Game!
+    public var game: Game!
     private var screenshots = [GameScreenshot]()
-    private var gameTrailers = [GameTrailerModel]()
+    private var gameTrailers = [GameTrailer]()
     private var gamesStoresLinks = [String]()
     
     private let scrollView: UIScrollView = {
@@ -52,36 +52,16 @@ class GameDetailViewController: UIViewController {
         return gameAboutContainer
     }()
     
-    private let gameRelease: GameFutureView = {
-        let gameRelease = GameFutureView()
-        gameRelease.translatesAutoresizingMaskIntoConstraints = false
-        return gameRelease
-    }()
+    private let gameRelease: GameFutureView = GameFutureView()
     
-    private let gameRating: GameFutureView = {
-        let gameRating = GameFutureView()
-        gameRating.translatesAutoresizingMaskIntoConstraints = false
-        return gameRating
-    }()
+    private let gameRating: GameFutureView = GameFutureView()
     
-    private let gameGenre: GameFutureView = {
-        let gameGenre = GameFutureView()
-        gameGenre.translatesAutoresizingMaskIntoConstraints = false
-        return gameGenre
-    }()
+    private let gameGenre: GameFutureView = GameFutureView()
     
-    private let gameDeveloper: GameFutureView = {
-        let gameDeveloper = GameFutureView()
-        gameDeveloper.translatesAutoresizingMaskIntoConstraints = false
-        return gameDeveloper
-    }()
+    private let gameDeveloper: GameFutureView = GameFutureView()
     
-    private let gamePublisher: GameFutureView = {
-        let gamePublisher = GameFutureView()
-        gamePublisher.translatesAutoresizingMaskIntoConstraints = false
-        return gamePublisher
-    }()
-    
+    private let gamePublisher: GameFutureView = GameFutureView()
+        
     private let imageCollectionSlider: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -131,7 +111,7 @@ class GameDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveGameToFavourite))
+        configureNavBar()
         
         view.addSubview(scrollView)
         
@@ -177,6 +157,10 @@ class GameDetailViewController: UIViewController {
             print("Succes")
         }
         
+    }
+    
+    private func configureNavBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveGameToFavourite))
     }
         
     private func setDelegates() {
@@ -226,7 +210,6 @@ class GameDetailViewController: UIViewController {
                         self?.storeCollection.removeFromSuperview()
                     }
                 }
-                
             case .failure(let error):
                 print(error)
             }
@@ -311,36 +294,11 @@ class GameDetailViewController: UIViewController {
         return store
     }
     
-//    //MARK: Create store buttons with action
-//    private func createStoreButton(storeUrl: String, storeImage: Stores, title: String) -> UIButton {
-//
-//        var config = UIButton.Configuration.plain()
-//        config.imagePlacement = .top
-//        config.title = title
-//        config.image = UIImage(named: storeImage.rawValue)
-//        config.titleAlignment = .center
-//
-//        let button = UIButton(configuration: config, primaryAction: UIAction(handler: { [weak self] _ in
-//            let vc = StoreWebViewViewController()
-//            vc.storeUrl = storeUrl
-//            self?.present(vc, animated: true)
-//        }))
-//
-//        return button
-//    }
-}
-
-extension NSLayoutConstraint
-{
-    func withPriority(_ priority: UILayoutPriority) -> NSLayoutConstraint
-    {
-        self.priority = priority
-        return self
-    }
 }
 
 //MARK: Constraints
 extension GameDetailViewController {
+    
     func setConstraints() {
         NSLayoutConstraint.activate([
             //game image
@@ -427,6 +385,7 @@ extension GameDetailViewController {
 
 //MARK: Collection slider settings
 extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == imageCollectionSlider {
             return screenshots.count

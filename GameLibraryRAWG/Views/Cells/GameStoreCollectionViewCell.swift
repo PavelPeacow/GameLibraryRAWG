@@ -46,7 +46,8 @@ class GameStoreCollectionViewCell: UICollectionViewCell {
 }
 
 extension GameStoreCollectionViewCell {
-    func setConstraints() {
+    
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             storeImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             storeImage.heightAnchor.constraint(equalToConstant: 50),

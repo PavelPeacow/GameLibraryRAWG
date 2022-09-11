@@ -35,5 +35,4 @@ class ScreenshotPreviewViewController: UIViewController {
         screenshotPreview.sd_setImage(with: url)
     }
     
-    
 }

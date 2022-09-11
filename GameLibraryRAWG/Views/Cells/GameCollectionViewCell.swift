@@ -84,7 +84,7 @@ class GameCollectionViewCell: UICollectionViewCell {
 
 extension GameCollectionViewCell {
     
-    func setConstraints() {
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             metacriticLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             metacriticLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),

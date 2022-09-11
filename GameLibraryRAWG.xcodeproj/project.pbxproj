@@ -22,7 +22,7 @@
 		B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */; };
 		B559E09B28BA5C0A00B26A0B /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B559E09A28BA5C0A00B26A0B /* SDWebImage */; };
 		B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */; };
-		B55BDC6228C7952900EC7DC1 /* GameTrailerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55BDC6128C7952900EC7DC1 /* GameTrailerModel.swift */; };
+		B55BDC6228C7952900EC7DC1 /* GameTrailer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55BDC6128C7952900EC7DC1 /* GameTrailer.swift */; };
 		B55BDC6428C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55BDC6328C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift */; };
 		B578779828C9FEBB00D2B777 /* ProfileAuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B578779728C9FEBB00D2B777 /* ProfileAuthorizationViewController.swift */; };
 		B591DD0C28C3914200548335 /* GameStoreCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */; };
@@ -48,6 +48,11 @@
 		B5D7A5F128B784FD000504BE /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5F028B784FD000504BE /* GameModel.swift */; };
 		B5D7AC9F28BE074E00859B03 /* GameFutureViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7AC9E28BE074E00859B03 /* GameFutureViewModel.swift */; };
 		B5E3A61828CCEF0E00A48CFD /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E3A61728CCEF0E00A48CFD /* FirebaseManager.swift */; };
+		B5E3A61A28CDFAFF00A48CFD /* CompositionalLayoutSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E3A61928CDFAFF00A48CFD /* CompositionalLayoutSections.swift */; };
+		B5E3A61C28CDFBAC00A48CFD /* EmailTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E3A61B28CDFBAC00A48CFD /* EmailTextField.swift */; };
+		B5E3A61E28CDFC1100A48CFD /* PasswordTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E3A61D28CDFC1100A48CFD /* PasswordTextField.swift */; };
+		B5E3A62028CDFECA00A48CFD /* ProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E3A61F28CDFECA00A48CFD /* ProfileButton.swift */; };
+		B5E3A62228CE047C00A48CFD /* ConstraintPriority.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E3A62128CE047C00A48CFD /* ConstraintPriority.swift */; };
 		B5FE7EA828C245E3008B15B8 /* StoreWebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -58,7 +63,7 @@
 		B533893328CB9237002F405D /* ProfileMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileMainViewController.swift; sourceTree = "<group>"; };
 		B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCollectionViewCell.swift; sourceTree = "<group>"; };
 		B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
-		B55BDC6128C7952900EC7DC1 /* GameTrailerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTrailerModel.swift; sourceTree = "<group>"; };
+		B55BDC6128C7952900EC7DC1 /* GameTrailer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTrailer.swift; sourceTree = "<group>"; };
 		B55BDC6328C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTrailerCollectionViewCell.swift; sourceTree = "<group>"; };
 		B578779728C9FEBB00D2B777 /* ProfileAuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAuthorizationViewController.swift; sourceTree = "<group>"; };
 		B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStoreCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -86,6 +91,11 @@
 		B5D7A5F028B784FD000504BE /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		B5D7AC9E28BE074E00859B03 /* GameFutureViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFutureViewModel.swift; sourceTree = "<group>"; };
 		B5E3A61728CCEF0E00A48CFD /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
+		B5E3A61928CDFAFF00A48CFD /* CompositionalLayoutSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionalLayoutSections.swift; sourceTree = "<group>"; };
+		B5E3A61B28CDFBAC00A48CFD /* EmailTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailTextField.swift; sourceTree = "<group>"; };
+		B5E3A61D28CDFC1100A48CFD /* PasswordTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordTextField.swift; sourceTree = "<group>"; };
+		B5E3A61F28CDFECA00A48CFD /* ProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileButton.swift; sourceTree = "<group>"; };
+		B5E3A62128CE047C00A48CFD /* ConstraintPriority.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstraintPriority.swift; sourceTree = "<group>"; };
 		B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreWebViewViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -140,6 +150,9 @@
 			isa = PBXGroup;
 			children = (
 				B591DD0D28C3A45C00548335 /* DynamicCollectionView.swift */,
+				B5E3A61B28CDFBAC00A48CFD /* EmailTextField.swift */,
+				B5E3A61D28CDFC1100A48CFD /* PasswordTextField.swift */,
+				B5E3A61F28CDFECA00A48CFD /* ProfileButton.swift */,
 			);
 			path = Subclasses;
 			sourceTree = "<group>";
@@ -148,6 +161,8 @@
 			isa = PBXGroup;
 			children = (
 				B591DD1028C47E3400548335 /* LoadingNewPage.swift */,
+				B5E3A61928CDFAFF00A48CFD /* CompositionalLayoutSections.swift */,
+				B5E3A62128CE047C00A48CFD /* ConstraintPriority.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -200,9 +215,10 @@
 			isa = PBXGroup;
 			children = (
 				B591DD0F28C3A4CB00548335 /* Subclasses */,
-				B5D7ACA128BE2D0000859B03 /* CollectionViews */,
-				B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */,
+				B5D7ACA128BE2D0000859B03 /* Cells */,
+				B5E3A62328CE04D000A48CFD /* CollectionHeader */,
 				B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */,
+				B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */,
 				B591DD1328C4B10D00548335 /* ScreenshotPreviewViewController.swift */,
 			);
 			path = Views;
@@ -215,7 +231,7 @@
 				B5C89E1628BCF9E300B5F0DA /* GameDetailModel.swift */,
 				B5D050C728BF8BB6008DF07C /* GameScreenshotModel.swift */,
 				B59D107E28C10F3F0077DFAD /* GameStoreModel.swift */,
-				B55BDC6128C7952900EC7DC1 /* GameTrailerModel.swift */,
+				B55BDC6128C7952900EC7DC1 /* GameTrailer.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -248,16 +264,15 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
-		B5D7ACA128BE2D0000859B03 /* CollectionViews */ = {
+		B5D7ACA128BE2D0000859B03 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
 				B559E09428BA49B800B26A0B /* GameCollectionViewCell.swift */,
-				B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */,
 				B5D050C528BF8A65008DF07C /* SliderCollectionViewCell.swift */,
 				B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */,
 				B55BDC6328C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift */,
 			);
-			path = CollectionViews;
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		B5D7ACA228BE2D2600859B03 /* Main */ = {
@@ -276,6 +291,14 @@
 				B5E3A61728CCEF0E00A48CFD /* FirebaseManager.swift */,
 			);
 			path = FirebaseManager;
+			sourceTree = "<group>";
+		};
+		B5E3A62328CE04D000A48CFD /* CollectionHeader */ = {
+			isa = PBXGroup;
+			children = (
+				B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */,
+			);
+			path = CollectionHeader;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -364,15 +387,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5E3A61C28CDFBAC00A48CFD /* EmailTextField.swift in Sources */,
+				B5E3A62228CE047C00A48CFD /* ConstraintPriority.swift in Sources */,
 				B591DD1128C47E3400548335 /* LoadingNewPage.swift in Sources */,
 				B52EE29328C22E5E00EB54E8 /* StoresEnum.swift in Sources */,
 				B55BDC6428C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift in Sources */,
 				B5D050C628BF8A65008DF07C /* SliderCollectionViewCell.swift in Sources */,
 				B5D7A5EA28B77E29000504BE /* SearchViewController.swift in Sources */,
 				B5C89E1928BCFBED00B5F0DA /* GameDetailViewController.swift in Sources */,
+				B5E3A61A28CDFAFF00A48CFD /* CompositionalLayoutSections.swift in Sources */,
 				B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */,
 				B5D7A5EF28B780AF000504BE /* APIConstants.swift in Sources */,
-				B55BDC6228C7952900EC7DC1 /* GameTrailerModel.swift in Sources */,
+				B55BDC6228C7952900EC7DC1 /* GameTrailer.swift in Sources */,
 				B591DD0E28C3A45C00548335 /* DynamicCollectionView.swift in Sources */,
 				B5D050CA28BFA9DF008DF07C /* APIEndpoints.swift in Sources */,
 				B533893228CB6FD5002F405D /* ProfileRegisterNewUserViewController.swift in Sources */,
@@ -382,6 +408,7 @@
 				B5D7A5D328B77445000504BE /* MainTabBarController.swift in Sources */,
 				B59D107F28C10F3F0077DFAD /* GameStoreModel.swift in Sources */,
 				B5D7A5CF28B77445000504BE /* AppDelegate.swift in Sources */,
+				B5E3A61E28CDFC1100A48CFD /* PasswordTextField.swift in Sources */,
 				B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */,
 				B591DD1428C4B10D00548335 /* ScreenshotPreviewViewController.swift in Sources */,
 				B5FE7EA828C245E3008B15B8 /* StoreWebViewViewController.swift in Sources */,
@@ -390,6 +417,7 @@
 				B5D7A5F128B784FD000504BE /* GameModel.swift in Sources */,
 				B5D7AC9F28BE074E00859B03 /* GameFutureViewModel.swift in Sources */,
 				B578779828C9FEBB00D2B777 /* ProfileAuthorizationViewController.swift in Sources */,
+				B5E3A62028CDFECA00A48CFD /* ProfileButton.swift in Sources */,
 				B5D050C828BF8BB6008DF07C /* GameScreenshotModel.swift in Sources */,
 				B5D7A5D128B77445000504BE /* SceneDelegate.swift in Sources */,
 				B533893428CB9237002F405D /* ProfileMainViewController.swift in Sources */,

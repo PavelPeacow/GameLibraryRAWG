@@ -8,10 +8,10 @@
 import Foundation
 
 struct GameTrailerResponse: Codable {
-    let results: [GameTrailerModel]
+    let results: [GameTrailer]
 }
 
-struct GameTrailerModel: Codable {
+struct GameTrailer: Codable {
     let name: String
     let preview: String
     let data: GameTrailerData

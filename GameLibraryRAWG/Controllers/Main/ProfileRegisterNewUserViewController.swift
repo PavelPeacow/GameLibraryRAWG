@@ -10,50 +10,14 @@ import FirebaseAuth
 
 class ProfileRegisterNewUserViewController: UIViewController {
     
-    private let emailTextField: UITextField = {
-        let emailTextField = UITextField()
-        emailTextField.placeholder = "Email"
-        emailTextField.borderStyle = .roundedRect
-        emailTextField.clearButtonMode = .whileEditing
-        emailTextField.autocorrectionType = .no
-        emailTextField.keyboardType = .emailAddress
-        emailTextField.enablesReturnKeyAutomatically = true
-        emailTextField.translatesAutoresizingMaskIntoConstraints = false
-        return emailTextField
-    }()
+    private let emailTextField: EmailTextField = EmailTextField()
     
-    private let passwordTextField: UITextField = {
-        let passwordTextField = UITextField()
-        passwordTextField.placeholder = "Password"
-        passwordTextField.clearButtonMode = .whileEditing
-        passwordTextField.borderStyle = .roundedRect
-        passwordTextField.autocorrectionType = .no
-        passwordTextField.isSecureTextEntry = true
-        passwordTextField.enablesReturnKeyAutomatically = true
-        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
-        return passwordTextField
-    }()
+    private let passwordTextField: PasswordTextField = PasswordTextField(placeholder: "Password")
     
-    private let repeatPasswordTextField: UITextField = {
-        let passwordTextField = UITextField()
-        passwordTextField.placeholder = "Repeat Password"
-        passwordTextField.clearButtonMode = .whileEditing
-        passwordTextField.borderStyle = .roundedRect
-        passwordTextField.autocorrectionType = .no
-        passwordTextField.isSecureTextEntry = true
-        passwordTextField.enablesReturnKeyAutomatically = true
-        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
-        return passwordTextField
-    }()
+    private let repeatPasswordTextField: PasswordTextField = PasswordTextField(placeholder: "Repeat password")
     
-    private let registerButton: UIButton = {
-        let signInButton = UIButton(configuration: UIButton.Configuration.filled())
-        signInButton.setTitle("Register", for: .normal)
+    private let registerButton: ProfileButton = ProfileButton(configuration: .filled(), title: "Registration")
         
-        signInButton.translatesAutoresizingMaskIntoConstraints = false
-        return signInButton
-    }()
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -113,7 +77,11 @@ class ProfileRegisterNewUserViewController: UIViewController {
         present(ac, animated: true)
     }
 
-    func setConstraints() {
+}
+
+extension ProfileRegisterNewUserViewController {
+    
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             
             emailTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 70),
@@ -138,7 +106,6 @@ class ProfileRegisterNewUserViewController: UIViewController {
             
         ])
     }
-
 }
 
 extension ProfileRegisterNewUserViewController: UITextFieldDelegate {
