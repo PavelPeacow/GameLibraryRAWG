@@ -10,7 +10,7 @@ import UIKit
 
 fileprivate var container = UIView()
 
-extension HomeViewController {
+extension UIViewController {
     
     func loadingIndicator() {
         container = UIView(frame: view.bounds)

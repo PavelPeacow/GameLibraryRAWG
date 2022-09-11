@@ -97,7 +97,7 @@ class ProfileAuthorizationViewController: UIViewController {
         guard let email = emailTextField.text, !email.isEmpty,
               let password = passwordTextField.text, !password.isEmpty else { return }
         
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+        FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { [weak self] result, error in
             guard error == nil else {
                 print("No such user found!")
                 return
@@ -105,8 +105,6 @@ class ProfileAuthorizationViewController: UIViewController {
             
             print("signed!!!")
             self?.showSignInAlert()
-            
-           
         }
     }
     

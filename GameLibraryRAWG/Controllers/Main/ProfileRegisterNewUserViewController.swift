@@ -94,7 +94,7 @@ class ProfileRegisterNewUserViewController: UIViewController {
             return
         }
         
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
+        FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { [weak self] result, error in
             guard error == nil else {
                 print("Error when creating user")
                 return
@@ -102,10 +102,7 @@ class ProfileRegisterNewUserViewController: UIViewController {
             self?.showCreateAccount()
             print("User created")
         }
-        
-        
-        
-        
+
     }
     	
     private func showCreateAccount() {

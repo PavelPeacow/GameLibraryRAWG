@@ -47,6 +47,7 @@
 		B5D7A5EF28B780AF000504BE /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5EE28B780AF000504BE /* APIConstants.swift */; };
 		B5D7A5F128B784FD000504BE /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7A5F028B784FD000504BE /* GameModel.swift */; };
 		B5D7AC9F28BE074E00859B03 /* GameFutureViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D7AC9E28BE074E00859B03 /* GameFutureViewModel.swift */; };
+		B5E3A61828CCEF0E00A48CFD /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E3A61728CCEF0E00A48CFD /* FirebaseManager.swift */; };
 		B5FE7EA828C245E3008B15B8 /* StoreWebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -84,6 +85,7 @@
 		B5D7A5EE28B780AF000504BE /* APIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		B5D7A5F028B784FD000504BE /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		B5D7AC9E28BE074E00859B03 /* GameFutureViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFutureViewModel.swift; sourceTree = "<group>"; };
+		B5E3A61728CCEF0E00A48CFD /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
 		B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreWebViewViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -170,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				B5D7A5E628B77631000504BE /* App */,
+				B5E3A61628CCEEE400A48CFD /* FirebaseManager */,
 				B5D7A5EB28B77FDE000504BE /* APIManager */,
 				B5D7A5E428B775FC000504BE /* Model */,
 				B5D7ACA028BE075200859B03 /* ViewModel */,
@@ -265,6 +268,14 @@
 				B533893128CB6FD5002F405D /* ProfileRegisterNewUserViewController.swift */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		B5E3A61628CCEEE400A48CFD /* FirebaseManager */ = {
+			isa = PBXGroup;
+			children = (
+				B5E3A61728CCEF0E00A48CFD /* FirebaseManager.swift */,
+			);
+			path = FirebaseManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -365,6 +376,7 @@
 				B591DD0E28C3A45C00548335 /* DynamicCollectionView.swift in Sources */,
 				B5D050CA28BFA9DF008DF07C /* APIEndpoints.swift in Sources */,
 				B533893228CB6FD5002F405D /* ProfileRegisterNewUserViewController.swift in Sources */,
+				B5E3A61828CCEF0E00A48CFD /* FirebaseManager.swift in Sources */,
 				B5BD12E428BDFF5A00BACD4D /* GameFutureView.swift in Sources */,
 				B5D7A5ED28B77FFE000504BE /* APICaller.swift in Sources */,
 				B5D7A5D328B77445000504BE /* MainTabBarController.swift in Sources */,

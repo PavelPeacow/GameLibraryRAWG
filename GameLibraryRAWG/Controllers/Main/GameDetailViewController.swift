@@ -131,7 +131,7 @@ class GameDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController?.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveGameToFavourite))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveGameToFavourite))
         
         view.addSubview(scrollView)
         
@@ -154,7 +154,7 @@ class GameDetailViewController: UIViewController {
         gameAboutContainer.addSubview(gamePublisher)
         
         view.backgroundColor = .systemBackground
-        
+        print(FirebaseManager.shared.auth.currentUser?.uid ?? "looooooooh")
         setDelegates()
         setConstraints()
     }
@@ -165,6 +165,17 @@ class GameDetailViewController: UIViewController {
     }
     
     @objc func saveGameToFavourite() {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+            print("Error whe finding the uid of current user")
+            return
+        }
+     
+        try? FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).setData(from: game) { error in
+            if let error = error {
+                print(error.localizedDescription)
+            }
+            print("Succes")
+        }
         
     }
         

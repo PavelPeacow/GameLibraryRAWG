@@ -36,9 +36,10 @@ class ProfileMainViewController: UIViewController {
     
     private let gamesFavouritesCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 200, height: 200)
+        layout.itemSize = CGSize(width: 150, height: 150)
         
-        let gamesFavouritesCollection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        let gamesFavouritesCollection = DynamicCollectionView(frame: .zero, collectionViewLayout: layout)
+        gamesFavouritesCollection.register(GameCollectionViewCell.self, forCellWithReuseIdentifier: GameCollectionViewCell.identifier)
         gamesFavouritesCollection.translatesAutoresizingMaskIntoConstraints = false
         return gamesFavouritesCollection
     }()
@@ -46,23 +47,66 @@ class ProfileMainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(signOutButton))
+        
         view.backgroundColor = .systemBackground
         
         view.addSubview(profileImage)
         view.addSubview(userProfileName)
         view.addSubview(gamesAddCount)
         view.addSubview(gamesFavouritesCollection)
-        	
+        
+        
+        
         setDelegates()
         setConstraints()
     }
     
-    func setDelegates() {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchFirestoreData()
+    }
+    
+    @objc func signOutButton() {
+        try? FirebaseManager.shared.auth.signOut()
+        navigationController?.setViewControllers([ProfileAuthorizationViewController()], animated: true)
+    }
+    
+    private func setDelegates() {
         gamesFavouritesCollection.delegate = self
         gamesFavouritesCollection.dataSource = self
     }
     
-    func setConstraints() {
+    private func fetchFirestoreData() {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+
+        loadingIndicator()
+        
+        FirebaseManager.shared.firestore.collection("userid \(uid)").getDocuments { [weak self] snapshot, error in
+            self?.removeLoadingIndicatior()
+            guard error == nil else {
+                print("Error when trying get user documents")
+                return
+            }
+
+            if let snapshot = snapshot {
+                DispatchQueue.main.async {
+                    self?.favouritesGames = snapshot.documents.map { doc in
+                        return Game(name: doc["name"] as? String ?? "",
+                                    slug: doc["slug"] as? String ?? "",
+                                    background_image: doc["background_image"] as? String ?? "",
+                                    metacritic: doc["metacritic"] as? Int)
+                    }
+                    print(self?.favouritesGames ?? "")
+                    self?.gamesFavouritesCollection.reloadData()
+                }
+                
+                
+            }
+        }
+    }
+    
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             profileImage.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
@@ -92,9 +136,25 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCollectionViewCell.identifier, for: indexPath) as! GameCollectionViewCell
+        cell.configure(with: favouritesGames[indexPath.item])
         return cell
         
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vc = GameDetailViewController()
+        
+        APICaller.shared.fetchMainGameDetails(with: favouritesGames[indexPath.item].slug) { [weak self] result in
+            switch result {
+            case .success(let gameDetail):
+                DispatchQueue.main.async {
+                    vc.configure(with: gameDetail, game: self!.favouritesGames[indexPath.item])
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
     
 }
