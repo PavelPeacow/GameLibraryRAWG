@@ -12,30 +12,48 @@ class GameTrailerCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "GameTrailerCollectionViewCell"
     
-    private let imageTrailer: UIImageView = {
+    private let trailerImage: UIImageView = {
         let imageTraler = UIImageView()
         imageTraler.translatesAutoresizingMaskIntoConstraints = false
         imageTraler.clipsToBounds = true
+        imageTraler.alpha = 0.25
         imageTraler.contentMode = .scaleAspectFill
         return imageTraler
     }()
     
-    private let name: UILabel = {
+    private let trailerName: UILabel = {
        let name = UILabel()
         name.translatesAutoresizingMaskIntoConstraints = false
         name.textAlignment = .center
         name.numberOfLines = 2
         name.adjustsFontSizeToFitWidth = true
         name.font = UIFont.boldSystemFont(ofSize: 16)
-        name.backgroundColor = .white.withAlphaComponent(0.5)
         return name
+    }()
+    
+    private let trailerPlayBackground: UIView = {
+        let trailerPlayImage = UIView()
+        trailerPlayImage.translatesAutoresizingMaskIntoConstraints = false
+        trailerPlayImage.backgroundColor = .gray.withAlphaComponent(0.25)
+        return trailerPlayImage
+    }()
+    
+    private let trailerPlayIcon: UIImageView = {
+        let trailerPlayIcon = UIImageView()
+        trailerPlayIcon.translatesAutoresizingMaskIntoConstraints = false
+        trailerPlayIcon.image = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 60))
+        trailerPlayIcon.contentMode = .scaleAspectFill
+        return trailerPlayIcon
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        contentView.addSubview(name)
-        contentView.addSubview(imageTrailer)
+        contentView.addSubview(trailerPlayBackground)
+        trailerPlayBackground.addSubview(trailerPlayIcon)
+        
+        trailerPlayBackground.addSubview(trailerName)
+        trailerPlayBackground.addSubview(trailerImage)
         
         setConstraints()
     }
@@ -47,10 +65,10 @@ class GameTrailerCollectionViewCell: UICollectionViewCell {
     public func configure(with model: GameTrailer) {
         guard let url = URL(string: model.preview) else { return }
         
-        name.text = model.name
+        trailerName.text = model.name
         
-        imageTrailer.sd_imageIndicator = SDWebImageActivityIndicator.large
-        imageTrailer.sd_setImage(with: url)
+        trailerImage.sd_imageIndicator = SDWebImageActivityIndicator.large
+        trailerImage.sd_setImage(with: url)
     }
  
 
@@ -60,15 +78,25 @@ extension GameTrailerCollectionViewCell {
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            imageTrailer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            imageTrailer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageTrailer.topAnchor.constraint(equalTo: contentView.topAnchor),
-            imageTrailer.bottomAnchor.constraint(equalTo: name.topAnchor),
+            
+            trailerPlayBackground.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            trailerPlayBackground.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            trailerPlayBackground.topAnchor.constraint(equalTo: contentView.topAnchor),
+            trailerPlayBackground.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1),
+            trailerPlayBackground.bottomAnchor.constraint(equalTo: trailerName.topAnchor),
+            
+            trailerPlayIcon.centerXAnchor.constraint(equalTo: trailerPlayBackground.centerXAnchor),
+            trailerPlayIcon.centerYAnchor.constraint(equalTo: trailerPlayBackground.centerYAnchor),
+            
+            trailerImage.leadingAnchor.constraint(equalTo: trailerPlayBackground.leadingAnchor),
+            trailerImage.trailingAnchor.constraint(equalTo: trailerPlayBackground.trailingAnchor),
+            trailerImage.topAnchor.constraint(equalTo: trailerPlayBackground.topAnchor),
+            trailerImage.bottomAnchor.constraint(equalTo: trailerName.topAnchor),
             
             
-            name.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
-            name.heightAnchor.constraint(equalToConstant: 20),
-            name.widthAnchor.constraint(equalTo: contentView.widthAnchor)
+            trailerName.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
+            trailerName.heightAnchor.constraint(equalToConstant: 20),
+            trailerName.widthAnchor.constraint(equalTo: contentView.widthAnchor)
         ])
     }
 }
