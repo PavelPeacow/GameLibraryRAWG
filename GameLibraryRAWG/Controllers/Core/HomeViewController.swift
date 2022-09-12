@@ -16,6 +16,7 @@ enum Sections: Int {
 
 class HomeViewController: UIViewController {
     
+    //MARK: PROPERTIES
     private var mustPlay = [Game]()
     private var popular = [Game]()
     private var upcoming = [Game]()
@@ -25,6 +26,7 @@ class HomeViewController: UIViewController {
     
     private let sectionTitles = ["Metacritic's choice", "Popular This Year", "Most Anticipated Upcoming Games", "More games to discover"]
     
+    //MARK: VIEWS
     private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout.createLayout())
         collectionView.register(GameCollectionViewCell.self, forCellWithReuseIdentifier: GameCollectionViewCell.identifier)
@@ -34,6 +36,7 @@ class HomeViewController: UIViewController {
         return collectionView
     }()
     
+    //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -62,7 +65,7 @@ class HomeViewController: UIViewController {
     }
     
     private func configureNavBar() {
-        title = "Profile"
+        title = "Home"
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     

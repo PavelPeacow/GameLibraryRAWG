@@ -10,6 +10,7 @@ import FirebaseAuth
 
 class ProfileRegisterNewUserViewController: UIViewController {
     
+    //MARK: VIEWS
     private let scrollVIew: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = false
@@ -24,6 +25,7 @@ class ProfileRegisterNewUserViewController: UIViewController {
     
     private let registerButton: ProfileButton = ProfileButton(configuration: .filled(), title: "Registration")
     
+    //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,29 +70,27 @@ class ProfileRegisterNewUserViewController: UIViewController {
     
     private func addActiontoRegisterButton() {
         registerButton.addAction(UIAction(handler: { [weak self] _ in
-            self?.didTapRegisterButton()
+            
+            guard let email = self?.emailTextField.text, !email.isEmpty, email.contains("@"),
+                  let password = self?.passwordTextField.text, !password.isEmpty, password.count > 6,
+                  let repeatPassword = self?.repeatPasswordTextField.text, password == repeatPassword  else {
+                print("You need to be satisfied all")
+                return
+            }
+            
+            FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { [weak self] result, error in
+                guard error == nil else {
+                    print(FirebaseErrors.ErrorCreateUser)
+                    return
+                }
+                self?.showCreateAccount()
+                print("User created")
+            }
+            
         }), for: .touchUpInside)
     }
     
-    private func didTapRegisterButton() {
-        guard let email = emailTextField.text, !email.isEmpty, email.contains("@"),
-              let password = passwordTextField.text, !password.isEmpty, password.count > 6,
-              let repeatPassword = repeatPasswordTextField.text, password == repeatPassword  else {
-            print("You need to be satisfied all")
-            return
-        }
-        
-        FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { [weak self] result, error in
-            guard error == nil else {
-                print("Error when creating user")
-                return
-            }
-            self?.showCreateAccount()
-            print("User created")
-        }
-        
-    }
-    
+
     private func showCreateAccount() {
         let ac = UIAlertController(title: "Your account have been created", message: nil, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { [weak self] _ in
@@ -101,6 +101,7 @@ class ProfileRegisterNewUserViewController: UIViewController {
     
 }
 
+//MARK: CONSTRAINTS
 extension ProfileRegisterNewUserViewController {
     
     private func setConstraints() {
@@ -131,6 +132,7 @@ extension ProfileRegisterNewUserViewController {
     }
 }
 
+//MARK: TEXTFIELD
 extension ProfileRegisterNewUserViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

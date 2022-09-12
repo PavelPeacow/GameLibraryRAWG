@@ -37,7 +37,6 @@ class SliderCollectionViewCell: UICollectionViewCell {
     
     public func configure(with model: String) {
         guard let url = URL(string: model) else { return }
-        print(model)
         image.sd_imageIndicator = SDWebImageActivityIndicator.medium
         image.sd_setImage(with: url)
     }

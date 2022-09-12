@@ -31,11 +31,11 @@ class ProfileMainViewController: UIViewController {
         view.addSubview(gamesFavouritesCollection)
         
         setDelegates()
-        setConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.isUserInteractionEnabled = true
         fetchFirestoreData()
     }
     
@@ -62,7 +62,7 @@ class ProfileMainViewController: UIViewController {
         FirebaseManager.shared.firestore.collection("userid \(uid)").getDocuments { [weak self] snapshot, error in
             self?.removeLoadingIndicatior()
             guard error == nil else {
-                print("Error when trying get user documents")
+                print(FirebaseErrors.ErrorGetUserDocuments)
                 return
             }
 
@@ -74,7 +74,7 @@ class ProfileMainViewController: UIViewController {
                                     background_image: doc["background_image"] as? String ?? "",
                                     metacritic: doc["metacritic"] as? Int)
                     }
-                    print(self?.favouritesGames ?? "")
+
                     self?.gamesFavouritesCollection.reloadData()
                 }
                 
@@ -85,30 +85,7 @@ class ProfileMainViewController: UIViewController {
     
 }
 
-extension ProfileMainViewController {
-    
-    private func setConstraints() {
-        NSLayoutConstraint.activate([
-//            profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-//            profileImage.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
-//            profileImage.heightAnchor.constraint(equalToConstant: 90),
-//            profileImage.widthAnchor.constraint(equalToConstant: 90),
-//
-//            userProfileName.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-//            userProfileName.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 15),
-//            userProfileName.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
-//
-//            gamesAddCount.topAnchor.constraint(equalTo: userProfileName.bottomAnchor, constant: 30),
-//            gamesAddCount.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 15),
-            
-//            gamesFavouritesCollection.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-//            gamesFavouritesCollection.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
-//            gamesFavouritesCollection.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-//            gamesFavouritesCollection.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
-}
-
+//MARK: CollcetionView settings
 extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         favouritesGames.count
@@ -131,7 +108,11 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let vc = GameDetailViewController()
         
+        view.isUserInteractionEnabled = false
+        loadingIndicator()
+        
         APICaller.shared.fetchMainGameDetails(with: favouritesGames[indexPath.item].slug) { [weak self] result in
+            self?.removeLoadingIndicatior()
             switch result {
             case .success(let gameDetail):
                 DispatchQueue.main.async {

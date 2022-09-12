@@ -10,6 +10,7 @@ import FirebaseAuth
 
 class ProfileAuthorizationViewController: UIViewController {
     
+    //MARK: VIEWS
     private let scrollVIew: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = false
@@ -24,6 +25,7 @@ class ProfileAuthorizationViewController: UIViewController {
     
     private let dontHaveAccountButton: ProfileButton = ProfileButton(configuration: .bordered(), title: "Don't have an account?")
     
+    //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -72,39 +74,52 @@ class ProfileAuthorizationViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
+    //MARK: SignIn auth
     private func addActionToSignInButton() {
         signInButton.addAction(UIAction(handler: { [weak self] _ in
-            self?.didTapSignInButton()
-        }), for: .touchUpInside)
-    }
-    
-    private func addActionToDontHaveAccountButton() {
-        dontHaveAccountButton.addAction(UIAction(handler: { [weak self] _ in
-            let vc = ProfileRegisterNewUserViewController()
-            self?.present(vc, animated: true)
-        }), for: .touchUpInside)
-    }
-    
-    private func didTapSignInButton() {
-        guard let email = emailTextField.text, !email.isEmpty,
-              let password = passwordTextField.text, !password.isEmpty else { return }
-        
-        FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { [weak self] result, error in
-            guard error == nil else {
-                print("No such user found!")
-                return
+            
+            UIView.animate(withDuration: 0.2) {
+                self?.signInButton.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+            } completion: { isEnd in
+                UIView.animate(withDuration: 0.35) {
+                    self?.signInButton.transform = .identity
+                }
+            }
+
+            guard let email = self?.emailTextField.text, !email.isEmpty,
+                  let password = self?.passwordTextField.text, !password.isEmpty else { return }
+            
+            FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { [weak self] result, error in
+                guard error == nil else {
+                    print(FirebaseErrors.UserNotFound)
+                    return
+                }
+                
+                print("signed!!!")
+                self?.showSignInAlert()
             }
             
-            print("signed!!!")
-            self?.showSignInAlert()
-        }
+        }), for: .touchUpInside)
+    }
+    
+    //MARK: show registration sheet
+    private func addActionToDontHaveAccountButton() {
+        dontHaveAccountButton.addAction(UIAction(handler: { [weak self] _ in
+            
+            let vc = ProfileRegisterNewUserViewController()
+            
+            self?.present(vc, animated: true)
+            
+        }), for: .touchUpInside)
     }
     
     private func showSignInAlert() {
         let ac = UIAlertController(title: "Nice", message: "You are sign in!", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "hooray!", style: .default, handler: { [weak self] _ in
+            
             let vc = ProfileMainViewController()
             self?.navigationController?.setViewControllers([vc], animated: true)
+            
         }))
                      
         present(ac, animated: true)
@@ -112,6 +127,7 @@ class ProfileAuthorizationViewController: UIViewController {
     
 }
 
+//MARK: CONSTRAINTS
 extension ProfileAuthorizationViewController {
     
     private func setConstraints() {
@@ -141,6 +157,7 @@ extension ProfileAuthorizationViewController {
     }
 }
 
+//MARK: TEXTFIELD
 extension ProfileAuthorizationViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

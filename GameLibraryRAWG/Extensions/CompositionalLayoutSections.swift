@@ -108,7 +108,7 @@ extension NSCollectionLayoutSection {
         return section
     }
     
-    
+    //Profile section
     static func profile() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.3), heightDimension: .fractionalHeight(0.4))
         
@@ -131,8 +131,6 @@ extension NSCollectionLayoutSection {
         
         
         section.boundarySupplementaryItems = [sectionHeaderItem]
-        
-        
         
         return section
     }

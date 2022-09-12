@@ -12,11 +12,13 @@ import AVKit
 
 class GameDetailViewController: UIViewController {
     
+    //MARK: PROPERTIES
     public var game: Game!
     private var screenshots = [GameScreenshot]()
     private var gameTrailers = [GameTrailer]()
     private var gamesStoresLinks = [String]()
     
+    //MARK: VIEWS
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         return scrollView
@@ -107,7 +109,7 @@ class GameDetailViewController: UIViewController {
         return whereToBuyLabel
     }()
     
-    
+    //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -133,7 +135,7 @@ class GameDetailViewController: UIViewController {
         gameAboutContainer.addSubview(gamePublisher)
         
         view.backgroundColor = .systemBackground
-        print(FirebaseManager.shared.auth.currentUser?.uid ?? "looooooooh")
+
         setDelegates()
         setConstraints()
     }
@@ -147,9 +149,10 @@ class GameDetailViewController: UIViewController {
         configureNavBar()
     }
         
+    //MARK: Checking document existing in firestore
     private func configureNavBar() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            print("Error whe finding the uid of current user")
+            print(FirebaseErrors.UserNotFound)
             navigationItem.rightBarButtonItem = nil
             return
         }
@@ -169,32 +172,35 @@ class GameDetailViewController: UIViewController {
         }
     }
     
+    //MARK: Saving game to firestore
     @objc func saveGameToFavourite() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            print("Error whe finding the uid of current user")
+            print(FirebaseErrors.UserNotFound)
             return
         }
         
         try? FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).setData(from: game) { error in
 
-            if let error = error {
-                print(error.localizedDescription)
+            guard error == nil else {
+                print(FirebaseErrors.ErrorCreateDocument)
+                return
             }
             print("Succes")
         }
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(deleteGameFromFavourite))
     }
     
+    //MARK: Deleting game from firestore
     @objc func deleteGameFromFavourite() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            print("Error whe finding the uid of current user")
+            print(FirebaseErrors.UserNotFound)
             return
         }
         
         FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).delete { error in
 
             guard error == nil else {
-                print("Error when trying delete a document")
+                print(FirebaseErrors.ErrorDeleteDocument)
                 return
             }
             print("Document successfully deleted")
@@ -202,7 +208,6 @@ class GameDetailViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveGameToFavourite))
     }
     
-        
     private func setDelegates() {
         imageCollectionSlider.delegate = self
         imageCollectionSlider.dataSource = self
@@ -214,6 +219,7 @@ class GameDetailViewController: UIViewController {
         gameTrailersCollection.dataSource = self
     }
     
+    //MARK: CONFIGURE
     public func configure(with model: GameDetail, game: Game) {
         guard let url = URL(string: model.background_image ?? "") else { return }
         
@@ -242,7 +248,6 @@ class GameDetailViewController: UIViewController {
                     if !response.results.isEmpty {
                         self?.whereToBuyLabel.isHidden = false
                         let urls = response.results.map({ $0.url })
-                        print("some urls epta \(urls)")
                         
                         self?.gamesStoresLinks = urls
                         self?.storeCollection.reloadData()
@@ -260,7 +265,6 @@ class GameDetailViewController: UIViewController {
             case .success(let response):
                 DispatchQueue.main.async { [weak self] in
                     if !response.results.isEmpty {
-                        print(response.results)
                         self?.gameTrailers = response.results
                         self?.gameTrailersCollection.reloadData()
                     } else {
@@ -301,7 +305,7 @@ extension GameDetailViewController {
         NSLayoutConstraint.activate([
             //game image
             gameCover.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            gameCover.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 50),
+            gameCover.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 5),
             gameCover.heightAnchor.constraint(equalToConstant: 200),
             gameCover.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             gameCover.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
@@ -381,7 +385,7 @@ extension GameDetailViewController {
     }
 }
 
-//MARK: Collection slider settings
+//MARK: CollcetionView settings
 extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -443,7 +447,6 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
         case imageCollectionSlider:
             let vc = ScreenshotPreviewViewController()
             vc.configure(with: screenshots[indexPath.item].image)
-            print("looooooooh: \(gameTrailers)")
             present(vc, animated: true)
             
         case gameTrailersCollection:
@@ -453,7 +456,7 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
             playerViewController.player = player
             self.present(playerViewController, animated: true) {
                 playerViewController.player!.play()
-                player.volume = 0.0
+                player.volume = 0.5
             }
             
         default:

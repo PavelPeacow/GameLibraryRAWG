@@ -7,6 +7,7 @@
 
 import Foundation
 
+//Hardcoded stores
 enum Stores: String {
     case steam = "steam"
     case microsoft = "microsoft"
