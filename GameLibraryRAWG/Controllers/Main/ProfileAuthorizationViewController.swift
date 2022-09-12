@@ -10,6 +10,12 @@ import FirebaseAuth
 
 class ProfileAuthorizationViewController: UIViewController {
     
+    private let scrollVIew: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = false
+        return scrollView
+    }()
+    
     private let emailTextField: EmailTextField = EmailTextField()
     
     private let passwordTextField: PasswordTextField = PasswordTextField(placeholder: "Password")
@@ -23,12 +29,16 @@ class ProfileAuthorizationViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         
-        view.addSubview(emailTextField)
-        view.addSubview(passwordTextField)
-        view.addSubview(signInButton)
-        view.addSubview(dontHaveAccountButton)
+        view.addSubview(scrollVIew)
+        
+        scrollVIew.addSubview(emailTextField)
+        scrollVIew.addSubview(passwordTextField)
+        scrollVIew.addSubview(signInButton)
+        scrollVIew.addSubview(dontHaveAccountButton)
         
         configureNavBar()
+        
+        createGestureRecognizer()
         
         addActionToSignInButton()
         addActionToDontHaveAccountButton()
@@ -38,14 +48,23 @@ class ProfileAuthorizationViewController: UIViewController {
         
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        view.endEditing(true)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scrollVIew.frame = view.bounds
     }
     
     private func setDelegates() {
         emailTextField.delegate = self
         passwordTextField.delegate = self
+    }
+    
+    private func createGestureRecognizer() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc private func dismissKeyboard(){
+        view.endEditing(true)
     }
     
     private func configureNavBar() {
@@ -98,25 +117,26 @@ extension ProfileAuthorizationViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             
-            emailTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 70),
-            emailTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emailTextField.topAnchor.constraint(equalTo: scrollVIew.contentLayoutGuide.topAnchor, constant: 70),
+            emailTextField.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
             emailTextField.heightAnchor.constraint(equalToConstant: 40),
-            emailTextField.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
+            emailTextField.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
             
             passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 30),
-            passwordTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            passwordTextField.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
             passwordTextField.heightAnchor.constraint(equalToConstant: 40),
-            passwordTextField.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
+            passwordTextField.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
             
             signInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 30),
-            signInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            signInButton.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
             signInButton.heightAnchor.constraint(equalToConstant: 50),
-            signInButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
+            signInButton.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
             
             dontHaveAccountButton.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 15),
-            dontHaveAccountButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            dontHaveAccountButton.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
             dontHaveAccountButton.heightAnchor.constraint(equalToConstant: 50),
-            dontHaveAccountButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
+            dontHaveAccountButton.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
+            dontHaveAccountButton.bottomAnchor.constraint(equalTo: scrollVIew.contentLayoutGuide.bottomAnchor, constant: -150),
         ])
     }
 }

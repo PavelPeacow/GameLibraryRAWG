@@ -28,6 +28,7 @@ class HomeViewController: UIViewController {
     private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout.createLayout())
         collectionView.register(GameCollectionViewCell.self, forCellWithReuseIdentifier: GameCollectionViewCell.identifier)
+        collectionView.showsVerticalScrollIndicator = false
         
         collectionView.register(HeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionReusableView.identifier)
         return collectionView
@@ -37,6 +38,8 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .systemBackground
+        
+        configureNavBar()
         
         view.addSubview(collectionView)
         setDelegates()
@@ -56,6 +59,11 @@ class HomeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         //prevent double tapping, it causing pushViewController appear twice
         view.isUserInteractionEnabled = true
+    }
+    
+    private func configureNavBar() {
+        title = "Profile"
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     private func setDelegates() {
@@ -189,9 +197,12 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         //prevent double tapping, it causing pushViewController appear twice
         view.isUserInteractionEnabled = false
         
+        loadingIndicator()
+        
         switch Sections(rawValue: indexPath.section) {
         case .mustPlay:
             APICaller.shared.fetchMainGameDetails(with: mustPlay[indexPath.item].slug) { [weak self]result in
+                self?.removeLoadingIndicatior()
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
@@ -205,6 +216,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         case .popular:
             APICaller.shared.fetchMainGameDetails(with: popular[indexPath.item].slug) { [weak self]result in
+                self?.removeLoadingIndicatior()
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
@@ -218,6 +230,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         case .upcoming:
             APICaller.shared.fetchMainGameDetails(with: upcoming[indexPath.item].slug) { [weak self]result in
+                self?.removeLoadingIndicatior()
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
@@ -231,6 +244,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         case .discover:
             APICaller.shared.fetchMainGameDetails(with: discover[indexPath.item].slug) { [weak self]result in
+                self?.removeLoadingIndicatior()
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
