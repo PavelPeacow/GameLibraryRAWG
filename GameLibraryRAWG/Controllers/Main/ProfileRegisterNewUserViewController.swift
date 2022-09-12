@@ -71,10 +71,18 @@ class ProfileRegisterNewUserViewController: UIViewController {
     private func addActiontoRegisterButton() {
         registerButton.addAction(UIAction(handler: { [weak self] _ in
             
+            UIView.animate(withDuration: 0.2) {
+                self?.registerButton.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+            } completion: { isEnd in
+                UIView.animate(withDuration: 0.35) {
+                    self?.registerButton.transform = .identity
+                }
+            }
+            
             guard let email = self?.emailTextField.text, !email.isEmpty, email.contains("@"),
                   let password = self?.passwordTextField.text, !password.isEmpty, password.count > 6,
                   let repeatPassword = self?.repeatPasswordTextField.text, password == repeatPassword  else {
-                print("You need to be satisfied all")
+                self?.showRegistrationValidation()
                 return
             }
             
@@ -83,21 +91,13 @@ class ProfileRegisterNewUserViewController: UIViewController {
                     print(FirebaseErrors.ErrorCreateUser)
                     return
                 }
-                self?.showCreateAccount()
+                self?.showCreateAccount(email: email, password: password)
                 print("User created")
             }
             
         }), for: .touchUpInside)
     }
     
-
-    private func showCreateAccount() {
-        let ac = UIAlertController(title: "Your account have been created", message: nil, preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { [weak self] _ in
-            self?.dismiss(animated: true)
-        }))
-        present(ac, animated: true)
-    }
     
 }
 

@@ -13,7 +13,9 @@ import AVKit
 class GameDetailViewController: UIViewController {
     
     //MARK: PROPERTIES
+    //game that saves in firestore
     public var game: Game!
+    private var gameDetail: GameDetail!
     private var screenshots = [GameScreenshot]()
     private var gameTrailers = [GameTrailer]()
     private var gamesStoresLinks = [String]()
@@ -103,7 +105,6 @@ class GameDetailViewController: UIViewController {
     private let whereToBuyLabel: UILabel = {
         let whereToBuyLabel = UILabel()
         whereToBuyLabel.translatesAutoresizingMaskIntoConstraints = false
-        whereToBuyLabel.isHidden = true
         whereToBuyLabel.text = "Where to buy"
         whereToBuyLabel.font = UIFont.boldSystemFont(ofSize: 18)
         return whereToBuyLabel
@@ -135,6 +136,10 @@ class GameDetailViewController: UIViewController {
         gameAboutContainer.addSubview(gamePublisher)
         
         view.backgroundColor = .systemBackground
+        
+        fetchGameTrailers()
+        fetchGameScreenshots()
+        fetchGameStores()
 
         setDelegates()
         setConstraints()
@@ -226,57 +231,10 @@ class GameDetailViewController: UIViewController {
         gameCover.sd_imageIndicator = SDWebImageActivityIndicator.large
         gameCover.sd_setImage(with: url)
         
+        gameDetail = model
+        
         self.game = game
-        
-        APICaller.shared.fetchSpecificGameDetails(with: model.slug, endpoint: APIEndpoints.screenshots, expecting: GameScreenshotResponse.self) { [weak self] result in
-            switch result {
-            case .success(let response):
-                DispatchQueue.main.async {
-                    self?.screenshots = response.results
-                    self?.imageCollectionSlider.reloadData()
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
-        
-        APICaller.shared.fetchSpecificGameDetails(with: model.slug, endpoint: APIEndpoints.stores, expecting: GameStoreResponse.self) { [weak self] result in
-            switch result {
-            case .success(let response):
-                DispatchQueue.main.async {
-                    
-                    if !response.results.isEmpty {
-                        self?.whereToBuyLabel.isHidden = false
-                        let urls = response.results.map({ $0.url })
-                        
-                        self?.gamesStoresLinks = urls
-                        self?.storeCollection.reloadData()
-                    } else {
-                        self?.storeCollection.removeFromSuperview()
-                    }
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
-        
-        APICaller.shared.fetchSpecificGameDetails(with: model.slug, endpoint: APIEndpoints.movies, expecting: GameTrailerResponse.self) { result in
-            switch result {
-            case .success(let response):
-                DispatchQueue.main.async { [weak self] in
-                    if !response.results.isEmpty {
-                        self?.gameTrailers = response.results
-                        self?.gameTrailersCollection.reloadData()
-                    } else {
-                        self?.gameTrailersCollection.removeFromSuperview()
-                    }
-                   
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
-        
+                
         gameName.text = model.name
         gameDescription.text = model.description_raw
         
@@ -296,6 +254,67 @@ class GameDetailViewController: UIViewController {
         gamePublisher.configure(with: gamePublisherModel)
     }
         
+}
+
+//MARK: API Results
+extension GameDetailViewController {
+    
+    private func fetchGameScreenshots() {
+        APICaller.shared.fetchSpecificGameDetails(with: gameDetail.slug, endpoint: APIEndpoints.screenshots, expecting: GameScreenshotResponse.self) { [weak self] result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    self?.screenshots = response.results
+                    self?.imageCollectionSlider.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    private func fetchGameStores() {
+        APICaller.shared.fetchSpecificGameDetails(with: gameDetail.slug, endpoint: APIEndpoints.stores, expecting: GameStoreResponse.self) { [weak self] result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    
+                    //if game has store, execute
+                    if !response.results.isEmpty {
+                        let urls = response.results.map({ $0.url })
+                        
+                        self?.gamesStoresLinks = urls
+                        self?.storeCollection.reloadData()
+                    } else {
+                        self?.storeCollection.removeFromSuperview()
+                        self?.whereToBuyLabel.removeFromSuperview()
+                    }
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    private func fetchGameTrailers() {
+        APICaller.shared.fetchSpecificGameDetails(with: gameDetail.slug, endpoint: APIEndpoints.movies, expecting: GameTrailerResponse.self) { result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async { [weak self] in
+                    if !response.results.isEmpty {
+                        self?.gameTrailers = response.results
+                        self?.gameTrailersCollection.reloadData()
+                    } else {
+                        self?.gameTrailersCollection.removeFromSuperview()
+                    }
+                   
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+
 }
 
 //MARK: Constraints

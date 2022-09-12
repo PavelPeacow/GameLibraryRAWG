@@ -35,7 +35,6 @@ class ProfileMainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        view.isUserInteractionEnabled = true
         fetchFirestoreData()
     }
     
@@ -108,7 +107,6 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let vc = GameDetailViewController()
         
-        view.isUserInteractionEnabled = false
         loadingIndicator()
         
         APICaller.shared.fetchMainGameDetails(with: favouritesGames[indexPath.item].slug) { [weak self] result in

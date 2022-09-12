@@ -10,6 +10,8 @@
 		B52C4EA328CE1075005C5D6C /* CheckStores.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52C4EA228CE1075005C5D6C /* CheckStores.swift */; };
 		B52C4EA528CE346B005C5D6C /* ProfileCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52C4EA428CE346B005C5D6C /* ProfileCollectionReusableView.swift */; };
 		B52C4EA728CF2C55005C5D6C /* FirebaseErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52C4EA628CF2C55005C5D6C /* FirebaseErrors.swift */; };
+		B52C4EA928CF3EF4005C5D6C /* SearchGameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52C4EA828CF3EF4005C5D6C /* SearchGameTableViewCell.swift */; };
+		B52C4EB228CF5E02005C5D6C /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52C4EB128CF5E02005C5D6C /* Alerts.swift */; };
 		B52EE29328C22E5E00EB54E8 /* StoresEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */; };
 		B533891F28CA30CD002F405D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B533891E28CA30CD002F405D /* GoogleService-Info.plist */; };
 		B533892228CA3278002F405D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B533892128CA3278002F405D /* FirebaseAuth */; };
@@ -63,6 +65,8 @@
 		B52C4EA228CE1075005C5D6C /* CheckStores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CheckStores.swift; path = ../../../CheckStores.swift; sourceTree = "<group>"; };
 		B52C4EA428CE346B005C5D6C /* ProfileCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCollectionReusableView.swift; sourceTree = "<group>"; };
 		B52C4EA628CF2C55005C5D6C /* FirebaseErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseErrors.swift; sourceTree = "<group>"; };
+		B52C4EA828CF3EF4005C5D6C /* SearchGameTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGameTableViewCell.swift; sourceTree = "<group>"; };
+		B52C4EB128CF5E02005C5D6C /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoresEnum.swift; sourceTree = "<group>"; };
 		B533891E28CA30CD002F405D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B533893128CB6FD5002F405D /* ProfileRegisterNewUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRegisterNewUserViewController.swift; sourceTree = "<group>"; };
@@ -170,6 +174,7 @@
 				B591DD1028C47E3400548335 /* LoadingNewPage.swift */,
 				B5E3A61928CDFAFF00A48CFD /* CompositionalLayoutSections.swift */,
 				B5E3A62128CE047C00A48CFD /* ConstraintPriority.swift */,
+				B52C4EB128CF5E02005C5D6C /* Alerts.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -278,6 +283,7 @@
 				B5D050C528BF8A65008DF07C /* SliderCollectionViewCell.swift */,
 				B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */,
 				B55BDC6328C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift */,
+				B52C4EA828CF3EF4005C5D6C /* SearchGameTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -420,7 +426,9 @@
 				B5D7A5CF28B77445000504BE /* AppDelegate.swift in Sources */,
 				B5E3A61E28CDFC1100A48CFD /* PasswordTextField.swift in Sources */,
 				B559E09528BA49B800B26A0B /* GameCollectionViewCell.swift in Sources */,
+				B52C4EA928CF3EF4005C5D6C /* SearchGameTableViewCell.swift in Sources */,
 				B591DD1428C4B10D00548335 /* ScreenshotPreviewViewController.swift in Sources */,
+				B52C4EB228CF5E02005C5D6C /* Alerts.swift in Sources */,
 				B5FE7EA828C245E3008B15B8 /* StoreWebViewViewController.swift in Sources */,
 				B591DD0C28C3914200548335 /* GameStoreCollectionViewCell.swift in Sources */,
 				B5C89E1728BCF9E300B5F0DA /* GameDetailModel.swift in Sources */,

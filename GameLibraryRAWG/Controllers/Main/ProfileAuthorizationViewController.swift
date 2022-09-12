@@ -85,13 +85,19 @@ class ProfileAuthorizationViewController: UIViewController {
                     self?.signInButton.transform = .identity
                 }
             }
-
+            
             guard let email = self?.emailTextField.text, !email.isEmpty,
-                  let password = self?.passwordTextField.text, !password.isEmpty else { return }
+                  let password = self?.passwordTextField.text, !password.isEmpty else {
+                self?.showEmptyFields()
+                return }
+            
+            self?.loadingIndicator()
             
             FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { [weak self] result, error in
+                self?.removeLoadingIndicatior()
                 guard error == nil else {
                     print(FirebaseErrors.UserNotFound)
+                    self?.showInvalidUser()
                     return
                 }
                 
@@ -111,18 +117,6 @@ class ProfileAuthorizationViewController: UIViewController {
             self?.present(vc, animated: true)
             
         }), for: .touchUpInside)
-    }
-    
-    private func showSignInAlert() {
-        let ac = UIAlertController(title: "Nice", message: "You are sign in!", preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "hooray!", style: .default, handler: { [weak self] _ in
-            
-            let vc = ProfileMainViewController()
-            self?.navigationController?.setViewControllers([vc], animated: true)
-            
-        }))
-                     
-        present(ac, animated: true)
     }
     
 }
