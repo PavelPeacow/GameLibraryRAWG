@@ -111,14 +111,11 @@ class GameDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configureNavBar()
-        
         view.addSubview(scrollView)
         
         scrollView.addSubview(gameCover)
         scrollView.addSubview(gameName)
         scrollView.addSubview(gameDescription)
-        scrollView.addSubview(gameAboutContainer)
         
         scrollView.addSubview(gameTrailersCollection)
         
@@ -126,6 +123,8 @@ class GameDetailViewController: UIViewController {
         
         scrollView.addSubview(whereToBuyLabel)
         scrollView.addSubview(storeCollection)
+        
+        scrollView.addSubview(gameAboutContainer)
         
         gameAboutContainer.addSubview(gameRelease)
         gameAboutContainer.addSubview(gameRating)
@@ -144,24 +143,65 @@ class GameDetailViewController: UIViewController {
         scrollView.frame = view.bounds
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        configureNavBar()
+    }
+        
+    private func configureNavBar() {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+            print("Error whe finding the uid of current user")
+            navigationItem.rightBarButtonItem = nil
+            return
+        }
+        
+        loadingIndicator()
+        
+        FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).getDocument { [weak self] snapshot, error in
+            self?.removeLoadingIndicatior()
+            
+            if let snapshot = snapshot {
+                if snapshot.exists {
+                    self?.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(self?.deleteGameFromFavourite))
+                } else {
+                    self?.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(self?.saveGameToFavourite))
+                }
+            }
+        }
+    }
+    
     @objc func saveGameToFavourite() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
             print("Error whe finding the uid of current user")
             return
         }
-     
+        
         try? FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).setData(from: game) { error in
+
             if let error = error {
                 print(error.localizedDescription)
             }
             print("Succes")
         }
-        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(deleteGameFromFavourite))
     }
     
-    private func configureNavBar() {
+    @objc func deleteGameFromFavourite() {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+            print("Error whe finding the uid of current user")
+            return
+        }
+        
+        FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).delete { error in
+
+            guard error == nil else {
+                print("Error when trying delete a document")
+                return
+            }
+            print("Document successfully deleted")
+        }
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveGameToFavourite))
     }
+    
         
     private func setDelegates() {
         imageCollectionSlider.delegate = self
