@@ -15,6 +15,7 @@ class GameCollectionViewCell: UICollectionViewCell {
     private let gameCover: UIImageView = {        
         let gameCover = UIImageView()
         gameCover.contentMode = .scaleAspectFill
+        gameCover.translatesAutoresizingMaskIntoConstraints = false
         gameCover.clipsToBounds = true
         return gameCover
     }()
@@ -35,10 +36,9 @@ class GameCollectionViewCell: UICollectionViewCell {
         let gameLabel = UILabel()
         gameLabel.translatesAutoresizingMaskIntoConstraints = false
         gameLabel.textAlignment = .center
-        gameLabel.numberOfLines = 2
+        gameLabel.numberOfLines = 0
         gameLabel.adjustsFontSizeToFitWidth = true
         gameLabel.font = UIFont.boldSystemFont(ofSize: 16)
-        gameLabel.backgroundColor = .systemBackground.withAlphaComponent(0.5)
         return gameLabel
     }()
     
@@ -51,12 +51,7 @@ class GameCollectionViewCell: UICollectionViewCell {
         
         setConstraints()
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        gameCover.frame = contentView.bounds
-    }
-    
+        
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -86,6 +81,11 @@ extension GameCollectionViewCell {
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
+            gameCover.topAnchor.constraint(equalTo: contentView.topAnchor),
+            gameCover.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            gameCover.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            gameCover.bottomAnchor.constraint(equalTo: gameLabel.topAnchor),
+            
             metacriticLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             metacriticLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             metacriticLabel.heightAnchor.constraint(equalToConstant: 50),
