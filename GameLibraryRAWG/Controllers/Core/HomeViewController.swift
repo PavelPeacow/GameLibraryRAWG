@@ -58,12 +58,7 @@ class HomeViewController: UIViewController {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        //prevent double tapping, it causing pushViewController appear twice
-        view.isUserInteractionEnabled = true
-    }
-    
+        
     private func configureNavBar() {
         title = "Home"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -197,8 +192,6 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let vc = GameDetailViewController()
-        //prevent double tapping, it causing pushViewController appear twice
-        view.isUserInteractionEnabled = false
         
         loadingIndicator()
         

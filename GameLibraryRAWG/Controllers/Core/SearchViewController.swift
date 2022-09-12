@@ -9,11 +9,14 @@ import UIKit
 
 class SearchViewController: UIViewController {
     
+    //MARK: PROPERTIES
     private var games = [Game]()
+    private var page = 1
     
+    //MARK: VIEWS
     private let searchTable: UITableView = {
-        let searchTable = UITableView(frame: .zero, style: .grouped)
-        searchTable.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        let searchTable = UITableView(frame: .zero, style: .plain)
+        searchTable.register(SearchGameTableViewCell.self, forCellReuseIdentifier: SearchGameTableViewCell.identifier)
         return searchTable
     }()
     
@@ -22,13 +25,14 @@ class SearchViewController: UIViewController {
         return searchController
     }()
     
+    //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(searchTable)
         
         setDelegates()
-        fetchGames()
+        fetchGames(with: page)
         configureNavBar()
         
     }
@@ -45,12 +49,14 @@ class SearchViewController: UIViewController {
         seacrhController.searchResultsUpdater = self
     }
     
-    private func fetchGames() {
-        APICaller.shared.fetchGames(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self) { [weak self] result in
+    private func fetchGames(with page: Int) {
+        loadingIndicator()
+        APICaller.shared.fetchGamesWithPage(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self, pageNumber: page) { [weak self] result in
+            self?.removeLoadingIndicatior()
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    self?.games = response.results
+                    self?.games += response.results
                     self?.searchTable.reloadData()
                 }
             case .failure(let error):
@@ -65,6 +71,7 @@ class SearchViewController: UIViewController {
     
 }
 
+//MARK: TableView settings
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -72,16 +79,22 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: SearchGameTableViewCell.identifier, for: indexPath) as! SearchGameTableViewCell
         
-        cell.textLabel?.text = games[indexPath.row].name
+        cell.configure(with: games[indexPath.row])
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        loadingIndicator()
+        tableView.deselectRow(at: indexPath, animated: true)
+        
         APICaller.shared.fetchMainGameDetails(with: games[indexPath.row].slug) { [weak self] result in
+            
+            self?.removeLoadingIndicatior()
+            
             switch result {
             case .success(let gameDetails):
                 DispatchQueue.main.async {
@@ -95,8 +108,28 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         }
        
     }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+        
+        print("offset = \(offsetY)")
+        print("contentHeight = \(contentHeight)")
+        print("height = \(height)")
+        
+        if offsetY > contentHeight - height {
+            page += 1
+            fetchGames(with: page)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        200
+    }
 }
 
+//MARK: UISeacrh
 extension SearchViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
