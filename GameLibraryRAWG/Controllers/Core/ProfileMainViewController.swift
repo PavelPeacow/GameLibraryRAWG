@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ProfileMainViewController: UIViewController {
+class ProfileMainViewController: UIViewController, ActivityIndicator {
     
     private var favouritesGames = [Game]()
         
@@ -59,7 +59,7 @@ class ProfileMainViewController: UIViewController {
         loadingIndicator()
         
         FirebaseManager.shared.firestore.collection("userid \(uid)").getDocuments { [weak self] snapshot, error in
-            self?.removeLoadingIndicatior()
+            self?.removeLoadingIndicator()
             guard error == nil else {
                 print(FirebaseErrors.ErrorGetUserDocuments)
                 return
@@ -110,7 +110,7 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
         loadingIndicator()
         
         APICaller.shared.fetchMainGameDetails(with: favouritesGames[indexPath.item].slug) { [weak self] result in
-            self?.removeLoadingIndicatior()
+            self?.removeLoadingIndicator()
             switch result {
             case .success(let gameDetail):
                 DispatchQueue.main.async {

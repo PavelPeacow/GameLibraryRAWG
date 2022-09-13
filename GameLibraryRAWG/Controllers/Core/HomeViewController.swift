@@ -14,7 +14,7 @@ enum Sections: Int {
     case discover = 3
 }
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, ActivityIndicator {
     
     //MARK: PROPERTIES
     private var mustPlay = [Game]()
@@ -120,7 +120,7 @@ extension HomeViewController {
         loadingIndicator()
         APICaller.shared.fetchGamesWithPage(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self, pageNumber: page) { [weak self] result in
             
-            self?.removeLoadingIndicatior()
+            self?.removeLoadingIndicator()
             
             switch result {
             case .success(let response):
@@ -198,7 +198,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         switch Sections(rawValue: indexPath.section) {
         case .mustPlay:
             APICaller.shared.fetchMainGameDetails(with: mustPlay[indexPath.item].slug) { [weak self]result in
-                self?.removeLoadingIndicatior()
+                self?.removeLoadingIndicator()
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
@@ -212,7 +212,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         case .popular:
             APICaller.shared.fetchMainGameDetails(with: popular[indexPath.item].slug) { [weak self]result in
-                self?.removeLoadingIndicatior()
+                self?.removeLoadingIndicator()
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
@@ -226,7 +226,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         case .upcoming:
             APICaller.shared.fetchMainGameDetails(with: upcoming[indexPath.item].slug) { [weak self]result in
-                self?.removeLoadingIndicatior()
+                self?.removeLoadingIndicator()
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {
@@ -240,7 +240,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         case .discover:
             APICaller.shared.fetchMainGameDetails(with: discover[indexPath.item].slug) { [weak self]result in
-                self?.removeLoadingIndicatior()
+                self?.removeLoadingIndicator()
                 switch result {
                 case .success(let gameDetail):
                     DispatchQueue.main.async {

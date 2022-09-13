@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension UIViewController {
+extension ProfileAlerts where Self: UIViewController {
     
      func showSignInAlert() {
         let ac = UIAlertController(title: "You are sign in", message: "You are sign in", preferredStyle: .alert)

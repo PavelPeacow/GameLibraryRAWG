@@ -8,7 +8,7 @@
 import UIKit
 import FirebaseAuth
 
-class ProfileAuthorizationViewController: UIViewController {
+class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, ProfileAlerts {
     
     //MARK: VIEWS
     private let scrollVIew: UIScrollView = {
@@ -94,7 +94,7 @@ class ProfileAuthorizationViewController: UIViewController {
             self?.loadingIndicator()
             
             FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { [weak self] result, error in
-                self?.removeLoadingIndicatior()
+                self?.removeLoadingIndicator()
                 guard error == nil else {
                     print(FirebaseErrors.UserNotFound)
                     self?.showInvalidUser()

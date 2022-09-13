@@ -8,7 +8,7 @@
 import UIKit
 import FirebaseAuth
 
-class ProfileRegisterNewUserViewController: UIViewController {
+class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, ActivityIndicator {
     
     //MARK: VIEWS
     private let scrollVIew: UIScrollView = {
@@ -86,7 +86,10 @@ class ProfileRegisterNewUserViewController: UIViewController {
                 return
             }
             
+            self?.loadingIndicator()
+            
             FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { [weak self] result, error in
+                self?.removeLoadingIndicator()
                 guard error == nil else {
                     print(FirebaseErrors.ErrorCreateUser)
                     return

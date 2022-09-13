@@ -10,7 +10,7 @@ import UIKit
 
 fileprivate var container = UIView()
 
-extension UIViewController {
+extension ActivityIndicator where Self: UIViewController {
     
     func loadingIndicator() {
         container = UIView(frame: view.bounds)
@@ -35,7 +35,7 @@ extension UIViewController {
         activityIndicator.startAnimating()
     }
     
-    func removeLoadingIndicatior() {
+    func removeLoadingIndicator() {
         DispatchQueue.main.async {
             container.removeFromSuperview()
         }

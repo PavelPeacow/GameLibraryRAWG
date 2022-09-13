@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SearchViewController: UIViewController {
+class SearchViewController: UIViewController, ActivityIndicator {
     
     //MARK: PROPERTIES
     private var games = [Game]()
@@ -52,7 +52,7 @@ class SearchViewController: UIViewController {
     private func fetchGames(with page: Int) {
         loadingIndicator()
         APICaller.shared.fetchGamesWithPage(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self, pageNumber: page) { [weak self] result in
-            self?.removeLoadingIndicatior()
+            self?.removeLoadingIndicator()
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
@@ -93,7 +93,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         
         APICaller.shared.fetchMainGameDetails(with: games[indexPath.row].slug) { [weak self] result in
             
-            self?.removeLoadingIndicatior()
+            self?.removeLoadingIndicator()
             
             switch result {
             case .success(let gameDetails):

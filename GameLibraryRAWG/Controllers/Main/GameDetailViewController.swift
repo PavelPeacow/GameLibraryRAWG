@@ -10,7 +10,7 @@ import SDWebImage
 import AVFoundation
 import AVKit
 
-class GameDetailViewController: UIViewController {
+class GameDetailViewController: UIViewController, ActivityIndicator {
     
     //MARK: PROPERTIES
     //game that saves in firestore
@@ -165,7 +165,7 @@ class GameDetailViewController: UIViewController {
         loadingIndicator()
         
         FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).getDocument { [weak self] snapshot, error in
-            self?.removeLoadingIndicatior()
+            self?.removeLoadingIndicator()
             
             if let snapshot = snapshot {
                 if snapshot.exists {
