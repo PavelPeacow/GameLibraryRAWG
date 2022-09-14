@@ -13,4 +13,5 @@ enum FirebaseErrors: Error {
     case ErrorDeleteDocument
     case ErrorCreateUser
     case ErrorGetUserDocuments
+    case ErrorChangeDisplayName
 }

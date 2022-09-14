@@ -65,7 +65,7 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
 
         loadingIndicator()
         
-        FirebaseManager.shared.firestore.collection("userid \(uid)").getDocuments { [weak self] snapshot, error in
+        FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").getDocuments { [weak self] snapshot, error in
             self?.removeLoadingIndicator()
             guard error == nil else {
                 print(FirebaseErrors.ErrorGetUserDocuments)
@@ -83,8 +83,8 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
 
                     self?.gamesFavouritesCollection.reloadData()
                 }
-                
             }
+            
         }
     }
     
@@ -112,6 +112,21 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileCollectionReusableView.identifier, for: indexPath) as! ProfileCollectionReusableView
+        
+        if let uid = FirebaseManager.shared.auth.currentUser?.uid {
+            FirebaseManager.shared.firestore.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
+                guard error == nil else { print(FirebaseErrors.ErrorGetUserDocuments); return }
+                
+                if let snapshot = snapshot {
+                    print("loh test 228")
+                    let data = snapshot.get("user_name") as? String ?? "Unknown"
+                    let model = GameFavouritesProfileViewModel(profileName: data, gamesCount: self?.favouritesGames.count ?? 0)
+                    header.configure(with: model)
+                }
+                
+            }
+        }
+        
         
         
         return header

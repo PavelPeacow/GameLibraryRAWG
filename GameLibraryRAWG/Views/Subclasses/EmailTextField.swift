@@ -13,9 +13,9 @@ class EmailTextField: UITextField {
         super.init(frame: frame)
     }
     
-    init() {
+    init(placeholder: String) {
         super.init(frame: .zero)
-        self.placeholder = "Email"
+        self.placeholder = placeholder
         self.borderStyle = .roundedRect
         self.clearButtonMode = .whileEditing
         self.autocorrectionType = .no

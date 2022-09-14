@@ -7,9 +7,9 @@
 
 import UIKit
 
-class ProfileSettingsViewController: UIViewController {
-    
-    private let profileImageBtn: UIImageView = {
+class ProfileSettingsViewController: UIViewController, ProfileAlerts {
+        
+    private let profileImage: UIImageView = {
         let profileImage = UIImageView()
         profileImage.image = UIImage(named: "cat")
         profileImage.isUserInteractionEnabled = true
@@ -29,7 +29,7 @@ class ProfileSettingsViewController: UIViewController {
         displayName.translatesAutoresizingMaskIntoConstraints = false
         displayName.textAlignment = .center
         displayName.font = UIFont.systemFont(ofSize: 18, weight: .heavy)
-        displayName.text = "Some nickname t Some nickname t"
+        displayName.text = FirebaseManager.shared.auth.currentUser?.displayName ?? "Unknown"
         displayName.sizeToFit()
         return displayName
     }()
@@ -48,18 +48,20 @@ class ProfileSettingsViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         
-        view.addSubview(profileImageBtn)
-        profileImageBtn.addSubview(changeImageIcon)
+        view.addSubview(profileImage)
+        profileImage.addSubview(changeImageIcon)
         
-        view.addSubview(displayName)
-        displayName.addSubview(changeDisplayNameIcon)
+        view.addSubview(changeDisplayNameIcon)
+        changeDisplayNameIcon.addSubview(displayName)
         
         view.addSubview(signOutButton)
         
         
-        changeImageIcon.addTarget(self, action: #selector(addActionToPorifileImageBtn), for: .touchUpInside)
+        changeImageIcon.addTarget(self, action: #selector(changeProfileImageAction), for: .touchUpInside)
+        changeDisplayNameIcon.addTarget(self, action: #selector(changeUserDisplayNameAction), for: .touchUpInside)
         signOutButton.addTarget(self, action: #selector(addActionToSignOutButton), for: .touchUpInside)
         
+        fetchUserNameDisplay()
         
         setDelegates()
         setConstraints()
@@ -69,13 +71,33 @@ class ProfileSettingsViewController: UIViewController {
         imagePicker.delegate = self
     }
     
+    private func fetchUserNameDisplay() {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(); return }
+        
+        FirebaseManager.shared.firestore.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
+            guard error == nil else { print(FirebaseErrors.ErrorGetUserDocuments); return }
+            
+            if let snapshot = snapshot {
+                let data = snapshot.get("user_name") as? String ?? "Unknown"
+                DispatchQueue.main.async {
+                    self?.displayName.text = data
+                }
+            }
+            
+        }
+    }
+    
+    @objc private func changeProfileImageAction() {
+        present(imagePicker, animated: true)
+    }
+    
+    @objc private func changeUserDisplayNameAction() {
+        showChangeUserDisplayNameAlert()
+    }
+    
     @objc private func addActionToSignOutButton() {
         try? FirebaseManager.shared.auth.signOut()
         navigationController?.setViewControllers([ProfileAuthorizationViewController()], animated: true)
-    }
-    
-    @objc private func addActionToPorifileImageBtn() {
-        present(imagePicker, animated: true)
     }
     
 }
@@ -85,20 +107,22 @@ extension ProfileSettingsViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             
-            changeImageIcon.topAnchor.constraint(equalTo: profileImageBtn.topAnchor, constant: 5),
-            changeImageIcon.trailingAnchor.constraint(equalTo: profileImageBtn.trailingAnchor, constant: -5),
+            changeImageIcon.topAnchor.constraint(equalTo: profileImage.topAnchor, constant: 5),
+            changeImageIcon.trailingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: -5),
             changeImageIcon.heightAnchor.constraint(equalToConstant: 30),
             changeImageIcon.widthAnchor.constraint(equalToConstant: 30),
             
-            profileImageBtn.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
-            profileImageBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            profileImageBtn.widthAnchor.constraint(equalToConstant: 250),
-            profileImageBtn.heightAnchor.constraint(equalToConstant: 200),
+            profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            profileImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            profileImage.widthAnchor.constraint(equalToConstant: 250),
+            profileImage.heightAnchor.constraint(equalToConstant: 200),
             
             changeDisplayNameIcon.topAnchor.constraint(equalTo: displayName.topAnchor),
             changeDisplayNameIcon.trailingAnchor.constraint(equalTo: displayName.trailingAnchor, constant: 25),
+            changeDisplayNameIcon.heightAnchor.constraint(equalToConstant: 20),
+            changeDisplayNameIcon.widthAnchor.constraint(equalToConstant: 20),
             
-            displayName.topAnchor.constraint(equalTo: profileImageBtn.bottomAnchor, constant: 15),
+            displayName.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 15),
             displayName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             displayName.heightAnchor.constraint(equalToConstant: 40),
             
@@ -114,7 +138,7 @@ extension ProfileSettingsViewController: UIImagePickerControllerDelegate & UINav
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            profileImageBtn.image = image
+            profileImage.image = image
         }
         
         dismiss(animated: true)

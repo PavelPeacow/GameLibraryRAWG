@@ -17,7 +17,7 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
         return scrollView
     }()
     
-    private let emailTextField: EmailTextField = EmailTextField()
+    private let emailTextField: EmailTextField = EmailTextField(placeholder: "Email")
     
     private let passwordTextField: PasswordTextField = PasswordTextField(placeholder: "Password")
     
@@ -88,7 +88,7 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
             
             guard let email = self?.emailTextField.text, !email.isEmpty,
                   let password = self?.passwordTextField.text, !password.isEmpty else {
-                self?.showEmptyFields()
+                self?.showEmptyFieldsAlert()
                 return }
             
             self?.loadingIndicator()
@@ -97,7 +97,7 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
                 self?.removeLoadingIndicator()
                 guard error == nil else {
                     print(FirebaseErrors.UserNotFound)
-                    self?.showInvalidUser()
+                    self?.showInvalidUserAlert()
                     return
                 }
                 

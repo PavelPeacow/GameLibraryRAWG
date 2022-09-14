@@ -25,7 +25,6 @@ class ProfileCollectionReusableView: UICollectionReusableView {
     
     private let userProfileName: UILabel = {
         let userProfileName = UILabel()
-        userProfileName.text = "Profile Name: Some_Profile_Name_I_Guess_LOL"
         userProfileName.numberOfLines = 2
         userProfileName.backgroundColor = .red
         userProfileName.translatesAutoresizingMaskIntoConstraints = false
@@ -54,6 +53,11 @@ class ProfileCollectionReusableView: UICollectionReusableView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func configure(with model: GameFavouritesProfileViewModel) {
+        userProfileName.text = model.profileName
+        gamesAddCount.text = String(model.gamesCount)
     }
 }
 

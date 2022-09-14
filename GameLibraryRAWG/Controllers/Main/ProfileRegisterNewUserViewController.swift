@@ -17,7 +17,9 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         return scrollView
     }()
     
-    private let emailTextField: EmailTextField = EmailTextField()
+    private let userDisplayName: EmailTextField = EmailTextField(placeholder: "Nickname")
+    
+    private let emailTextField: EmailTextField = EmailTextField(placeholder: "Email")
     
     private let passwordTextField: PasswordTextField = PasswordTextField(placeholder: "Password")
     
@@ -33,6 +35,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         
         view.addSubview(scrollVIew)
         
+        scrollVIew.addSubview(userDisplayName)
         scrollVIew.addSubview(emailTextField)
         scrollVIew.addSubview(passwordTextField)
         scrollVIew.addSubview(repeatPasswordTextField)
@@ -54,6 +57,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     }
     
     private func setDelegates() {
+        userDisplayName.delegate = self
         emailTextField.delegate = self
         passwordTextField.delegate = self
         repeatPasswordTextField.delegate = self
@@ -79,10 +83,11 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
                 }
             }
             
-            guard let email = self?.emailTextField.text, !email.isEmpty, email.contains("@"),
+            guard let displayName = self?.userDisplayName.text, !displayName.isEmpty,
+                  let email = self?.emailTextField.text, !email.isEmpty, email.contains("@"),
                   let password = self?.passwordTextField.text, !password.isEmpty, password.count > 6,
                   let repeatPassword = self?.repeatPasswordTextField.text, password == repeatPassword  else {
-                self?.showRegistrationValidation()
+                self?.showRegistrationValidationAlert()
                 return
             }
             
@@ -94,9 +99,23 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
                     print(FirebaseErrors.ErrorCreateUser)
                     return
                 }
-                self?.showCreateAccount(email: email, password: password)
+                
+                guard let uid = result?.user.uid else { print(FirebaseErrors.UserNotFound); return }
+                
+                self?.showCreateAccountAlert(email: email, password: password)
                 print("User created")
+                
+                FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": displayName]) { error in
+                    guard error == nil else {
+                        print(FirebaseErrors.ErrorCreateDocument)
+                        return
+                    }
+                   
+                    print("UserDisplayName created")
+                }
             }
+            
+            
             
         }), for: .touchUpInside)
     }
@@ -110,7 +129,12 @@ extension ProfileRegisterNewUserViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             
-            emailTextField.topAnchor.constraint(equalTo: scrollVIew.contentLayoutGuide.topAnchor, constant: 70),
+            userDisplayName.topAnchor.constraint(equalTo: scrollVIew.contentLayoutGuide.topAnchor, constant: 70),
+            userDisplayName.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            userDisplayName.heightAnchor.constraint(equalToConstant: 40),
+            userDisplayName.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
+            
+            emailTextField.topAnchor.constraint(equalTo: userDisplayName.bottomAnchor, constant: 30),
             emailTextField.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
             emailTextField.heightAnchor.constraint(equalToConstant: 40),
             emailTextField.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
@@ -141,6 +165,9 @@ extension ProfileRegisterNewUserViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         switch textField {
+        case userDisplayName:
+            emailTextField.becomeFirstResponder()
+            
         case emailTextField:
             passwordTextField.becomeFirstResponder()
             

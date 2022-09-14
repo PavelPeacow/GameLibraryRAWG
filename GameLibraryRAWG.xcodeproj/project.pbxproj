@@ -39,6 +39,7 @@
 		B592834328D0BF7E00E322E6 /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B592834228D0BF7E00E322E6 /* ProfileSettingsViewController.swift */; };
 		B59D107F28C10F3F0077DFAD /* GameStoreModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59D107E28C10F3F0077DFAD /* GameStoreModel.swift */; };
 		B5A8052B28D20C2000D413CA /* ProfileGearSettingIconBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A8052A28D20C2000D413CA /* ProfileGearSettingIconBtn.swift */; };
+		B5A8052D28D23ACD00D413CA /* GameFavouritesProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A8052C28D23ACD00D413CA /* GameFavouritesProfileViewModel.swift */; };
 		B5BD12E428BDFF5A00BACD4D /* GameFutureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */; };
 		B5C89E1728BCF9E300B5F0DA /* GameDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C89E1628BCF9E300B5F0DA /* GameDetailModel.swift */; };
 		B5C89E1928BCFBED00B5F0DA /* GameDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C89E1828BCFBED00B5F0DA /* GameDetailViewController.swift */; };
@@ -89,6 +90,7 @@
 		B592834228D0BF7E00E322E6 /* ProfileSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsViewController.swift; sourceTree = "<group>"; };
 		B59D107E28C10F3F0077DFAD /* GameStoreModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStoreModel.swift; sourceTree = "<group>"; };
 		B5A8052A28D20C2000D413CA /* ProfileGearSettingIconBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileGearSettingIconBtn.swift; sourceTree = "<group>"; };
+		B5A8052C28D23ACD00D413CA /* GameFavouritesProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFavouritesProfileViewModel.swift; sourceTree = "<group>"; };
 		B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFutureView.swift; sourceTree = "<group>"; };
 		B5C89E1628BCF9E300B5F0DA /* GameDetailModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailModel.swift; sourceTree = "<group>"; };
 		B5C89E1828BCFBED00B5F0DA /* GameDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailViewController.swift; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 			isa = PBXGroup;
 			children = (
 				B5D7AC9E28BE074E00859B03 /* GameFutureViewModel.swift */,
+				B5A8052C28D23ACD00D413CA /* GameFavouritesProfileViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -458,6 +461,7 @@
 				B5D7A5F128B784FD000504BE /* GameModel.swift in Sources */,
 				B5D7AC9F28BE074E00859B03 /* GameFutureViewModel.swift in Sources */,
 				B578779828C9FEBB00D2B777 /* ProfileAuthorizationViewController.swift in Sources */,
+				B5A8052D28D23ACD00D413CA /* GameFavouritesProfileViewModel.swift in Sources */,
 				B5E3A62028CDFECA00A48CFD /* ProfileButton.swift in Sources */,
 				B5A8052B28D20C2000D413CA /* ProfileGearSettingIconBtn.swift in Sources */,
 				B5D050C828BF8BB6008DF07C /* GameScreenshotModel.swift in Sources */,

@@ -164,7 +164,7 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         
         loadingIndicator()
         
-        FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).getDocument { [weak self] snapshot, error in
+        FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).getDocument { [weak self] snapshot, error in
             self?.removeLoadingIndicator()
             
             if let snapshot = snapshot {
@@ -184,7 +184,7 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
             return
         }
         
-        try? FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).setData(from: game) { error in
+        try? FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).setData(from: game) { error in
 
             guard error == nil else {
                 print(FirebaseErrors.ErrorCreateDocument)
@@ -202,7 +202,7 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
             return
         }
         
-        FirebaseManager.shared.firestore.collection("userid \(uid)").document(game.name).delete { error in
+        FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).delete { error in
 
             guard error == nil else {
                 print(FirebaseErrors.ErrorDeleteDocument)
