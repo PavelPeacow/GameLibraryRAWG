@@ -20,11 +20,11 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
         gamesFavouritesCollection.register(ProfileCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileCollectionReusableView.identifier)
         return gamesFavouritesCollection
     }()
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(signOutButton))
+        configureNavBar()
         
         view.backgroundColor = .systemBackground
         
@@ -43,9 +43,16 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
         gamesFavouritesCollection.frame = view.bounds
     }
     
-    @objc func signOutButton() {
-        try? FirebaseManager.shared.auth.signOut()
-        navigationController?.setViewControllers([ProfileAuthorizationViewController()], animated: true)
+    private func configureNavBar() {
+        let navBarButtonProfileSettings = UIButton(type: .system)
+        navBarButtonProfileSettings.setTitle("Profile Settings", for: .normal)
+
+        navBarButtonProfileSettings.addAction(UIAction(handler: { [weak self] _ in
+            let vc = ProfileSettingsViewController()
+            self?.navigationController?.pushViewController(vc, animated: true)
+        }), for: .touchUpInside)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarButtonProfileSettings)
     }
     
     private func setDelegates() {
@@ -77,7 +84,6 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
                     self?.gamesFavouritesCollection.reloadData()
                 }
                 
-                
             }
         }
     }
@@ -87,7 +93,14 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
 //MARK: CollcetionView settings
 extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        favouritesGames.count
+        if favouritesGames.isEmpty {
+            collectionView.setEmptyMessageInCollectionView("No favourite games added yet😉")
+            collectionView.isScrollEnabled = false
+        } else {
+            collectionView.restoreCollectionViewBackground()
+            collectionView.isScrollEnabled = true
+        }
+        return favouritesGames.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

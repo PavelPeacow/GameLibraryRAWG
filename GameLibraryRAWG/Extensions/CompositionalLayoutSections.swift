@@ -123,8 +123,8 @@ extension NSCollectionLayoutSection {
         
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets.leading = 20
-        section.contentInsets.trailing = -20
+        section.contentInsets.leading = 5
+        section.contentInsets.trailing = -5
         
         let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(150))
         let sectionHeaderItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
