@@ -88,20 +88,21 @@ extension NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.3), heightDimension: .fractionalHeight(0.4))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets.trailing = 10
         item.contentInsets.bottom = 10
         
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(500))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        
+        group.interItemSpacing = NSCollectionLayoutSpacing.fixed(5)
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets.leading = 20
-        section.contentInsets.trailing = -20
+        section.contentInsets.trailing = -5
+
         
         let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
+        
         
         section.boundarySupplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
         
@@ -113,17 +114,16 @@ extension NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.3), heightDimension: .fractionalHeight(0.4))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets.trailing = 10
         item.contentInsets.bottom = 10
         
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(500))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        
+        group.interItemSpacing = NSCollectionLayoutSpacing.fixed(5)
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets.leading = 5
+        section.contentInsets.leading = 20
         section.contentInsets.trailing = -5
         
         let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(150))

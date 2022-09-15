@@ -61,7 +61,7 @@ extension SearchGameTableViewCell {
             gameCover.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             gameCover.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
             gameCover.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            gameCover.widthAnchor.constraint(equalToConstant: 200),
+            gameCover.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.4),
             
             gameTitle.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             gameTitle.leadingAnchor.constraint(equalTo: gameCover.trailingAnchor, constant: 30),
