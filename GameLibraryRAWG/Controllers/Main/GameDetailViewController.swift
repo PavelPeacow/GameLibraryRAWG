@@ -150,10 +150,21 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         scrollView.frame = view.bounds
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         configureNavBar()
     }
+    
+    private func setDelegates() {
+        imageCollectionSlider.delegate = self
+        imageCollectionSlider.dataSource = self
         
+        storeCollection.delegate = self
+        storeCollection.dataSource = self
+        
+        gameTrailersCollection.delegate = self
+        gameTrailersCollection.dataSource = self
+    }
+            
     //MARK: Checking document existing in firestore
     private func configureNavBar() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
@@ -169,9 +180,13 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
             
             if let snapshot = snapshot {
                 if snapshot.exists {
-                    self?.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(self?.deleteGameFromFavourite))
+                    let item = UIBarButtonItem(image: UIImage(systemName: "heart.fill")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.deleteGameFromFavourite))
+                    
+                    self?.navigationItem.rightBarButtonItem = item
                 } else {
-                    self?.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(self?.saveGameToFavourite))
+                    let item = UIBarButtonItem(image: UIImage(systemName: "heart")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.saveGameToFavourite))
+                    
+                    self?.navigationItem.rightBarButtonItem = item
                 }
             }
         }
@@ -179,51 +194,46 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
     
     //MARK: Saving game to firestore
     @objc func saveGameToFavourite() {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            print(FirebaseErrors.UserNotFound)
-            return
-        }
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
         
-        try? FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).setData(from: game) { error in
-
-            guard error == nil else {
-                print(FirebaseErrors.ErrorCreateDocument)
-                return
-            }
+        //preventing tap multiple time
+        navigationItem.rightBarButtonItem?.isEnabled = false
+        loadingIndicator()
+        
+        try? FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).setData(from: game) { [weak self] error in
+            self?.removeLoadingIndicator()
+            
+            guard error == nil else { print(FirebaseErrors.ErrorCreateDocument); return }
+            
+            let item = UIBarButtonItem(image: UIImage(systemName: "heart.fill")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.deleteGameFromFavourite))
+            
+            self?.navigationItem.rightBarButtonItem = item
             print("Succes")
         }
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(deleteGameFromFavourite))
+       
     }
     
     //MARK: Deleting game from firestore
     @objc func deleteGameFromFavourite() {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            print(FirebaseErrors.UserNotFound)
-            return
-        }
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
         
-        FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).delete { error in
-
-            guard error == nil else {
-                print(FirebaseErrors.ErrorDeleteDocument)
-                return
-            }
+        //preventing tap multiple time
+        navigationItem.rightBarButtonItem?.isEnabled = false
+        loadingIndicator()
+        
+        FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).delete { [weak self] error in
+            self?.removeLoadingIndicator()
+            
+            guard error == nil else { print(FirebaseErrors.ErrorDeleteDocument); return }
+            
+            let item = UIBarButtonItem(image: UIImage(systemName: "heart")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.saveGameToFavourite))
+            
+            self?.navigationItem.rightBarButtonItem = item
             print("Document successfully deleted")
         }
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveGameToFavourite))
+       
     }
-    
-    private func setDelegates() {
-        imageCollectionSlider.delegate = self
-        imageCollectionSlider.dataSource = self
         
-        storeCollection.delegate = self
-        storeCollection.dataSource = self
-        
-        gameTrailersCollection.delegate = self
-        gameTrailersCollection.dataSource = self
-    }
-    
     //MARK: CONFIGURE
     public func configure(with model: GameDetail, game: Game) {
         guard let url = URL(string: model.background_image ?? "") else { return }
@@ -320,7 +330,7 @@ extension GameDetailViewController {
 //MARK: Constraints
 extension GameDetailViewController {
     
-    func setConstraints() {
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             //game image
             gameCover.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -369,7 +379,6 @@ extension GameDetailViewController {
             gameAboutContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             gameAboutContainer.topAnchor.constraint(equalTo: storeCollection.bottomAnchor, constant: 10),
             gameAboutContainer.topAnchor.constraint(equalTo: imageCollectionSlider.bottomAnchor, constant: 10).withPriority(.defaultLow),
-            gameAboutContainer.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             gameAboutContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             gameAboutContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             gameAboutContainer.heightAnchor.constraint(equalToConstant: 300),
@@ -377,29 +386,25 @@ extension GameDetailViewController {
             //first column
             gameRelease.topAnchor.constraint(equalTo: gameAboutContainer.topAnchor, constant: 30),
             gameRelease.leadingAnchor.constraint(equalTo: gameAboutContainer.leadingAnchor, constant: 15),
-            gameRelease.heightAnchor.constraint(equalToConstant: 60),
             gameRelease.widthAnchor.constraint(equalToConstant: 120),
             
             gameGenre.topAnchor.constraint(equalTo: gameRelease.bottomAnchor, constant: 30),
             gameGenre.leadingAnchor.constraint(equalTo: gameAboutContainer.leadingAnchor, constant: 15),
-            gameGenre.heightAnchor.constraint(equalToConstant: 60),
             gameGenre.widthAnchor.constraint(equalToConstant: 120),
             
             //second column
             gameRating.topAnchor.constraint(equalTo: gameAboutContainer.topAnchor, constant: 30),
             gameRating.trailingAnchor.constraint(equalTo: gameAboutContainer.trailingAnchor, constant: -15),
-            gameRating.heightAnchor.constraint(equalToConstant: 60),
             gameRating.widthAnchor.constraint(equalToConstant: 120),
             
             gameDeveloper.topAnchor.constraint(equalTo: gameRating.bottomAnchor, constant: 30),
             gameDeveloper.trailingAnchor.constraint(equalTo: gameAboutContainer.trailingAnchor, constant: -15),
-            gameDeveloper.heightAnchor.constraint(equalToConstant: 60),
             gameDeveloper.widthAnchor.constraint(equalToConstant: 120),
             
             gamePublisher.topAnchor.constraint(equalTo: gameDeveloper.bottomAnchor, constant: 30),
             gamePublisher.trailingAnchor.constraint(equalTo: gameAboutContainer.trailingAnchor, constant: -15),
-            gamePublisher.heightAnchor.constraint(equalToConstant: 60),
             gamePublisher.widthAnchor.constraint(equalToConstant: 120),
+            gamePublisher.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -15),
         ])
     }
 }

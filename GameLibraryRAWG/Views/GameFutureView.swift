@@ -19,8 +19,7 @@ class GameFutureView: UIView {
     
     private let futureDescr: UILabel = {
         let futureDescr = UILabel()
-        futureDescr.numberOfLines = 3
-        futureDescr.adjustsFontSizeToFitWidth = true
+        futureDescr.numberOfLines = 0
         futureDescr.translatesAutoresizingMaskIntoConstraints = false
         return futureDescr
     }()
@@ -51,13 +50,16 @@ extension GameFutureView {
     
     func setConstraints() {
         NSLayoutConstraint.activate([
+            
+            self.bottomAnchor.constraint(equalTo: futureDescr.bottomAnchor),
+            
             futureTitle.topAnchor.constraint(equalTo: self.topAnchor),
             futureTitle.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             futureTitle.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             
             futureDescr.topAnchor.constraint(equalTo: futureTitle.bottomAnchor, constant: 5),
-            futureDescr.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.9),
-            futureDescr.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: 1),
+            futureDescr.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            futureDescr.trailingAnchor.constraint(equalTo: self.trailingAnchor),
 
         ])
     }

@@ -250,9 +250,9 @@
 				B591DD0F28C3A4CB00548335 /* Subclasses */,
 				B5D7ACA128BE2D0000859B03 /* Cells */,
 				B5E3A62328CE04D000A48CFD /* CollectionHeader */,
-				B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */,
 				B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */,
 				B591DD1328C4B10D00548335 /* ScreenshotPreviewViewController.swift */,
+				B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
