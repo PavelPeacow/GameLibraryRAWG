@@ -7,8 +7,12 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseStorage
 
 class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, ActivityIndicator {
+    
+    //MARK: PROPERTIES
+    private var imageData: Data?
     
     //MARK: VIEWS
     private let scrollVIew: UIScrollView = {
@@ -16,6 +20,19 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
+    
+    private let profileImage: UIImageView = {
+        let profileImage = UIImageView()
+        profileImage.image = UIImage(named: "cat")
+        profileImage.isUserInteractionEnabled = true
+        profileImage.contentMode = .scaleToFill
+        profileImage.clipsToBounds = true
+        profileImage.layer.cornerRadius = 15
+        profileImage.translatesAutoresizingMaskIntoConstraints = false
+        return profileImage
+    }()
+    
+    private let setProfileImageIcon = ProfileGearSettingIconBtn()
     
     private let userDisplayName: EmailTextField = EmailTextField(placeholder: "Nickname")
     
@@ -35,6 +52,9 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         
         view.addSubview(scrollVIew)
         
+        scrollVIew.addSubview(profileImage)
+        profileImage.addSubview(setProfileImageIcon)
+        
         scrollVIew.addSubview(userDisplayName)
         scrollVIew.addSubview(emailTextField)
         scrollVIew.addSubview(passwordTextField)
@@ -45,6 +65,8 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         
         addActiontoRegisterButton()
         
+        setProfileImageIcon.addTarget(self, action: #selector(changeProfileImageAction), for: .touchUpInside)
+        
         setDelegates()
         setConstraints()
     }
@@ -53,7 +75,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        scrollVIew.frame = view.bounds	
+        scrollVIew.frame = view.bounds
     }
     
     private func setDelegates() {
@@ -72,9 +94,18 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         view.endEditing(true)
     }
     
+    @objc private func changeProfileImageAction() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.allowsEditing = true
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.delegate = self
+        present(imagePicker, animated: true)
+    }
+    
     private func addActiontoRegisterButton() {
         registerButton.addAction(UIAction(handler: { [weak self] _ in
             
+            //animation
             UIView.animate(withDuration: 0.2) {
                 self?.registerButton.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
             } completion: { isEnd in
@@ -83,6 +114,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
                 }
             }
             
+            //validation
             guard let displayName = self?.userDisplayName.text, !displayName.isEmpty,
                   let email = self?.emailTextField.text, !email.isEmpty, email.contains("@"),
                   let password = self?.passwordTextField.text, !password.isEmpty, password.count > 6,
@@ -93,6 +125,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
             
             self?.loadingIndicator()
             
+            //createUser
             FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { [weak self] result, error in
                 self?.removeLoadingIndicator()
                 guard error == nil else {
@@ -110,13 +143,22 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
                         print(FirebaseErrors.ErrorCreateDocument)
                         return
                     }
-                   
+                    
                     print("UserDisplayName created")
                 }
+                
+                let metadata = StorageMetadata()
+                metadata.contentType = "image/jpg"
+                
+                if let imageData = self?.imageData {
+                    FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(imageData, metadata: metadata) { metadata, error in
+                        guard error == nil else { print(FirebaseErrors.ErrorPutImageToStorage); return }
+                        
+                        print("UserAvatar succesfully uploaded")
+                    }
+                }
+                
             }
-            
-            
-            
         }), for: .touchUpInside)
     }
     
@@ -129,7 +171,17 @@ extension ProfileRegisterNewUserViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             
-            userDisplayName.topAnchor.constraint(equalTo: scrollVIew.contentLayoutGuide.topAnchor, constant: 70),
+            setProfileImageIcon.topAnchor.constraint(equalTo: profileImage.topAnchor, constant: 5),
+            setProfileImageIcon.trailingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: -5),
+            setProfileImageIcon.heightAnchor.constraint(equalToConstant: 30),
+            setProfileImageIcon.widthAnchor.constraint(equalToConstant: 30),
+            
+            profileImage.topAnchor.constraint(equalTo: scrollVIew.contentLayoutGuide.topAnchor, constant: 70),
+            profileImage.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            profileImage.widthAnchor.constraint(equalToConstant: 250),
+            profileImage.heightAnchor.constraint(equalToConstant: 200),
+            
+            userDisplayName.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 30),
             userDisplayName.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
             userDisplayName.heightAnchor.constraint(equalToConstant: 40),
             userDisplayName.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
@@ -157,6 +209,22 @@ extension ProfileRegisterNewUserViewController {
             
         ])
     }
+}
+
+extension ProfileRegisterNewUserViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            
+            profileImage.image = image
+            
+            let data = image.jpegData(compressionQuality: 0.3)
+            imageData = data
+        }
+        
+        dismiss(animated: true)
+    }
+    
 }
 
 //MARK: TEXTFIELD

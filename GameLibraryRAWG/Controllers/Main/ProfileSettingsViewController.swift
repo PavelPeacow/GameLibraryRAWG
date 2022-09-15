@@ -36,13 +36,6 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         return displayName
     }()
     
-    private let imagePicker: UIImagePickerController = {
-        let imagePicker = UIImagePickerController()
-        imagePicker.allowsEditing = true
-        imagePicker.sourceType = .photoLibrary
-        return imagePicker
-    }()
-    
     private let signOutButton = ProfileButton(configuration: .gray(), title: "Sign Out")
     
     override func viewDidLoad() {
@@ -64,7 +57,6 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         signOutButton.addTarget(self, action: #selector(addActionToSignOutButton), for: .touchUpInside)
         
         
-        setDelegates()
         setConstraints()
     }
     
@@ -86,10 +78,6 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         
     }
     
-    private func setDelegates() {
-        imagePicker.delegate = self
-    }
-    
     private func fetchUserNameDisplay() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(); return }
         
@@ -107,6 +95,10 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
     }
     
     @objc private func changeProfileImageAction() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.allowsEditing = true
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.delegate = self
         present(imagePicker, animated: true)
     }
     
