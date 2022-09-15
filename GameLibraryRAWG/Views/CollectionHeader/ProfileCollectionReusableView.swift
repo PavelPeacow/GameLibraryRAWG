@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class ProfileCollectionReusableView: UICollectionReusableView {
     
@@ -58,6 +59,9 @@ class ProfileCollectionReusableView: UICollectionReusableView {
     public func configure(with model: GameFavouritesProfileViewModel) {
         userProfileName.text = model.profileName
         gamesAddCount.text = String(model.gamesCount)
+        
+        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.large
+        profileImage.sd_setImage(with: model.imageData)
     }
 }
 

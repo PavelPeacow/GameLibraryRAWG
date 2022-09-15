@@ -119,15 +119,18 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
                 
                 if let snapshot = snapshot {
                     print("loh test 228")
-                    let data = snapshot.get("user_name") as? String ?? "Unknown"
-                    let model = GameFavouritesProfileViewModel(profileName: data, gamesCount: self?.favouritesGames.count ?? 0)
-                    header.configure(with: model)
+                    let dataName = snapshot.get("user_name") as? String ?? "Unknown"
+                                        
+                    FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { url, error in
+                        
+                        guard error == nil else { print("error url"); return }
+                        
+                        let model = GameFavouritesProfileViewModel(profileName: dataName, gamesCount: self!.favouritesGames.count, imageData: url!)
+                        header.configure(with: model)
+                    }
                 }
-                
             }
         }
-        
-        
         
         return header
     }

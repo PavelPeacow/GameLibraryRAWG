@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import FirebaseStorage
+import SDWebImage
 
 class ProfileSettingsViewController: UIViewController, ProfileAlerts {
-        
+    
     private let profileImage: UIImageView = {
         let profileImage = UIImageView()
         profileImage.image = UIImage(named: "cat")
@@ -61,10 +63,27 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         changeDisplayNameIcon.addTarget(self, action: #selector(changeUserDisplayNameAction), for: .touchUpInside)
         signOutButton.addTarget(self, action: #selector(addActionToSignOutButton), for: .touchUpInside)
         
-        fetchUserNameDisplay()
         
         setDelegates()
         setConstraints()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchUserNameDisplay()
+        
+        if let uid = FirebaseManager.shared.auth.currentUser?.uid {
+            FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { [weak self] url, error in
+                
+                guard error == nil else { print("error url"); return }
+                
+                self?.profileImage.sd_imageIndicator = SDWebImageActivityIndicator.large
+                self?.profileImage.sd_setImage(with: url)
+            }
+        }
+        
+        
     }
     
     private func setDelegates() {
@@ -137,8 +156,25 @@ extension ProfileSettingsViewController {
 extension ProfileSettingsViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
+        
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             profileImage.image = image
+            
+            let data = image.jpegData(compressionQuality: 0.3)
+            
+            let metadata = StorageMetadata()
+            metadata.contentType = "image/jpg"
+            
+            if let data = data {
+                FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(data, metadata: metadata) { metadata, error in
+                    guard error == nil else { print(FirebaseErrors.ErrorPutImageToStorage); return }
+                    
+                    print("UserAvatar succesfully uploaded")
+                }
+            }
+            
+            
         }
         
         dismiss(animated: true)

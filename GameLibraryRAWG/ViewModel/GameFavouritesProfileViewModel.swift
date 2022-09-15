@@ -10,4 +10,5 @@ import Foundation
 struct GameFavouritesProfileViewModel {
     let profileName: String
     let gamesCount: Int
+    let imageData: URL
 }
