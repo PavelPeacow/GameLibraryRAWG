@@ -49,29 +49,5 @@ extension ProfileAlerts where Self: UIViewController {
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         present(ac, animated: true)
     }
-    
-    func showChangeUserDisplayNameAlert() {
-        let ac = UIAlertController(title: "Change nickname",
-                                   message: nil, preferredStyle: .alert)
-        ac.addTextField()
         
-        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        
-        ac.addAction(UIAlertAction(title: "Change", style: .default, handler: { _ in
-            guard let nick = ac.textFields?.first?.text else { return }
-            
-            guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
-            
-            FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": nick]) { error in
-                guard error == nil else { print(FirebaseErrors.ErrorCreateDocument); return }
-            }
-            print("DisplayName changed to \(nick)")
-        }))
-        
-        
-        
-        present(ac, animated: true)
-        
-    }
-    
 }

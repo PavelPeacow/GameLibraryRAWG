@@ -18,5 +18,4 @@ protocol ProfileAlerts {
     func showEmptyFieldsAlert()
     func showInvalidUserAlert()
     func showRegistrationValidationAlert()
-    func showChangeUserDisplayNameAlert()
 }

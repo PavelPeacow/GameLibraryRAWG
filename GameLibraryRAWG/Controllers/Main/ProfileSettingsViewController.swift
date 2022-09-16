@@ -31,7 +31,6 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         displayName.translatesAutoresizingMaskIntoConstraints = false
         displayName.textAlignment = .center
         displayName.font = UIFont.systemFont(ofSize: 18, weight: .heavy)
-        displayName.text = FirebaseManager.shared.auth.currentUser?.displayName ?? "Unknown"
         displayName.sizeToFit()
         return displayName
     }()
@@ -109,6 +108,33 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
     @objc private func addActionToSignOutButton() {
         try? FirebaseManager.shared.auth.signOut()
         navigationController?.setViewControllers([ProfileAuthorizationViewController()], animated: true)
+    }
+    
+    private func showChangeUserDisplayNameAlert() {
+        let ac = UIAlertController(title: "Change nickname",
+                                   message: nil, preferredStyle: .alert)
+        ac.addTextField()
+        
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        ac.addAction(UIAlertAction(title: "Change", style: .default, handler: { [weak self] _ in
+            guard let nick = ac.textFields?.first?.text else { return }
+            
+            guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
+            
+            FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": nick]) { error in
+                guard error == nil else { print(FirebaseErrors.ErrorCreateDocument); return }
+            }
+            
+            print("DisplayName changed to \(nick)")
+            DispatchQueue.main.async {
+                self?.displayName.text = nick
+            }
+        }))
+        
+        
+        present(ac, animated: true)
+        
     }
     
 }
