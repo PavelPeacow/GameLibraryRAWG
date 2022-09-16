@@ -43,7 +43,7 @@ class HomeViewController: UIViewController, ActivityIndicator {
         view.backgroundColor = .systemBackground
         
         configureNavBar()
-        
+        print(ThemesUserDefaults.shared.theme.rawValue)
         view.addSubview(collectionView)
         setDelegates()
         
@@ -58,10 +58,45 @@ class HomeViewController: UIViewController, ActivityIndicator {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
     }
-        
+    
     private func configureNavBar() {
         title = "Home"
         navigationController?.navigationBar.prefersLargeTitles = true
+        
+        if traitCollection.userInterfaceStyle == .light {
+            let lightModeItem = UIBarButtonItem(image: UIImage(systemName: "moon"), style: .plain, target: self, action: #selector(switchToDarkMode))
+            
+            navigationItem.leftBarButtonItem = lightModeItem
+        } else {
+            let darkModeItem = UIBarButtonItem(image: UIImage(systemName: "moon.fill"), style: .plain, target: self, action: #selector(switchToLightMode))
+            
+            navigationItem.leftBarButtonItem = darkModeItem
+        }
+    }
+    
+    @objc private func switchToLightMode() {
+        
+        ThemesUserDefaults.shared.theme = Theme(rawValue: 0)!
+        UIWindow.animate(withDuration: 0.5) {
+            UIApplication.shared.currentUIWindow()!.overrideUserInterfaceStyle = .light
+        }
+        
+        let lightModeItem = UIBarButtonItem(image: UIImage(systemName: "moon"), style: .plain, target: self, action: #selector(switchToDarkMode))
+        
+        navigationItem.leftBarButtonItem = lightModeItem
+    }
+    
+    @objc private func switchToDarkMode() {
+        
+        ThemesUserDefaults.shared.theme = Theme(rawValue: 1)!
+        UIWindow.animate(withDuration: 0.5) {
+            UIApplication.shared.currentUIWindow()!.overrideUserInterfaceStyle = .dark
+        }
+        
+        
+        let darkModeItem = UIBarButtonItem(image: UIImage(systemName: "moon.fill"), style: .plain, target: self, action: #selector(switchToLightMode))
+        
+        navigationItem.leftBarButtonItem = darkModeItem
     }
     
     private func setDelegates() {
