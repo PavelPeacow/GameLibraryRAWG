@@ -19,11 +19,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = MainTabBarController()
         
-        if ThemesUserDefaults.shared.theme.rawValue == 0 {
-            window.overrideUserInterfaceStyle = .light
-        } else if ThemesUserDefaults.shared.theme.rawValue == 1 {
-            window.overrideUserInterfaceStyle = .dark
-        }
+//        if ThemesUserDefaults.shared.theme.rawValue == 0 {
+//            window.overrideUserInterfaceStyle = .light
+//        } else if ThemesUserDefaults.shared.theme.rawValue == 1 {
+//            window.overrideUserInterfaceStyle = .dark
+//        }
         
         window.makeKeyAndVisible()
         self.window = window

@@ -11,7 +11,7 @@ import SDWebImage
 
 class ProfileSettingsViewController: UIViewController, ProfileAlerts {
     
-    private let profileImage: UIImageView = {
+    public let profileImage: UIImageView = {
         let profileImage = UIImageView()
         profileImage.image = UIImage(named: "cat")
         profileImage.isUserInteractionEnabled = true
@@ -26,7 +26,7 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
     
     private let changeDisplayNameIcon = ProfileGearSettingIconBtn()
 
-    private let displayName: UILabel = {
+    public let displayName: UILabel = {
         let displayName = UILabel()
         displayName.translatesAutoresizingMaskIntoConstraints = false
         displayName.textAlignment = .center
@@ -58,41 +58,7 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         
         setConstraints()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
-        fetchUserNameDisplay()
-        
-        if let uid = FirebaseManager.shared.auth.currentUser?.uid {
-            FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { [weak self] url, error in
-                
-                guard error == nil else { print("error url"); return }
-                
-                self?.profileImage.sd_imageIndicator = SDWebImageActivityIndicator.large
-                self?.profileImage.sd_setImage(with: url)
-            }
-        }
-        
-        
-    }
-    
-    private func fetchUserNameDisplay() {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(); return }
-        
-        FirebaseManager.shared.firestore.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
-            guard error == nil else { print(FirebaseErrors.ErrorGetUserDocuments); return }
-            
-            if let snapshot = snapshot {
-                let data = snapshot.get("user_name") as? String ?? "Unknown"
-                DispatchQueue.main.async {
-                    self?.displayName.text = data
-                }
-            }
-            
-        }
-    }
-    
     @objc private func changeProfileImageAction() {
         let imagePicker = UIImagePickerController()
         imagePicker.allowsEditing = true
@@ -176,7 +142,7 @@ extension ProfileSettingsViewController: UIImagePickerControllerDelegate & UINav
         
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
         
-        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+        if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
             profileImage.image = image
             
             let data = image.jpegData(compressionQuality: 0.3)

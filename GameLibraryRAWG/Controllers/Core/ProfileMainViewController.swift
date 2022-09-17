@@ -9,8 +9,13 @@ import UIKit
 
 class ProfileMainViewController: UIViewController, ActivityIndicator {
     
+    //PROPERTIES
     private var favouritesGames = [Game]()
-        
+    
+    private var userDisplayName = ""
+    private var userImageURL: URL!
+    
+    //VIEWS
     private let gamesFavouritesCollection: UICollectionView = {
         let layout = UICollectionViewCompositionalLayout(section: .profile())
         
@@ -20,7 +25,11 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
         gamesFavouritesCollection.register(ProfileCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileCollectionReusableView.identifier)
         return gamesFavouritesCollection
     }()
-        
+    
+    private let navBarButtonProfileSettings = UIButton(type: .system)
+    private let dispatchGroup = DispatchGroup()
+    
+    //LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -31,11 +40,20 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
         view.addSubview(gamesFavouritesCollection)
         
         setDelegates()
+        
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        loadingIndicator()
         fetchFirestoreData()
+        fetchUserImage()
+        fetchUserNameDisplay()
+        dispatchGroup.notify(queue: .main) { [weak self] in
+            self?.removeLoadingIndicator()
+            self?.navBarButtonProfileSettings.isEnabled = true
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -44,11 +62,13 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     }
     
     private func configureNavBar() {
-        let navBarButtonProfileSettings = UIButton(type: .system)
+        
         navBarButtonProfileSettings.setTitle("Profile Settings", for: .normal)
-
+        
         navBarButtonProfileSettings.addAction(UIAction(handler: { [weak self] _ in
             let vc = ProfileSettingsViewController()
+            vc.profileImage.sd_setImage(with: self?.userImageURL)
+            vc.displayName.text = self?.userDisplayName
             self?.navigationController?.pushViewController(vc, animated: true)
         }), for: .touchUpInside)
         
@@ -62,16 +82,17 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     
     private func fetchFirestoreData() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
-
-        loadingIndicator()
         
+        navBarButtonProfileSettings.isEnabled = false
+        
+        dispatchGroup.enter()
         FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").getDocuments { [weak self] snapshot, error in
-            self?.removeLoadingIndicator()
+            
             guard error == nil else {
                 print(FirebaseErrors.ErrorGetUserDocuments)
                 return
             }
-
+            
             if let snapshot = snapshot {
                 DispatchQueue.main.async {
                     self?.favouritesGames = snapshot.documents.map { doc in
@@ -80,11 +101,42 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
                                     background_image: doc["background_image"] as? String ?? "",
                                     metacritic: doc["metacritic"] as? Int)
                     }
-
+                    
                     self?.gamesFavouritesCollection.reloadData()
+                    self?.dispatchGroup.leave()
                 }
             }
+        }
+    }
+    
+
+    private func fetchUserImage() {
+        dispatchGroup.enter()
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { [weak self] url, error in
             
+            guard error == nil else { print("error url"); return }
+            
+            DispatchQueue.main.async {
+                self?.userImageURL = url
+                self?.dispatchGroup.leave()
+            }
+        }
+    }
+    
+    private func fetchUserNameDisplay() {
+        dispatchGroup.enter()
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        FirebaseManager.shared.firestore.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
+            guard error == nil else { print(FirebaseErrors.ErrorGetUserDocuments); return }
+            
+            if let snapshot = snapshot {
+                let data = snapshot.get("user_name") as? String ?? "Unknown"
+                DispatchQueue.main.async {
+                    self?.userDisplayName = data
+                    self?.dispatchGroup.leave()
+                }
+            }
         }
     }
     
@@ -120,7 +172,7 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
                 if let snapshot = snapshot {
                     print("loh test 228")
                     let dataName = snapshot.get("user_name") as? String ?? "Unknown"
-                                        
+                    
                     FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { url, error in
                         
                         guard error == nil else { print("error url"); return }

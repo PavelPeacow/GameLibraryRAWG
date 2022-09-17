@@ -22,6 +22,8 @@ class HomeViewController: UIViewController, ActivityIndicator {
     private var upcoming = [Game]()
     private var discover = [Game]()
     
+    private let dispatchGroup = DispatchGroup()
+    
     private var page = 1
     
     private let sectionTitles = ["Metacritic's choice", "Popular This Year", "Most Anticipated Upcoming Games", "More games to discover"]
@@ -47,11 +49,14 @@ class HomeViewController: UIViewController, ActivityIndicator {
         view.addSubview(collectionView)
         setDelegates()
         
+        loadingIndicator()
         fetchPopularGames()
         fetchMustPlayGames()
         fetchUpcomingGames()
         fetchDiscoverMoreGames(with: page)
-        
+        dispatchGroup.notify(queue: .main) { [weak self] in
+            self?.removeLoadingIndicator()
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -110,6 +115,7 @@ class HomeViewController: UIViewController, ActivityIndicator {
 extension HomeViewController {
     
     func fetchMustPlayGames() {
+        dispatchGroup.enter()
         APICaller.shared.fetchGames(url: APIConstants.METACRITIC_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
             case .success(let response):
@@ -120,10 +126,13 @@ extension HomeViewController {
             case .failure(let error):
                 print(error)
             }
+            self?.dispatchGroup.leave()
         }
+       
     }
     
     func fetchPopularGames() {
+        dispatchGroup.enter()
         APICaller.shared.fetchGames(url: APIConstants.POPULAR_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
             case .success(let response):
@@ -134,10 +143,13 @@ extension HomeViewController {
             case .failure(let error):
                 print(error)
             }
+            self?.dispatchGroup.leave()
         }
+       
     }
     
     func fetchUpcomingGames() {
+        dispatchGroup.enter()
         APICaller.shared.fetchGames(url: APIConstants.UPCOMING_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
             case .success(let response):
@@ -148,14 +160,13 @@ extension HomeViewController {
             case .failure(let error):
                 print(error)
             }
+            self?.dispatchGroup.leave()
         }
     }
     
     func fetchDiscoverMoreGames(with page: Int) {
-        loadingIndicator()
+        dispatchGroup.enter()
         APICaller.shared.fetchGamesWithPage(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self, pageNumber: page) { [weak self] result in
-            
-            self?.removeLoadingIndicator()
             
             switch result {
             case .success(let response):
@@ -166,6 +177,7 @@ extension HomeViewController {
             case .failure(let error):
                 print(error)
             }
+            self?.dispatchGroup.leave()
         }
     }
 }
