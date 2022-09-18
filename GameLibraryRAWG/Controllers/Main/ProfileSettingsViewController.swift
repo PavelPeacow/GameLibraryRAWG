@@ -13,7 +13,6 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
     
     public let profileImage: UIImageView = {
         let profileImage = UIImageView()
-        profileImage.image = UIImage(named: "cat")
         profileImage.isUserInteractionEnabled = true
         profileImage.contentMode = .scaleToFill
         profileImage.clipsToBounds = true

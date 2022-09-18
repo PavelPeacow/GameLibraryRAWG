@@ -12,8 +12,8 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     //MARK: PROPERTIES
     private var favouritesGames = [Game]()
     
-    private var userDisplayName = ""
-    private var userImageURL: URL!
+    private lazy var userDisplayName = ""
+    private lazy var userImageURL = ""
     
     //dispatch
     private let dispatchGroup = DispatchGroup()
@@ -77,8 +77,9 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     }
     
     @objc func goToSettingsProfileView() {
+        guard let url = URL(string: userImageURL) else { return }
         let vc = ProfileSettingsViewController()
-        vc.profileImage.sd_setImage(with: userImageURL)
+        vc.profileImage.sd_setImage(with: url)
         vc.displayName.text = userDisplayName
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -113,7 +114,7 @@ extension ProfileMainViewController {
         FirebaseManager.shared.fetchUserImage { [weak self] urlResult in
             switch urlResult {
             case .success(let url):
-                self?.userImageURL = url
+                self?.userImageURL = url.absoluteString
             case .failure(let error):
                 print(error)
             }
@@ -161,18 +162,9 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileCollectionReusableView.identifier, for: indexPath) as! ProfileCollectionReusableView
         
-        dispatchGroup.enter()
+        let model = GameFavouritesProfileViewModel(profileName: userDisplayName, gamesCount: favouritesGames.count, imageData: userImageURL)
+        header.configure(with: model)
         
-        FirebaseManager.shared.getUserProfileData { result in
-            switch result {
-            case .success(let profileViewModel):
-                header.configure(with: profileViewModel)
-            case .failure(let error):
-                print(error)
-            }
-            self.dispatchGroup.leave()
-        }
-
         return header
     }
     

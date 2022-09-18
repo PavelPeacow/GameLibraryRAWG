@@ -23,7 +23,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     
     private let profileImage: UIImageView = {
         let profileImage = UIImageView()
-        profileImage.image = UIImage(named: "cat")
+        profileImage.image = UIImage(systemName: "photo")
         profileImage.isUserInteractionEnabled = true
         profileImage.contentMode = .scaleToFill
         profileImage.clipsToBounds = true

@@ -102,7 +102,7 @@ class FirebaseManager {
                 
                 guard error == nil else { print("error url"); return }
                 
-                let model = GameFavouritesProfileViewModel(profileName: dataName, gamesCount: 0, imageData: url!)
+                let model = GameFavouritesProfileViewModel(profileName: dataName, gamesCount: 0, imageData: url!.path)
                 
                 onCompletion(.success(model))
             }

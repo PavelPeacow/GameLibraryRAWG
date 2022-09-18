@@ -14,7 +14,6 @@ class ProfileCollectionReusableView: UICollectionReusableView {
     
     private let profileImage: UIImageView = {
         let profileImage = UIImageView()
-        profileImage.image = UIImage(named: "cat")
         profileImage.contentMode = .scaleToFill
         profileImage.clipsToBounds = true
         profileImage.layer.borderWidth = 3
@@ -26,15 +25,14 @@ class ProfileCollectionReusableView: UICollectionReusableView {
     
     private let userProfileName: UILabel = {
         let userProfileName = UILabel()
-        userProfileName.numberOfLines = 2
-        userProfileName.backgroundColor = .red
+        userProfileName.numberOfLines = 1
+        userProfileName.font = UIFont.preferredFont(forTextStyle: .headline)
         userProfileName.translatesAutoresizingMaskIntoConstraints = false
         return userProfileName
     }()
     
     private let gamesAddCount: UILabel = {
         let gamesAddCount = UILabel()
-        gamesAddCount.text = "Games add to favourites: 5"
         gamesAddCount.translatesAutoresizingMaskIntoConstraints = false
         return gamesAddCount
     }()
@@ -58,25 +56,25 @@ class ProfileCollectionReusableView: UICollectionReusableView {
     
     public func configure(with model: GameFavouritesProfileViewModel) {
         userProfileName.text = model.profileName
-        gamesAddCount.text = String(model.gamesCount)
-        
+        gamesAddCount.text = "games added: \(model.gamesCount)"
+
         profileImage.sd_imageIndicator = SDWebImageActivityIndicator.large
-        profileImage.sd_setImage(with: model.imageData)
+        profileImage.sd_setImage(with: URL(string: model.imageData))
     }
 }
 
 extension ProfileCollectionReusableView {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            profileImage.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30),
-            profileImage.heightAnchor.constraint(equalToConstant: 90),
-            profileImage.widthAnchor.constraint(equalToConstant: 90),
+            profileImage.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15),
+            profileImage.heightAnchor.constraint(equalToConstant: 120),
+            profileImage.widthAnchor.constraint(equalToConstant: 120),
             
-            userProfileName.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30),
+            userProfileName.topAnchor.constraint(equalTo: profileImage.topAnchor, constant: 15),
             userProfileName.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 15),
             userProfileName.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5),
             
-            gamesAddCount.topAnchor.constraint(equalTo: userProfileName.bottomAnchor, constant: 30),
+            gamesAddCount.bottomAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: -15),
             gamesAddCount.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 15),
         ])
     }
