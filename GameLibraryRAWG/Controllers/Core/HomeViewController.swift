@@ -114,8 +114,10 @@ class HomeViewController: UIViewController, ActivityIndicator {
 //MARK: API Results
 extension HomeViewController {
     
-    func fetchMustPlayGames() {
+    private func fetchMustPlayGames() {
+        
         dispatchGroup.enter()
+        
         APICaller.shared.fetchGames(url: APIConstants.METACRITIC_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
             case .success(let response):
@@ -128,11 +130,12 @@ extension HomeViewController {
             }
             self?.dispatchGroup.leave()
         }
-       
     }
     
-    func fetchPopularGames() {
+    private func fetchPopularGames() {
+        
         dispatchGroup.enter()
+        
         APICaller.shared.fetchGames(url: APIConstants.POPULAR_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
             case .success(let response):
@@ -145,11 +148,12 @@ extension HomeViewController {
             }
             self?.dispatchGroup.leave()
         }
-       
     }
     
-    func fetchUpcomingGames() {
+    private func fetchUpcomingGames() {
+        
         dispatchGroup.enter()
+        
         APICaller.shared.fetchGames(url: APIConstants.UPCOMING_URL, expecting: GamesResponse.self) { [weak self] result in
             switch result {
             case .success(let response):
@@ -164,10 +168,11 @@ extension HomeViewController {
         }
     }
     
-    func fetchDiscoverMoreGames(with page: Int) {
+    private func fetchDiscoverMoreGames(with page: Int) {
+        
         dispatchGroup.enter()
+        
         APICaller.shared.fetchGamesWithPage(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self, pageNumber: page) { [weak self] result in
-            
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
