@@ -20,18 +20,6 @@ class GameCollectionViewCell: UICollectionViewCell {
         return gameCover
     }()
     
-    private let metacriticLabel: UILabel = {
-        let metacriticLabel = UILabel()
-        metacriticLabel.translatesAutoresizingMaskIntoConstraints = false
-        metacriticLabel.backgroundColor = .systemBackground
-        metacriticLabel.layer.cornerRadius = 25
-        metacriticLabel.layer.borderColor = UIColor.yellow.cgColor
-        metacriticLabel.layer.borderWidth = 2
-        metacriticLabel.clipsToBounds = true
-        metacriticLabel.textAlignment = .center
-        return metacriticLabel
-    }()
-    
     private let gameLabel: UILabel = {
         let gameLabel = UILabel()
         gameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +34,6 @@ class GameCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         contentView.addSubview(gameCover)
-        contentView.addSubview(metacriticLabel)
         contentView.addSubview(gameLabel)
         
         setConstraints()
@@ -63,15 +50,6 @@ class GameCollectionViewCell: UICollectionViewCell {
         gameCover.sd_setImage(with: url)
         
         gameLabel.text = model.name
-        
-        if let metacritic = model.metacritic {
-            //strange bug appears when i dont use isHiddin = false
-            metacriticLabel.isHidden = false
-            metacriticLabel.text = "\(metacritic)"
-        } else {
-            metacriticLabel.isHidden = true
-        }
-        
     }
     
     
@@ -85,11 +63,6 @@ extension GameCollectionViewCell {
             gameCover.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             gameCover.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             gameCover.bottomAnchor.constraint(equalTo: gameLabel.topAnchor),
-            
-            metacriticLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            metacriticLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            metacriticLabel.heightAnchor.constraint(equalToConstant: 50),
-            metacriticLabel.widthAnchor.constraint(equalToConstant: 50),
             
             gameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             gameLabel.heightAnchor.constraint(equalToConstant: 20),

@@ -31,10 +31,9 @@ class SearchViewController: UIViewController, ActivityIndicator {
         
         view.addSubview(searchTable)
         
-        setDelegates()
-        fetchGames(with: page)
         configureNavBar()
-        
+        fetchGames(with: page)
+        setDelegates()
     }
     
     override func viewDidLayoutSubviews() {
@@ -47,6 +46,12 @@ class SearchViewController: UIViewController, ActivityIndicator {
         searchTable.dataSource = self
         
         seacrhController.searchResultsUpdater = self
+    }
+    
+    private func configureNavBar() {
+        navigationItem.searchController = seacrhController
+        title = "Search"
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     private func fetchGames(with page: Int) {
@@ -64,11 +69,7 @@ class SearchViewController: UIViewController, ActivityIndicator {
             }
         }
     }
-    
-    private func configureNavBar() {
-        navigationItem.searchController = seacrhController
-    }
-    
+        
 }
 
 //MARK: TableView settings

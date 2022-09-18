@@ -38,6 +38,11 @@ class HomeViewController: UIViewController, ActivityIndicator {
         return collectionView
     }()
     
+    //navBar items
+    private lazy var lightModeNavBarItem = UIBarButtonItem(image: UIImage(systemName: "moon"), style: .plain, target: self, action: #selector(switchToDarkMode))
+    
+    private lazy var darkModeNavBarItem = UIBarButtonItem(image: UIImage(systemName: "moon.fill"), style: .plain, target: self, action: #selector(switchToLightMode))
+    
     //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,13 +74,9 @@ class HomeViewController: UIViewController, ActivityIndicator {
         navigationController?.navigationBar.prefersLargeTitles = true
         
         if traitCollection.userInterfaceStyle == .light {
-            let lightModeItem = UIBarButtonItem(image: UIImage(systemName: "moon"), style: .plain, target: self, action: #selector(switchToDarkMode))
-            
-            navigationItem.leftBarButtonItem = lightModeItem
+            navigationItem.leftBarButtonItem = lightModeNavBarItem
         } else {
-            let darkModeItem = UIBarButtonItem(image: UIImage(systemName: "moon.fill"), style: .plain, target: self, action: #selector(switchToLightMode))
-            
-            navigationItem.leftBarButtonItem = darkModeItem
+            navigationItem.leftBarButtonItem = darkModeNavBarItem
         }
     }
     
@@ -86,9 +87,7 @@ class HomeViewController: UIViewController, ActivityIndicator {
             UIApplication.shared.currentUIWindow()!.overrideUserInterfaceStyle = .light
         }
         
-        let lightModeItem = UIBarButtonItem(image: UIImage(systemName: "moon"), style: .plain, target: self, action: #selector(switchToDarkMode))
-        
-        navigationItem.leftBarButtonItem = lightModeItem
+        navigationItem.leftBarButtonItem = darkModeNavBarItem
     }
     
     @objc private func switchToDarkMode() {
@@ -97,11 +96,8 @@ class HomeViewController: UIViewController, ActivityIndicator {
         UIWindow.animate(withDuration: 0.5) {
             UIApplication.shared.currentUIWindow()!.overrideUserInterfaceStyle = .dark
         }
-        
-        
-        let darkModeItem = UIBarButtonItem(image: UIImage(systemName: "moon.fill"), style: .plain, target: self, action: #selector(switchToLightMode))
-        
-        navigationItem.leftBarButtonItem = darkModeItem
+
+        navigationItem.leftBarButtonItem = lightModeNavBarItem
     }
     
     private func setDelegates() {

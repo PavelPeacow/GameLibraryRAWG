@@ -15,6 +15,7 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     private var userDisplayName = ""
     private var userImageURL: URL!
     
+    //dispatch
     private let dispatchGroup = DispatchGroup()
     
     //MARK: VIEWS
@@ -28,6 +29,7 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
         return gamesFavouritesCollection
     }()
     
+    //navBar item
     private lazy var settingsNavBarItem: UIBarButtonItem = {
         let settingsNavBarItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(goToSettingsProfileView))
         settingsNavBarItem.isEnabled = false

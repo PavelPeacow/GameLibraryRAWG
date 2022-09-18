@@ -41,7 +41,12 @@ class GameFutureView: UIView {
     
     public func configure(with model: GameFutureViewModel) {
         futureTitle.text = model.gameFutureTitle
-        futureDescr.text = model.gameFutureDescr
+        
+        if model.gameFutureDescr.isEmpty {
+            futureDescr.text = "TBA"
+        } else {
+            futureDescr.text = model.gameFutureDescr
+        }
     }
     
 }

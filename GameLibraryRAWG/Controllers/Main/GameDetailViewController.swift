@@ -34,6 +34,19 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         return gameCover
     }()
     
+    private let metacriticLabel: UILabel = {
+        let metacriticLabel = UILabel()
+        metacriticLabel.translatesAutoresizingMaskIntoConstraints = false
+        metacriticLabel.textColor = .white
+        metacriticLabel.backgroundColor = .black
+        metacriticLabel.layer.cornerRadius = 25
+        metacriticLabel.layer.borderColor = UIColor.systemYellow.cgColor
+        metacriticLabel.layer.borderWidth = 2
+        metacriticLabel.clipsToBounds = true
+        metacriticLabel.textAlignment = .center
+        return metacriticLabel
+    }()
+    
     private let gameName: UILabel = {
         let gameName = UILabel()
         gameName.font = UIFont.boldSystemFont(ofSize: 18)
@@ -117,7 +130,10 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         view.addSubview(scrollView)
         
         scrollView.addSubview(gameCover)
+        gameCover.addSubview(metacriticLabel)
+        
         scrollView.addSubview(gameName)
+        
         scrollView.addSubview(gameDescription)
         
         scrollView.addSubview(gameTrailersCollection)
@@ -246,6 +262,15 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         self.game = game
                 
         gameName.text = model.name
+        
+        if let metacritic = model.metacritic {
+            metacriticLabel.text = String(metacritic)
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.metacriticLabel.removeFromSuperview()
+            }
+        }
+        
         gameDescription.text = model.description_raw
         
         let gameReleaseModel = GameFutureViewModel(gameFutureTitle: "Release", gameFutureDescr: model.released ?? "TBA")
@@ -344,6 +369,12 @@ extension GameDetailViewController {
             gameName.topAnchor.constraint(equalTo: gameCover.bottomAnchor, constant: 10),
             gameName.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             gameName.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            
+            //metacritic
+            metacriticLabel.topAnchor.constraint(equalTo: gameCover.topAnchor,constant: 15),
+            metacriticLabel.heightAnchor.constraint(equalToConstant: 50),
+            metacriticLabel.widthAnchor.constraint(equalToConstant: 50),
+            metacriticLabel.trailingAnchor.constraint(equalTo: gameCover.trailingAnchor, constant: -15),
             
             //description
             gameDescription.centerXAnchor.constraint(equalTo: view.centerXAnchor),
