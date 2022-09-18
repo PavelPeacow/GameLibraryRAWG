@@ -14,6 +14,9 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     //MARK: PROPERTIES
     private var imageData: Data?
     
+    //dispatch
+    private let dispatchGroup = DispatchGroup()
+    
     //MARK: VIEWS
     private let scrollVIew: UIScrollView = {
         let scrollView = UIScrollView()
@@ -63,14 +66,12 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         
         createGestureRecognizer()
         
-        addActiontoRegisterButton()
-        
         setProfileImageIcon.addTarget(self, action: #selector(changeProfileImageAction), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(addActiontoRegisterButton(_:)), for: .touchUpInside)
         
         setDelegates()
         setConstraints()
     }
-    
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -102,67 +103,94 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         present(imagePicker, animated: true)
     }
     
-    private func addActiontoRegisterButton() {
-        registerButton.addAction(UIAction(handler: { [weak self] _ in
-            
-            //animation
-            UIView.animate(withDuration: 0.2) {
-                self?.registerButton.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
-            } completion: { isEnd in
-                UIView.animate(withDuration: 0.35) {
-                    self?.registerButton.transform = .identity
-                }
+    @objc private func addActiontoRegisterButton(_ sender: UIButton) {
+        
+        //animation
+        UIView.animate(withDuration: 0.2) {
+            sender.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+        } completion: { animationEnd in
+            UIView.animate(withDuration: 0.35) {
+                sender.transform = .identity
             }
-            
-            //validation
-            guard let displayName = self?.userDisplayName.text, !displayName.isEmpty,
-                  let email = self?.emailTextField.text, !email.isEmpty, email.contains("@"),
-                  let password = self?.passwordTextField.text, !password.isEmpty, password.count > 6,
-                  let repeatPassword = self?.repeatPasswordTextField.text, password == repeatPassword  else {
-                self?.showRegistrationValidationAlert()
-                return
-            }
-            
-            self?.loadingIndicator()
-            
-            //createUser
-            FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { [weak self] result, error in
-                self?.removeLoadingIndicator()
-                guard error == nil else {
-                    print(FirebaseErrors.ErrorCreateUser)
-                    return
-                }
-                
-                guard let uid = result?.user.uid else { print(FirebaseErrors.UserNotFound); return }
-                
-                self?.showCreateAccountAlert(email: email, password: password)
-                print("User created")
-                
-                FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": displayName]) { error in
-                    guard error == nil else {
-                        print(FirebaseErrors.ErrorCreateDocument)
-                        return
-                    }
-                    
-                    print("UserDisplayName created")
-                }
-                
-                let metadata = StorageMetadata()
-                metadata.contentType = "image/jpg"
-                
-                if let imageData = self?.imageData {
-                    FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(imageData, metadata: metadata) { metadata, error in
-                        guard error == nil else { print(FirebaseErrors.ErrorPutImageToStorage); return }
-                        
-                        print("UserAvatar succesfully uploaded")
-                    }
-                }
-                
-            }
-        }), for: .touchUpInside)
+        }
+        
+        //validation
+        guard let displayName = userDisplayName.text, !displayName.isEmpty,
+              let email = emailTextField.text, !email.isEmpty, email.contains("@"),
+              let password = passwordTextField.text, !password.isEmpty, password.count > 6,
+              let repeatPassword = repeatPasswordTextField.text, password == repeatPassword  else {
+            showRegistrationValidationAlert()
+            return
+        }
+        
+        loadingIndicator()
+        
+        createNewUser(email: email, password: password)
+        uploadUserImage(imageData: imageData ?? Data())
+        uploadUserName(userName: displayName)
+
+        dispatchGroup.notify(queue: .main) { [weak self] in
+            self?.removeLoadingIndicator()
+            self?.showCreateAccountAlert(email: email, password: password)
+        }
+        
     }
     
+}
+
+//MARK: Firebase user registration
+extension ProfileRegisterNewUserViewController {
     
+    func createNewUser(email: String, password: String) {
+        
+        dispatchGroup.enter()
+        
+        FirebaseManager.shared.createUser(email: email, password: password) { [weak self] response in
+            switch response {
+            case .success(let result):
+                print(result)
+            case .failure(let error):
+                print(error)
+                
+            }
+            
+            self?.dispatchGroup.leave()
+        }
+        
+    }
+    
+    func uploadUserName(userName: String) {
+        
+        dispatchGroup.enter()
+        
+        FirebaseManager.shared.createUserName(displayName: userName) { [weak self] response in
+            switch response {
+            case .success(let result):
+                print(result)
+            case .failure(let error):
+                print(error)
+            }
+            
+            self?.dispatchGroup.leave()
+        }
+    }
+    
+    func uploadUserImage(imageData: Data) {
+        
+        dispatchGroup.enter()
+        
+        FirebaseManager.shared.addImageToStorage(imageData: imageData) { [weak self] response in
+            switch response {
+            case .success(let result):
+                print(result)
+            case .failure(let error):
+                print(error)
+            }
+            
+            self?.dispatchGroup.leave()
+        }
+    }
+        
 }
 
 //MARK: CONSTRAINTS

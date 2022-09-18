@@ -81,36 +81,50 @@ class FirebaseManager {
         }
     }
     
-    func getUserProfileData(onCompletion: @escaping (Result<GameFavouritesProfileViewModel, Error>) -> Void) {
+    func createUser(email: String, password: String, onCompletion: @escaping (Result<FirebaseUploadResults, FirebaseErrors>) -> Void) {
+        FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, error in
+            guard error == nil else {
+                onCompletion(.failure(.ErrorCreateUser))
+                return
+            }
+            
+            onCompletion(.success(.UserCreated))
+        }
+    }
+    
+    func addImageToStorage(imageData: Data, onCompletion: @escaping (Result<FirebaseUploadResults, FirebaseErrors>) -> Void) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
             onCompletion(.failure(FirebaseErrors.UserNotFound))
             return
         }
         
-        FirebaseManager.shared.firestore.collection("Users").document(uid).getDocument { snapshot, error in
-            guard error == nil, snapshot == snapshot else {
-                onCompletion(.failure(FirebaseErrors.ErrorGetUserDocuments))
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpg"
+        
+        FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(imageData, metadata: metadata) { metadata, error in
+            guard error == nil else {
+                onCompletion(.failure(.ErrorPutImageToStorage))
                 return
-                
             }
             
-            
-            print("loh test 228")
-            let dataName = snapshot!.get("user_name") as? String ?? "Unknown"
-            
-            FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { url, error in
-                
-                guard error == nil else { print("error url"); return }
-                
-                let model = GameFavouritesProfileViewModel(profileName: dataName, gamesCount: 0, imageData: url!.path)
-                
-                onCompletion(.success(model))
+            onCompletion(.success(.UserNameUploaded))
+        }
+    }
+    
+    func createUserName(displayName: String, onCompletion: @escaping (Result<FirebaseUploadResults, FirebaseErrors>) -> Void) {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+            onCompletion(.failure(FirebaseErrors.UserNotFound))
+            return
+        }
+        
+        FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": displayName]) { error in
+            guard error == nil else {
+                onCompletion(.failure(FirebaseErrors.ErrorCreateDocument))
+                return
             }
+            
+            onCompletion(.success(.UserNameUploaded))
         }
     }
     
 }
-
-
-
-
