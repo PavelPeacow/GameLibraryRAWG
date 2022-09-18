@@ -8,12 +8,24 @@
 import Foundation
 import UIKit
 
-fileprivate var container = UIView()
+fileprivate let containerTagId = 1337
 
-extension ActivityIndicator where Self: UIViewController {
+extension UIViewController {
+    
+    private func getContainerView() -> UIView? {
+        view.viewWithTag(containerTagId)
+    }
+    
+    private func isDisplayingIndicator() -> Bool {
+        getContainerView() != nil
+    }
     
     func loadingIndicator() {
-        container = UIView(frame: view.bounds)
+        guard !isDisplayingIndicator() else { return }
+        
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.tag = containerTagId
         
         view.addSubview(container)
         
@@ -28,6 +40,8 @@ extension ActivityIndicator where Self: UIViewController {
         container.addSubview(activityIndicator)
         
         NSLayoutConstraint.activate([
+            container.widthAnchor.constraint(equalTo: view.widthAnchor),
+            container.heightAnchor.constraint(equalTo: view.heightAnchor),
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
@@ -37,7 +51,15 @@ extension ActivityIndicator where Self: UIViewController {
     
     func removeLoadingIndicator() {
         DispatchQueue.main.async {
-            container.removeFromSuperview()
+            if let container = self.view.viewWithTag(1337) {
+                
+                UIView.animate(withDuration: 0.2, animations: {
+                    container.alpha = 0.0
+                }) { animationEnd in
+                    container.removeFromSuperview()
+                }
+                
+            }
         }
     }
     

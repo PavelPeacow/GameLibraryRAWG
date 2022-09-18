@@ -30,11 +30,8 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     }()
     
     //navBar item
-    private lazy var settingsNavBarItem: UIBarButtonItem = {
-        let settingsNavBarItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(goToSettingsProfileView))
-        settingsNavBarItem.isEnabled = false
-        return settingsNavBarItem
-    }()
+    private lazy var settingsNavBarItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(goToSettingsProfileView))
+
     
     //MARK: LIFECYCLE
     override func viewDidLoad() {
@@ -51,6 +48,8 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        settingsNavBarItem.isEnabled = false
+        
         loadingIndicator()
         
         fetchFirestoreData()

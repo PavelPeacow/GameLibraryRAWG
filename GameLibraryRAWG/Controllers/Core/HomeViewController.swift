@@ -55,6 +55,7 @@ class HomeViewController: UIViewController, ActivityIndicator {
         setDelegates()
         
         loadingIndicator()
+        
         fetchPopularGames()
         fetchMustPlayGames()
         fetchUpcomingGames()
