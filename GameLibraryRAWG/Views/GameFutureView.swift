@@ -39,13 +39,13 @@ class GameFutureView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configure(with model: GameFutureViewModel) {
-        futureTitle.text = model.gameFutureTitle
+    public func configure(with model: GameFeaturesViewModel) {
+        futureTitle.text = model.gameFeatureTitle
         
-        if model.gameFutureDescr.isEmpty {
+        if model.gameFeatureDescr.isEmpty {
             futureDescr.text = "TBA"
         } else {
-            futureDescr.text = model.gameFutureDescr
+            futureDescr.text = model.gameFeatureDescr
         }
     }
     

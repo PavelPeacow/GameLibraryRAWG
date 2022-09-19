@@ -273,19 +273,19 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         
         gameDescription.text = model.description_raw
         
-        let gameReleaseModel = GameFutureViewModel(gameFutureTitle: "Release", gameFutureDescr: model.released ?? "TBA")
+        let gameReleaseModel = GameFeaturesViewModel(gameFeatureTitle: "Release", gameFeatureDescr: model.released ?? "TBA")
         gameRelease.configure(with: gameReleaseModel)
         
-        let gameRatingModel = GameFutureViewModel(gameFutureTitle: "Rating", gameFutureDescr: String(model.rating ?? 0))
+        let gameRatingModel = GameFeaturesViewModel(gameFeatureTitle: "Rating", gameFeatureDescr: String(model.rating ?? 0))
         gameRating.configure(with: gameRatingModel)
         
-        let gameGenreModel = GameFutureViewModel(gameFutureTitle: "Genres", gameFutureDescr: model.genres.map({ $0.name}).joined(separator: ", "))
+        let gameGenreModel = GameFeaturesViewModel(gameFeatureTitle: "Genres", gameFeatureDescr: model.genres.map({ $0.name}).joined(separator: ", "))
         gameGenre.configure(with: gameGenreModel)
         
-        let gameDeveloperModel = GameFutureViewModel(gameFutureTitle: "Developer", gameFutureDescr: model.developers.map({ $0.name}).joined(separator: ", "))
+        let gameDeveloperModel = GameFeaturesViewModel(gameFeatureTitle: "Developer", gameFeatureDescr: model.developers.map({ $0.name}).joined(separator: ", "))
         gameDeveloper.configure(with: gameDeveloperModel)
         
-        let gamePublisherModel = GameFutureViewModel(gameFutureTitle: "Publisher", gameFutureDescr: model.publishers.map({ $0.name}).joined(separator: ", "))
+        let gamePublisherModel = GameFeaturesViewModel(gameFeatureTitle: "Publisher", gameFeatureDescr: model.publishers.map({ $0.name}).joined(separator: ", "))
         gamePublisher.configure(with: gamePublisherModel)
     }
         

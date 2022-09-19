@@ -7,7 +7,9 @@
 
 import Foundation
 
-enum FirebaseUploadResults: String {
+enum FirebaseResults: String {
+    case UserSigned
+    
     case UserCreated
     case UserImageUploaded
     case UserNameUploaded

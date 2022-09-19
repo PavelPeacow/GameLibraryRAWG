@@ -1,5 +1,5 @@
 //
-//  EmailTextField.swift
+//  ProfileButton.swift
 //  GameLibraryRAWG
 //
 //  Created by Павел Кай on 11.09.2022.
@@ -7,20 +7,16 @@
 
 import UIKit
 
-class EmailTextField: UITextField {
-
+class ProfileActionButton: UIButton {
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-    
-    init(placeholder: String) {
+
+    init(configuration: Configuration, title: String) {
         super.init(frame: .zero)
-        self.placeholder = placeholder
-        self.borderStyle = .roundedRect
-        self.clearButtonMode = .whileEditing
-        self.autocorrectionType = .no
-        self.keyboardType = .emailAddress
-        self.enablesReturnKeyAutomatically = true
+        self.configuration = configuration
+        self.setTitle(title, for: .normal)
         self.translatesAutoresizingMaskIntoConstraints = false
     }
     

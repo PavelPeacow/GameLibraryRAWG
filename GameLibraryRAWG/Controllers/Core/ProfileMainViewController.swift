@@ -10,7 +10,7 @@ import UIKit
 class ProfileMainViewController: UIViewController, ActivityIndicator {
     
     //MARK: PROPERTIES
-    private var favouritesGames = [Game]()
+    private var favouriteGames = [Game]()
     
     private lazy var userDisplayName = ""
     private lazy var userImageURL = ""
@@ -19,7 +19,7 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     private let dispatchGroup = DispatchGroup()
     
     //MARK: VIEWS
-    private let gamesFavouritesCollection: UICollectionView = {
+    private let favouriteGamesCollection: UICollectionView = {
         let layout = UICollectionViewCompositionalLayout(section: .profile())
         
         let gamesFavouritesCollection = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -41,7 +41,7 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
         
         view.backgroundColor = .systemBackground
         
-        view.addSubview(gamesFavouritesCollection)
+        view.addSubview(favouriteGamesCollection)
         
         setDelegates()
     }
@@ -64,12 +64,12 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        gamesFavouritesCollection.frame = view.bounds
+        favouriteGamesCollection.frame = view.bounds
     }
         
     private func setDelegates() {
-        gamesFavouritesCollection.delegate = self
-        gamesFavouritesCollection.dataSource = self
+        favouriteGamesCollection.delegate = self
+        favouriteGamesCollection.dataSource = self
     }
     
     private func configureNavBar() {
@@ -77,9 +77,9 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     }
     
     @objc func goToSettingsProfileView() {
-        guard let url = URL(string: userImageURL) else { return }
+//        guard let url = URL(string: userImageURL) else { return }
         let vc = ProfileSettingsViewController()
-        vc.profileImage.sd_setImage(with: url)
+//        vc.profileImage.sd_setImage(with: url)
         vc.displayName.text = userDisplayName
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -97,8 +97,8 @@ extension ProfileMainViewController {
             switch gameResult {
             case .success(let game):
                 DispatchQueue.main.async {
-                    self?.favouritesGames = game
-                    self?.gamesFavouritesCollection.reloadData()
+                    self?.favouriteGames = game
+                    self?.favouriteGamesCollection.reloadData()
                 }
             case .failure(let error):
                 print(error)
@@ -142,19 +142,19 @@ extension ProfileMainViewController {
 //MARK: CollcetionView settings
 extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if favouritesGames.isEmpty {
+        if favouriteGames.isEmpty {
             collectionView.setEmptyMessageInCollectionView("No favourite games added yet😉")
             collectionView.isScrollEnabled = false
         } else {
             collectionView.restoreCollectionViewBackground()
             collectionView.isScrollEnabled = true
         }
-        return favouritesGames.count
+        return favouriteGames.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCollectionViewCell.identifier, for: indexPath) as! GameCollectionViewCell
-        cell.configure(with: favouritesGames[indexPath.item])
+        cell.configure(with: favouriteGames[indexPath.item])
         return cell
         
     }
@@ -162,7 +162,7 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileCollectionReusableView.identifier, for: indexPath) as! ProfileCollectionReusableView
         
-        let model = GameFavouritesProfileViewModel(profileName: userDisplayName, gamesCount: favouritesGames.count, imageData: userImageURL)
+        let model = GameFavouritesProfileViewModel(profileName: userDisplayName, gamesCount: favouriteGames.count, imageData: userImageURL)
         header.configure(with: model)
         
         return header
@@ -173,12 +173,12 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
         
         loadingIndicator()
         
-        APICaller.shared.fetchMainGameDetails(with: favouritesGames[indexPath.item].slug) { [weak self] result in
+        APICaller.shared.fetchMainGameDetails(with: favouriteGames[indexPath.item].slug) { [weak self] result in
             self?.removeLoadingIndicator()
             switch result {
             case .success(let gameDetail):
                 DispatchQueue.main.async {
-                    vc.configure(with: gameDetail, game: self!.favouritesGames[indexPath.item])
+                    vc.configure(with: gameDetail, game: self!.favouriteGames[indexPath.item])
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
             case .failure(let error):

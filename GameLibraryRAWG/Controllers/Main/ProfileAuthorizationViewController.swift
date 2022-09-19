@@ -11,19 +11,19 @@ import FirebaseAuth
 class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, ProfileAlerts {
     
     //MARK: VIEWS
-    private let scrollVIew: UIScrollView = {
+    private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
     
-    private let emailTextField: EmailTextField = EmailTextField(placeholder: "Email")
+    private let emailTextField: ProfileInputTextField = ProfileInputTextField(placeholder: "Email", isSecureTextEntryEnabled: false)
     
-    private let passwordTextField: PasswordTextField = PasswordTextField(placeholder: "Password")
+    private let passwordTextField: ProfileInputTextField = ProfileInputTextField(placeholder: "Password", isSecureTextEntryEnabled: true)
     
-    private let signInButton: ProfileButton = ProfileButton(configuration: .filled(), title: "Sign in")
+    private let signInButton: ProfileActionButton = ProfileActionButton(configuration: .filled(), title: "Sign in")
     
-    private let dontHaveAccountButton: ProfileButton = ProfileButton(configuration: .bordered(), title: "Don't have an account?")
+    private let dontHaveAccountButton: ProfileActionButton = ProfileActionButton(configuration: .bordered(), title: "Don't have an account?")
     
     //MARK: LIFECYCLE
     override func viewDidLoad() {
@@ -31,28 +31,27 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
         
         view.backgroundColor = .systemBackground
         
-        view.addSubview(scrollVIew)
+        view.addSubview(scrollView)
         
-        scrollVIew.addSubview(emailTextField)
-        scrollVIew.addSubview(passwordTextField)
-        scrollVIew.addSubview(signInButton)
-        scrollVIew.addSubview(dontHaveAccountButton)
+        scrollView.addSubview(emailTextField)
+        scrollView.addSubview(passwordTextField)
+        scrollView.addSubview(signInButton)
+        scrollView.addSubview(dontHaveAccountButton)
         
         configureNavBar()
         
         createGestureRecognizer()
         
-        addActionToSignInButton()
-        addActionToDontHaveAccountButton()
+        dontHaveAccountButton.addTarget(self, action: #selector(showRegistrationSheet), for: .touchUpInside)
+        signInButton.addTarget(self, action: #selector(trySignInUser(_:)), for: .touchUpInside)
         
         setConstraints()
         setDelegates()
-        
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        scrollVIew.frame = view.bounds
+        scrollView.frame = view.bounds
     }
     
     private func setDelegates() {
@@ -74,49 +73,50 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    //MARK: SignIn auth
-    private func addActionToSignInButton() {
-        signInButton.addAction(UIAction(handler: { [weak self] _ in
-            
-            UIView.animate(withDuration: 0.2) {
-                self?.signInButton.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
-            } completion: { isEnd in
-                UIView.animate(withDuration: 0.35) {
-                    self?.signInButton.transform = .identity
-                }
+    @objc private func trySignInUser(_ sender: UIButton) {
+        
+        UIView.animate(withDuration: 0.2) {
+            sender.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+        } completion: { animationEnd in
+            UIView.animate(withDuration: 0.35) {
+                sender.transform = .identity
             }
-            
-            guard let email = self?.emailTextField.text, !email.isEmpty,
-                  let password = self?.passwordTextField.text, !password.isEmpty else {
-                self?.showEmptyFieldsAlert()
-                return }
-            
-            self?.loadingIndicator()
-            
-            FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { [weak self] result, error in
-                self?.removeLoadingIndicator()
-                guard error == nil else {
-                    print(FirebaseErrors.UserNotFound)
-                    self?.showInvalidUserAlert()
-                    return
-                }
-                
-                print("signed!!!")
-                self?.showSignInAlert()
-            }
-            
-        }), for: .touchUpInside)
+        }
+        
+        guard let email = emailTextField.text, !email.isEmpty,
+              let password = passwordTextField.text, !password.isEmpty else {
+            showEmptyFieldsAlert()
+            return }
+        
+        authUser(email: email, password: password)
     }
     
-    //MARK: show registration sheet
-    private func addActionToDontHaveAccountButton() {
-        dontHaveAccountButton.addAction(UIAction(handler: { [weak self] _ in
+    @objc private func showRegistrationSheet() {
+        let vc = ProfileRegisterNewUserViewController()
+        present(vc, animated: true)
+    }
+    
+}
+
+//MARK: Firebase authentification
+extension ProfileAuthorizationViewController {
+    
+    private func authUser(email: String, password: String) {
+        loadingIndicator()
+        
+        FirebaseManager.shared.authUser(email: email, password: password) { [weak self] response in
             
-            let vc = ProfileRegisterNewUserViewController()
+            self?.removeLoadingIndicator()
             
-            self?.present(vc, animated: true)
-            
-        }), for: .touchUpInside)
+            switch response {
+            case .success(let result):
+                print(result)
+                self?.showSignInAlert()
+            case .failure(let error):
+                print(error)
+                self?.showInvalidUserAlert()
+            }
+        }
     }
     
 }
@@ -127,26 +127,26 @@ extension ProfileAuthorizationViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             
-            emailTextField.topAnchor.constraint(equalTo: scrollVIew.contentLayoutGuide.topAnchor, constant: 70),
-            emailTextField.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            emailTextField.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 70),
+            emailTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             emailTextField.heightAnchor.constraint(equalToConstant: 40),
-            emailTextField.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
+            emailTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
             
             passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 30),
-            passwordTextField.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            passwordTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             passwordTextField.heightAnchor.constraint(equalToConstant: 40),
-            passwordTextField.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
+            passwordTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
             
             signInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 30),
-            signInButton.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            signInButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             signInButton.heightAnchor.constraint(equalToConstant: 50),
-            signInButton.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
+            signInButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
             
             dontHaveAccountButton.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 15),
-            dontHaveAccountButton.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            dontHaveAccountButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             dontHaveAccountButton.heightAnchor.constraint(equalToConstant: 50),
-            dontHaveAccountButton.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
-            dontHaveAccountButton.bottomAnchor.constraint(equalTo: scrollVIew.contentLayoutGuide.bottomAnchor, constant: -150),
+            dontHaveAccountButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
+            dontHaveAccountButton.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -150),
         ])
     }
 }

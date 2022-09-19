@@ -21,9 +21,9 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         return profileImage
     }()
     
-    private let changeImageIcon = ProfileGearSettingIconBtn()
+    private let changeImageIcon = ProfileSettingIconButton()
     
-    private let changeDisplayNameIcon = ProfileGearSettingIconBtn()
+    private let changeDisplayNameIcon = ProfileSettingIconButton()
 
     public let displayName: UILabel = {
         let displayName = UILabel()
@@ -34,7 +34,7 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         return displayName
     }()
     
-    private let signOutButton = ProfileButton(configuration: .gray(), title: "Sign Out")
+    private let signOutButton = ProfileActionButton(configuration: .gray(), title: "Sign Out")
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -118,19 +118,17 @@ extension NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets.bottom = 10
         
-        
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(500))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        group.interItemSpacing = NSCollectionLayoutSpacing.fixed(5)
+        group.interItemSpacing = NSCollectionLayoutSpacing.flexible(5)
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets.leading = 20
-        section.contentInsets.trailing = -5
+        section.contentInsets.leading = 15
+        section.contentInsets.trailing = 15
         
         let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(150))
         let sectionHeaderItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
-        
         
         section.boundarySupplementaryItems = [sectionHeaderItem]
         

@@ -9,22 +9,24 @@ import Foundation
 
 enum APIError: Error {
     case failedToGetData
+    case failedToDecodeData
 }
 
 final class APICaller {
     static let shared = APICaller()
     
-    func fetchGames<T: Codable>(url: String, expecting: T.Type, onCompletion: @escaping (Result<T, Error>) -> Void) {
+    func fetchGames<T: Codable>(url: String, expecting: T.Type, onCompletion: @escaping (Result<T, APIError>) -> Void) {
         guard let url = URL(string: url) else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             
             guard let data = data, error == nil else {
+                onCompletion(.failure(.failedToGetData))
                 return
             }
             
             guard let results = try? JSONDecoder().decode(expecting.self, from: data) else {
-                onCompletion(.failure(APIError.failedToGetData))
+                onCompletion(.failure(.failedToGetData))
                 return
             }
             
@@ -33,17 +35,18 @@ final class APICaller {
         task.resume()
     }
     
-    func fetchGamesWithPage<T: Codable>(url: String, expecting: T.Type, pageNumber: Int, onCompletion: @escaping (Result<T, Error>) -> Void) {
+    func fetchGamesWithPage<T: Codable>(url: String, expecting: T.Type, pageNumber: Int, onCompletion: @escaping (Result<T, APIError>) -> Void) {
         guard let url = URL(string: "\(APIConstants.BASE_URL)/games?key=\(APIConstants.API_KEY)&ordering=-added&page_size=20&page=\(pageNumber)") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             
             guard let data = data, error == nil else {
+                onCompletion(.failure(.failedToGetData))
                 return
             }
             
             guard let results = try? JSONDecoder().decode(expecting.self, from: data) else {
-                onCompletion(.failure(APIError.failedToGetData))
+                onCompletion(.failure(.failedToGetData))
                 return
             }
             
@@ -53,7 +56,7 @@ final class APICaller {
     }
     
     
-    func searchGames(with query: String, onCompletion: @escaping (Result<[Game], Error>) -> Void) {
+    func searchGames(with query: String, onCompletion: @escaping (Result<[Game], APIError>) -> Void) {
         
         guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else { return }
         
@@ -61,11 +64,12 @@ final class APICaller {
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else {
+                onCompletion(.failure(.failedToGetData))
                 return
             }
 
             guard let results = try? JSONDecoder().decode(GamesResponse.self, from: data) else {
-                onCompletion(.failure(APIError.failedToGetData))
+                onCompletion(.failure(.failedToGetData))
                 return
             }
             
@@ -75,17 +79,18 @@ final class APICaller {
     }
     
     
-    func fetchMainGameDetails(with gameId: String, onCompletion: @escaping (Result<GameDetail, Error>) -> Void) {
+    func fetchMainGameDetails(with gameId: String, onCompletion: @escaping (Result<GameDetail, APIError>) -> Void) {
         
         guard let url = URL(string: "\(APIConstants.BASE_URL)/games/\(gameId)?key=\(APIConstants.API_KEY)") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else {
+                onCompletion(.failure(.failedToGetData))
                 return
             }
 
             guard let results = try? JSONDecoder().decode(GameDetail.self, from: data) else {
-                onCompletion(.failure(APIError.failedToGetData))
+                onCompletion(.failure(.failedToGetData))
                 return
             }
             
@@ -95,17 +100,18 @@ final class APICaller {
     }
     
     
-    func fetchSpecificGameDetails<T: Codable>(with gameId: String, endpoint: APIEndpoints, expecting: T.Type, onCompletion: @escaping (Result<T, Error>) -> Void) {
+    func fetchSpecificGameDetails<T: Codable>(with gameId: String, endpoint: APIEndpoints, expecting: T.Type, onCompletion: @escaping (Result<T, APIError>) -> Void) {
         
         guard let url = URL(string: "\(APIConstants.BASE_URL)/games/\(gameId)/\(endpoint)?key=\(APIConstants.API_KEY)") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else {
+                onCompletion(.failure(.failedToGetData))
                 return
             }
 
             guard let results = try? JSONDecoder().decode(T.self, from: data) else {
-                onCompletion(.failure(APIError.failedToGetData))
+                onCompletion(.failure(.failedToGetData))
                 return
             }
             

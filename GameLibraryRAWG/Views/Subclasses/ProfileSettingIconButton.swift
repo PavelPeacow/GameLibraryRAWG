@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ProfileGearSettingIconBtn: UIButton {
+class ProfileSettingIconButton: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)

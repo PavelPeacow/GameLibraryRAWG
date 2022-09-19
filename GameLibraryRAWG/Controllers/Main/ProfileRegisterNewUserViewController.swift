@@ -16,9 +16,10 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     
     //dispatch
     private let dispatchGroup = DispatchGroup()
+    private let dispatchqQueue = DispatchQueue(label: "registration")
     
     //MARK: VIEWS
-    private let scrollVIew: UIScrollView = {
+    private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
@@ -35,17 +36,17 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         return profileImage
     }()
     
-    private let setProfileImageIcon = ProfileGearSettingIconBtn()
+    private let setProfileImageIcon = ProfileSettingIconButton()
     
-    private let userDisplayName: EmailTextField = EmailTextField(placeholder: "Nickname")
+    private let userDisplayName: ProfileInputTextField = ProfileInputTextField(placeholder: "Nickname", isSecureTextEntryEnabled: false)
     
-    private let emailTextField: EmailTextField = EmailTextField(placeholder: "Email")
+    private let emailTextField: ProfileInputTextField = ProfileInputTextField(placeholder: "Email", isSecureTextEntryEnabled: false)
     
-    private let passwordTextField: PasswordTextField = PasswordTextField(placeholder: "Password")
+    private let passwordTextField: ProfileInputTextField = ProfileInputTextField(placeholder: "Password", isSecureTextEntryEnabled: true)
     
-    private let repeatPasswordTextField: PasswordTextField = PasswordTextField(placeholder: "Repeat password")
+    private let repeatPasswordTextField: ProfileInputTextField = ProfileInputTextField(placeholder: "Repeat password", isSecureTextEntryEnabled: true)
     
-    private let registerButton: ProfileButton = ProfileButton(configuration: .filled(), title: "Registration")
+    private let registerButton: ProfileActionButton = ProfileActionButton(configuration: .filled(), title: "Registration")
     
     //MARK: LIFECYCLE
     override func viewDidLoad() {
@@ -53,18 +54,20 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         
         view.backgroundColor = .systemBackground
         
-        view.addSubview(scrollVIew)
+        view.addSubview(scrollView)
         
-        scrollVIew.addSubview(profileImage)
+        scrollView.addSubview(profileImage)
         profileImage.addSubview(setProfileImageIcon)
         
-        scrollVIew.addSubview(userDisplayName)
-        scrollVIew.addSubview(emailTextField)
-        scrollVIew.addSubview(passwordTextField)
-        scrollVIew.addSubview(repeatPasswordTextField)
-        scrollVIew.addSubview(registerButton)
+        scrollView.addSubview(userDisplayName)
+        scrollView.addSubview(emailTextField)
+        scrollView.addSubview(passwordTextField)
+        scrollView.addSubview(repeatPasswordTextField)
+        scrollView.addSubview(registerButton)
         
         createGestureRecognizer()
+        
+        setDefaultProfileImage()
         
         setProfileImageIcon.addTarget(self, action: #selector(changeProfileImageAction), for: .touchUpInside)
         registerButton.addTarget(self, action: #selector(addActiontoRegisterButton(_:)), for: .touchUpInside)
@@ -76,7 +79,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        scrollVIew.frame = view.bounds
+        scrollView.frame = view.bounds
     }
     
     private func setDelegates() {
@@ -84,6 +87,11 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         emailTextField.delegate = self
         passwordTextField.delegate = self
         repeatPasswordTextField.delegate = self
+    }
+    
+    private func setDefaultProfileImage() {
+        let data = profileImage.image?.jpegData(compressionQuality: 0.3)
+        imageData = data
     }
     
     private func createGestureRecognizer() {
@@ -125,72 +133,104 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         
         loadingIndicator()
         
-        createNewUser(email: email, password: password)
-        uploadUserImage(imageData: imageData ?? Data())
-        uploadUserName(userName: displayName)
-
-        dispatchGroup.notify(queue: .main) { [weak self] in
+        createNewUser(email: email, password: password, displayName: displayName)
+                
+        dispatchGroup.notify(queue: .main, execute: { [weak self] in
             self?.removeLoadingIndicator()
             self?.showCreateAccountAlert(email: email, password: password)
-        }
+        })
         
     }
-    
+        
 }
 
 //MARK: Firebase user registration
 extension ProfileRegisterNewUserViewController {
     
-    func createNewUser(email: String, password: String) {
+    private func createNewUser(email: String, password: String, displayName: String) {
         
         dispatchGroup.enter()
         
         FirebaseManager.shared.createUser(email: email, password: password) { [weak self] response in
             switch response {
-            case .success(let result):
-                print(result)
-            case .failure(let error):
-                print(error)
                 
+            case .success(let result):
+                print(result)
+                
+                FirebaseManager.shared.authUser(email: email, password: password) { response in
+                    switch response {
+                        
+                    case .success(let result):
+                        print(result)
+                        
+                        FirebaseManager.shared.createUserName(displayName: displayName) { response in
+                            switch response {
+                                
+                            case .success(let result):
+                                print(result)
+                                
+                                
+                                FirebaseManager.shared.addImageToStorage(imageData: self?.imageData ?? Data()) { response in
+                                    switch response {
+                                    case .success(let result):
+                                        print(result)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
+                                    self?.dispatchGroup.leave()
+                                }
+                                
+                                
+                            case .failure(let error):
+                                print(error)
+                            }
+                        }
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+                
+            case .failure(let error):
+                print(error)
             }
             
-            self?.dispatchGroup.leave()
         }
         
     }
     
-    func uploadUserName(userName: String) {
-        
-        dispatchGroup.enter()
-        
-        FirebaseManager.shared.createUserName(displayName: userName) { [weak self] response in
+    private func signInUser(email: String, password: String) {
+        FirebaseManager.shared.authUser(email: email, password: password) { response in
             switch response {
             case .success(let result):
                 print(result)
             case .failure(let error):
                 print(error)
             }
-            
-            self?.dispatchGroup.leave()
         }
     }
     
-    func uploadUserImage(imageData: Data) {
-        
-        dispatchGroup.enter()
-        
-        FirebaseManager.shared.addImageToStorage(imageData: imageData) { [weak self] response in
+    private func uploadUserName(userName: String) {
+        FirebaseManager.shared.createUserName(displayName: userName) { response in
             switch response {
             case .success(let result):
                 print(result)
             case .failure(let error):
                 print(error)
             }
-            
-            self?.dispatchGroup.leave()
         }
     }
-        
+    
+    private func uploadUserImage(imageData: Data) {
+        FirebaseManager.shared.addImageToStorage(imageData: imageData) { response in
+            switch response {
+            case .success(let result):
+                print(result)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
 }
 
 //MARK: CONSTRAINTS
@@ -204,36 +244,36 @@ extension ProfileRegisterNewUserViewController {
             setProfileImageIcon.heightAnchor.constraint(equalToConstant: 30),
             setProfileImageIcon.widthAnchor.constraint(equalToConstant: 30),
             
-            profileImage.topAnchor.constraint(equalTo: scrollVIew.contentLayoutGuide.topAnchor, constant: 70),
-            profileImage.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            profileImage.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 70),
+            profileImage.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             profileImage.widthAnchor.constraint(equalToConstant: 250),
             profileImage.heightAnchor.constraint(equalToConstant: 200),
             
             userDisplayName.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 30),
-            userDisplayName.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            userDisplayName.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             userDisplayName.heightAnchor.constraint(equalToConstant: 40),
-            userDisplayName.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
+            userDisplayName.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
             
             emailTextField.topAnchor.constraint(equalTo: userDisplayName.bottomAnchor, constant: 30),
-            emailTextField.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            emailTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             emailTextField.heightAnchor.constraint(equalToConstant: 40),
-            emailTextField.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
+            emailTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
             
             passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 30),
-            passwordTextField.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            passwordTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             passwordTextField.heightAnchor.constraint(equalToConstant: 40),
-            passwordTextField.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
+            passwordTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
             
             repeatPasswordTextField.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 30),
-            repeatPasswordTextField.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            repeatPasswordTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             repeatPasswordTextField.heightAnchor.constraint(equalToConstant: 40),
-            repeatPasswordTextField.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
+            repeatPasswordTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
             
             registerButton.topAnchor.constraint(equalTo: repeatPasswordTextField.bottomAnchor, constant: 30),
-            registerButton.centerXAnchor.constraint(equalTo: scrollVIew.centerXAnchor),
+            registerButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             registerButton.heightAnchor.constraint(equalToConstant: 50),
-            registerButton.widthAnchor.constraint(equalTo: scrollVIew.widthAnchor, multiplier: 0.7),
-            registerButton.bottomAnchor.constraint(equalTo: scrollVIew.bottomAnchor, constant: -200),
+            registerButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
+            registerButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -200),
             
         ])
     }
@@ -248,6 +288,8 @@ extension ProfileRegisterNewUserViewController: UIImagePickerControllerDelegate 
             
             let data = image.jpegData(compressionQuality: 0.3)
             imageData = data
+        } else {
+            setDefaultProfileImage()
         }
         
         dismiss(animated: true)

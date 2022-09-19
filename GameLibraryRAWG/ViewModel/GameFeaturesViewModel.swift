@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GameFutureViewModel {
-    let gameFutureTitle: String
-    let gameFutureDescr: String
+struct GameFeaturesViewModel {
+    let gameFeatureTitle: String
+    let gameFeatureDescr: String
 }
