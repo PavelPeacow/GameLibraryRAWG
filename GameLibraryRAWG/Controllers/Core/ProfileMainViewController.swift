@@ -172,9 +172,11 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
         let vc = GameDetailViewController()
         
         loadingIndicator()
+        settingsNavBarItem.isEnabled = false
         
         APICaller.shared.fetchMainGameDetails(with: favouriteGames[indexPath.item].slug) { [weak self] result in
             self?.removeLoadingIndicator()
+            self?.settingsNavBarItem.isEnabled = true
             switch result {
             case .success(let gameDetail):
                 DispatchQueue.main.async {

@@ -35,6 +35,14 @@ extension ProfileAlerts where Self: UIViewController {
         present(ac, animated: true)
     }
     
+    func showInvalidCreateAccountAlert() {
+        let ac = UIAlertController(title: "Error when creating an account",
+                                   message: "Try again later", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .cancel))
+        
+        present(ac, animated: true)
+    }
+    
     func showChangeUserDisplayNameAlert(onCompletion: @escaping (String) -> Void) {
         let ac = UIAlertController(title: "Change nickname",
                                    message: nil, preferredStyle: .alert)

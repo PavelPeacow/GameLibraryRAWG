@@ -23,7 +23,7 @@ class FirebaseManager {
     func createUser(email: String, password: String) async throws -> FirebaseResults {
         
         return try await withCheckedThrowingContinuation { continuation in
-            FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, error in
+            auth.createUser(withEmail: email, password: password) { result, error in
                 guard error == nil else {
                     continuation.resume(with: .failure(FirebaseErrors.ErrorCreateUser))
                     return
@@ -37,7 +37,7 @@ class FirebaseManager {
     func authUser(email: String, password: String) async throws -> FirebaseResults {
         
         return try await withCheckedThrowingContinuation { continuation in
-            FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, error in
+            auth.signIn(withEmail: email, password: password) { result, error in
                 
                 guard error == nil else {
                     continuation.resume(with: .failure(FirebaseErrors.UserNotFound))
@@ -50,7 +50,7 @@ class FirebaseManager {
     }
     
     func addImageToStorage(imageData: Data) async throws -> FirebaseResults {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+        guard let uid = auth.currentUser?.uid else {
             throw FirebaseErrors.UserNotFound
         }
         
@@ -58,7 +58,7 @@ class FirebaseManager {
         metadata.contentType = "image/jpg"
         
         return try await withCheckedThrowingContinuation { continuation in
-            FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(imageData, metadata: metadata) { metadata1, error in
+            storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(imageData, metadata: metadata) { metadata1, error in
                 guard error == nil else {
                     continuation.resume(with: .failure(FirebaseErrors.ErrorUploadImageToStorage))
                     return
@@ -70,12 +70,12 @@ class FirebaseManager {
     }
     
     func createUserName(displayName: String) async throws -> FirebaseResults {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+        guard let uid = auth.currentUser?.uid else {
             throw FirebaseErrors.UserNotFound
         }
         
         return try await withCheckedThrowingContinuation { continuation in
-            FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": displayName]) { error in
+            firestore.collection("Users").document(uid).setData(["user_name": displayName]) { error in
                 guard error == nil else {
                     continuation.resume(with: .failure(FirebaseErrors.ErrorUploadDisplayName))
                     return
@@ -88,12 +88,12 @@ class FirebaseManager {
     
     //MARK: User add and delete game
     func addGameToFavourite(add game: Game) async throws -> FirebaseResults {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+        guard let uid = auth.currentUser?.uid else {
             throw FirebaseErrors.UserNotFound
         }
         
         return try await withCheckedThrowingContinuation { continuation in
-            try? FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).setData(from: game) { error in
+            try? firestore.collection("Users").document(uid).collection("Games").document(game.name).setData(from: game) { error in
                 guard error == nil else {
                     continuation.resume(with: .failure(FirebaseErrors.ErrorAddGame))
                     return
@@ -105,12 +105,12 @@ class FirebaseManager {
     }
     
     func deleteGameFromFavourite(delete game: Game) async throws -> FirebaseResults {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+        guard let uid = auth.currentUser?.uid else {
             throw FirebaseErrors.UserNotFound
         }
         
         return try await withCheckedThrowingContinuation { continuation in
-            FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).delete() { error in
+            firestore.collection("Users").document(uid).collection("Games").document(game.name).delete() { error in
                 guard error == nil else {
                     continuation.resume(with: .failure(FirebaseErrors.ErrorDeleteGame))
                     return
@@ -121,14 +121,38 @@ class FirebaseManager {
         }
     }
     
+    //MARK: check game existing in firestore
+    func fetchGameFromFirestore(game: Game) async throws -> Bool {
+        guard let uid = auth.currentUser?.uid else {
+            throw FirebaseErrors.UserNotFound
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            firestore.collection("Users").document(uid).collection("Games").document(game.name).getDocument { snapshot, error in
+                guard error == nil else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorWhenFindindGame))
+                    return
+                }
+                
+                if let snapshot = snapshot {
+                    if snapshot.exists {
+                        continuation.resume(with: .success(true))
+                    } else {
+                        continuation.resume(with: .success(false))
+                    }
+                }
+            }
+        }
+    }
+    
     //MARK: Fetch firestore data
     func fetchFirestoreData(onCompletion: @escaping (Result<[Game], FirebaseErrors>) -> Void) {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+        guard let uid = auth.currentUser?.uid else {
             onCompletion(.failure(.UserNotFound))
             return
         }
         
-        FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").getDocuments { snapshot, error in
+        firestore.collection("Users").document(uid).collection("Games").getDocuments { snapshot, error in
             guard error == nil, snapshot == snapshot else {
                 onCompletion(.failure(.ErrorGetGames))
                 return
@@ -148,13 +172,12 @@ class FirebaseManager {
     }
     
     func fetchUserImage(onCompletion: @escaping (Result<URL, FirebaseErrors>) -> Void) {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+        guard let uid = auth.currentUser?.uid else {
             onCompletion(.failure(.UserNotFound))
             return
         }
         
-        FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { url, error in
-            
+        storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { url, error in
             guard error == nil, url == url else {
                 onCompletion(.failure(.ErrorGetUserImage))
                 return
@@ -165,12 +188,12 @@ class FirebaseManager {
     }
     
     func fetchUserNameDisplay(onCompletion: @escaping (Result<String, FirebaseErrors>) -> Void) {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+        guard let uid = auth.currentUser?.uid else {
             onCompletion(.failure(.UserNotFound))
             return
         }
         
-        FirebaseManager.shared.firestore.collection("Users").document(uid).getDocument { snapshot, error in
+        firestore.collection("Users").document(uid).getDocument { snapshot, error in
             guard error == nil, snapshot == snapshot else {
                 onCompletion(.failure(.ErrorGetUserName))
                 return

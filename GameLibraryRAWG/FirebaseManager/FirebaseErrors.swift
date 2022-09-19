@@ -18,6 +18,7 @@ enum FirebaseErrors: Error {
     case ErrorUploadDisplayName
     case ErrorUploadImageToStorage
     
+    case ErrorWhenFindindGame
     case ErrorAddGame
     case ErrorDeleteGame
 }

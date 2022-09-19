@@ -78,7 +78,7 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
     private let gameDeveloper: GameFutureView = GameFutureView()
     
     private let gamePublisher: GameFutureView = GameFutureView()
-        
+    
     private let imageCollectionSlider: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -123,6 +123,13 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         return whereToBuyLabel
     }()
     
+    //NavBar items
+    
+    private lazy var deleteGameNavBarItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(deleteGame))
+    
+    private lazy var addGameNavBarItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(addGame))
+    
+    
     //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -156,7 +163,7 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         fetchGameTrailers()
         fetchGameScreenshots()
         fetchGameStores()
-
+        
         setDelegates()
         setConstraints()
     }
@@ -180,70 +187,46 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         gameTrailersCollection.delegate = self
         gameTrailersCollection.dataSource = self
     }
-            
+    
     //MARK: Checking document existing in firestore
     private func configureNavBar() {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            print(FirebaseErrors.UserNotFound)
-            navigationItem.rightBarButtonItem = nil
-            return
-        }
-        
-        loadingIndicator()
-        
-        FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).getDocument { [weak self] snapshot, error in
+        Task { [weak self] in
+            self?.loadingIndicator()
+            await isGameAddedToFavourite(game: game)
             self?.removeLoadingIndicator()
-            
-            if let snapshot = snapshot {
-                if snapshot.exists {
-                    let item = UIBarButtonItem(image: UIImage(systemName: "heart.fill")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.deleteGameFromFavourite))
-                    
-                    self?.navigationItem.rightBarButtonItem = item
-                } else {
-                    let item = UIBarButtonItem(image: UIImage(systemName: "heart")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.saveGameToFavourite))
-                    
-                    self?.navigationItem.rightBarButtonItem = item
-                }
-            }
         }
     }
     
     //MARK: Saving game to firestore
-    @objc func saveGameToFavourite() {
+    @objc func addGame() {
         //preventing tap multiple time
         navigationItem.rightBarButtonItem?.isEnabled = false
-
+        
         Task { [weak self] in
             self?.loadingIndicator()
             await addGameToFavourite(add: game)
             self?.removeLoadingIndicator()
+            navigationItem.rightBarButtonItem?.isEnabled = true
             
-            DispatchQueue.main.async { [weak self] in
-                let item = UIBarButtonItem(image: UIImage(systemName: "heart.fill")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.deleteGameFromFavourite))
-                
-                self?.navigationItem.rightBarButtonItem = item
-            }
+            self?.navigationItem.rightBarButtonItem = deleteGameNavBarItem
         }
     }
     
     //MARK: Deleting game from firestore
-    @objc func deleteGameFromFavourite() {
+    @objc func deleteGame() {
         //preventing tap multiple time
         navigationItem.rightBarButtonItem?.isEnabled = false
-       
+        
         Task { [weak self] in
             self?.loadingIndicator()
             await deleteGameFromFavourite(delete: game)
             self?.removeLoadingIndicator()
+            navigationItem.rightBarButtonItem?.isEnabled = true
             
-            DispatchQueue.main.async { [weak self] in
-                let item = UIBarButtonItem(image: UIImage(systemName: "heart")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.saveGameToFavourite))
-                
-                self?.navigationItem.rightBarButtonItem = item
-            }
+            self?.navigationItem.rightBarButtonItem = addGameNavBarItem
         }
     }
-        
+    
     //MARK: CONFIGURE
     public func configure(with model: GameDetail, game: Game) {
         guard let url = URL(string: model.background_image ?? "") else { return }
@@ -254,7 +237,7 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         gameDetail = model
         
         self.game = game
-                
+        
         gameName.text = model.name
         
         if let metacritic = model.metacritic {
@@ -282,7 +265,7 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         let gamePublisherModel = GameFeaturesViewModel(gameFeatureTitle: "Publisher", gameFeatureDescr: model.publishers.map({ $0.name}).joined(separator: ", "))
         gamePublisher.configure(with: gamePublisherModel)
     }
-        
+    
 }
 
 //MARK: Firebase async calls
@@ -301,6 +284,25 @@ extension GameDetailViewController {
         do {
             let result = try await FirebaseManager.shared.deleteGameFromFavourite(delete: game)
             print(result)
+        } catch let error {
+            print(error)
+        }
+    }
+    
+    private func isGameAddedToFavourite(game: Game) async {
+        do {
+            let isAdded = try await FirebaseManager.shared.fetchGameFromFirestore(game: game)
+            
+            if isAdded {
+                DispatchQueue.main.async { [weak self] in
+                    self?.navigationItem.rightBarButtonItem = self?.deleteGameNavBarItem
+                }
+            } else {
+                DispatchQueue.main.async { [weak self] in
+                    self?.navigationItem.rightBarButtonItem = self?.addGameNavBarItem
+                }
+            }
+            
         } catch let error {
             print(error)
         }
@@ -359,14 +361,14 @@ extension GameDetailViewController {
                     } else {
                         self?.gameTrailersCollection.removeFromSuperview()
                     }
-                   
+                    
                 }
             case .failure(let error):
                 print(error)
             }
         }
     }
-
+    
 }
 
 //MARK: Constraints
@@ -417,12 +419,12 @@ extension GameDetailViewController {
             whereToBuyLabel.topAnchor.constraint(equalTo: imageCollectionSlider.bottomAnchor, constant: 15),
             whereToBuyLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             whereToBuyLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-
+            
             storeCollection.topAnchor.constraint(equalTo: whereToBuyLabel.bottomAnchor, constant: 30),
             storeCollection.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             storeCollection.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             
-        
+            
             //container with game futures inside
             gameAboutContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             gameAboutContainer.topAnchor.constraint(equalTo: storeCollection.bottomAnchor, constant: 10),
@@ -475,7 +477,7 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
             
         default: fatalError("GameDetailView count")
         }
-
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -498,7 +500,7 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameStoreCollectionViewCell.identifier, for: indexPath) as! GameStoreCollectionViewCell
             
             let verifiedStore = checkStores(with: gamesStoresLinks[indexPath.item])
-
+            
             cell.configure(store: verifiedStore)
             return cell
             

@@ -136,7 +136,13 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
             await self?.uploadUserImage(imageData: imageData ?? Data())
             
             self?.removeLoadingIndicator()
-            self?.showCreateAccountAlert(email: email, password: password)
+            
+            //if there are no error when create account, show profileView, if error - show alert
+            if let _ = FirebaseManager.shared.auth.currentUser {
+                self?.showCreateAccountAlert(email: email, password: password)
+            } else {
+                self?.showInvalidCreateAccountAlert()
+            }
         }
         
     }
