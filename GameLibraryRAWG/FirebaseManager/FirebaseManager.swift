@@ -19,6 +19,7 @@ class FirebaseManager {
     let firestore = Firestore.firestore()
     let storage = FirebaseStorage.Storage.storage()
     
+    //MARK: User registration and changing
     func createUser(email: String, password: String) async throws -> FirebaseResults {
         
         return try await withCheckedThrowingContinuation { continuation in
@@ -59,7 +60,7 @@ class FirebaseManager {
         return try await withCheckedThrowingContinuation { continuation in
             FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(imageData, metadata: metadata) { metadata1, error in
                 guard error == nil else {
-                    continuation.resume(with: .failure(FirebaseErrors.ErrorPutImageToStorage))
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorUploadImageToStorage))
                     return
                 }
                 
@@ -76,7 +77,7 @@ class FirebaseManager {
         return try await withCheckedThrowingContinuation { continuation in
             FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": displayName]) { error in
                 guard error == nil else {
-                    continuation.resume(with: .failure(FirebaseErrors.ErrorCreateDocument))
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorUploadDisplayName))
                     return
                 }
                 
@@ -84,7 +85,43 @@ class FirebaseManager {
             }
         }
     }
+    
+    //MARK: User add and delete game
+    func addGameToFavourite(add game: Game) async throws -> FirebaseResults {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+            throw FirebaseErrors.UserNotFound
+        }
         
+        return try await withCheckedThrowingContinuation { continuation in
+            try? FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).setData(from: game) { error in
+                guard error == nil else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorAddGame))
+                    return
+                }
+                
+                continuation.resume(with: .success(FirebaseResults.GameAdded))
+            }
+        }
+    }
+    
+    func deleteGameFromFavourite(delete game: Game) async throws -> FirebaseResults {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+            throw FirebaseErrors.UserNotFound
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).delete() { error in
+                guard error == nil else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorDeleteGame))
+                    return
+                }
+                
+                continuation.resume(with: .success(FirebaseResults.GameDeleted))
+            }
+        }
+    }
+    
+    //MARK: Fetch firestore data
     func fetchFirestoreData(onCompletion: @escaping (Result<[Game], FirebaseErrors>) -> Void) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
             onCompletion(.failure(.UserNotFound))
@@ -93,7 +130,7 @@ class FirebaseManager {
         
         FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").getDocuments { snapshot, error in
             guard error == nil, snapshot == snapshot else {
-                onCompletion(.failure(.ErrorGetUserDocuments))
+                onCompletion(.failure(.ErrorGetGames))
                 return
             }
             
@@ -119,7 +156,7 @@ class FirebaseManager {
         FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { url, error in
             
             guard error == nil, url == url else {
-                onCompletion(.failure(.ErrorGetUserDocuments))
+                onCompletion(.failure(.ErrorGetUserImage))
                 return
             }
             
@@ -135,7 +172,7 @@ class FirebaseManager {
         
         FirebaseManager.shared.firestore.collection("Users").document(uid).getDocument { snapshot, error in
             guard error == nil, snapshot == snapshot else {
-                onCompletion(.failure(.ErrorGetUserDocuments))
+                onCompletion(.failure(.ErrorGetUserName))
                 return
             }
             

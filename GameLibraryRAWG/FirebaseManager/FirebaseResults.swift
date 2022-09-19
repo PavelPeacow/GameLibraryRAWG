@@ -10,6 +10,9 @@ import Foundation
 enum FirebaseResults: String {
     case UserSigned
     
+    case GameAdded
+    case GameDeleted
+    
     case UserCreated
     case UserImageUploaded
     case UserNameUploaded

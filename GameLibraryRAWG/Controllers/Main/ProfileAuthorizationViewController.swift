@@ -89,23 +89,22 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
             return
         }
         
-        loadingIndicator()
-        
-        Task {
-            await authUser(email: email, password: password)
-            removeLoadingIndicator()
+        Task { [weak self] in
+            self?.loadingIndicator()
+            await self?.authUser(email: email, password: password)
+            self?.removeLoadingIndicator()
         }
         
     }
     
     @objc private func showRegistrationSheet() {
         let vc = ProfileRegisterNewUserViewController()
-        present(vc, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
 }
 
-//MARK: Firebase authentification
+//MARK: Firebase async authentification
 extension ProfileAuthorizationViewController {
     
     private func authUser(email: String, password: String) async {

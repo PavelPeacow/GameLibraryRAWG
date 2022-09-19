@@ -21,9 +21,15 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         return profileImage
     }()
     
-    private let changeImageIcon = ProfileSettingIconButton()
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = false
+        return scrollView
+    }()
     
-    private let changeDisplayNameIcon = ProfileSettingIconButton()
+    private let changeImageIconButton = ProfileSettingIconButton()
+    
+    private let changeDisplayNameIconButton = ProfileSettingIconButton()
 
     public let displayName: UILabel = {
         let displayName = UILabel()
@@ -41,21 +47,26 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
         
         view.backgroundColor = .systemBackground
         
-        view.addSubview(profileImage)
-        profileImage.addSubview(changeImageIcon)
+        view.addSubview(scrollView)
         
-        view.addSubview(changeDisplayNameIcon)
-        changeDisplayNameIcon.addSubview(displayName)
+        scrollView.addSubview(profileImage)
+        profileImage.addSubview(changeImageIconButton)
         
-        view.addSubview(signOutButton)
+        scrollView.addSubview(changeDisplayNameIconButton)
+        changeDisplayNameIconButton.addSubview(displayName)
         
+        scrollView.addSubview(signOutButton)
         
-        changeImageIcon.addTarget(self, action: #selector(changeProfileImageAction), for: .touchUpInside)
-        changeDisplayNameIcon.addTarget(self, action: #selector(changeUserDisplayNameAction), for: .touchUpInside)
-        signOutButton.addTarget(self, action: #selector(addActionToSignOutButton), for: .touchUpInside)
-        
+        changeImageIconButton.addTarget(self, action: #selector(changeProfileImageAction), for: .touchUpInside)
+        changeDisplayNameIconButton.addTarget(self, action: #selector(changeUserDisplayNameAction), for: .touchUpInside)
+        signOutButton.addTarget(self, action: #selector(signOutAction), for: .touchUpInside)
         
         setConstraints()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scrollView.frame = view.bounds
     }
         
     @objc private func changeProfileImageAction() {
@@ -67,39 +78,44 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
     }
     
     @objc private func changeUserDisplayNameAction() {
-        showChangeUserDisplayNameAlert()
+        showChangeUserDisplayNameAlert { displayName in
+            Task { [weak self] in
+                self?.loadingIndicator()
+                await self?.uploadChangedName(displayName: displayName)
+                self?.removeLoadingIndicator()
+            }
+        }
     }
     
-    @objc private func addActionToSignOutButton() {
+    @objc private func signOutAction() {
         try? FirebaseManager.shared.auth.signOut()
         navigationController?.setViewControllers([ProfileAuthorizationViewController()], animated: true)
     }
     
-    private func showChangeUserDisplayNameAlert() {
-        let ac = UIAlertController(title: "Change nickname",
-                                   message: nil, preferredStyle: .alert)
-        ac.addTextField()
-        
-        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        
-        ac.addAction(UIAlertAction(title: "Change", style: .default, handler: { [weak self] _ in
-            guard let nick = ac.textFields?.first?.text else { return }
-            
-            guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
-            
-            FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": nick]) { error in
-                guard error == nil else { print(FirebaseErrors.ErrorCreateDocument); return }
+}
+
+//MARK: Firebase async calls
+extension ProfileSettingsViewController {
+    
+    private func uploadChangedImage(imageData: Data) async {
+        do {
+            let result = try await FirebaseManager.shared.addImageToStorage(imageData: imageData)
+            print(result)
+        } catch let error {
+            print(error)
+        }
+    }
+    
+    private func uploadChangedName(displayName: String) async {
+        do {
+            let result = try await FirebaseManager.shared.createUserName(displayName: displayName)
+            DispatchQueue.main.async { [weak self] in
+                self?.displayName.text = displayName
             }
-            
-            print("DisplayName changed to \(nick)")
-            DispatchQueue.main.async {
-                self?.displayName.text = nick
-            }
-        }))
-        
-        
-        present(ac, animated: true)
-        
+            print(result)
+        } catch let error {
+            print(error)
+        }
     }
     
 }
@@ -109,20 +125,20 @@ extension ProfileSettingsViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             
-            changeImageIcon.topAnchor.constraint(equalTo: profileImage.topAnchor, constant: 5),
-            changeImageIcon.trailingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: -5),
-            changeImageIcon.heightAnchor.constraint(equalToConstant: 30),
-            changeImageIcon.widthAnchor.constraint(equalToConstant: 30),
+            changeImageIconButton.topAnchor.constraint(equalTo: profileImage.topAnchor, constant: 5),
+            changeImageIconButton.trailingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: -5),
+            changeImageIconButton.heightAnchor.constraint(equalToConstant: 30),
+            changeImageIconButton.widthAnchor.constraint(equalToConstant: 30),
             
-            profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            profileImage.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 15),
             profileImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             profileImage.widthAnchor.constraint(equalToConstant: 250),
             profileImage.heightAnchor.constraint(equalToConstant: 200),
             
-            changeDisplayNameIcon.topAnchor.constraint(equalTo: displayName.topAnchor),
-            changeDisplayNameIcon.trailingAnchor.constraint(equalTo: displayName.trailingAnchor, constant: 25),
-            changeDisplayNameIcon.heightAnchor.constraint(equalToConstant: 20),
-            changeDisplayNameIcon.widthAnchor.constraint(equalToConstant: 20),
+            changeDisplayNameIconButton.topAnchor.constraint(equalTo: displayName.topAnchor),
+            changeDisplayNameIconButton.trailingAnchor.constraint(equalTo: displayName.trailingAnchor, constant: 25),
+            changeDisplayNameIconButton.heightAnchor.constraint(equalToConstant: 20),
+            changeDisplayNameIconButton.widthAnchor.constraint(equalToConstant: 20),
             
             displayName.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 15),
             displayName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -132,36 +148,34 @@ extension ProfileSettingsViewController {
             signOutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             signOutButton.heightAnchor.constraint(equalToConstant: 50),
             signOutButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
+            signOutButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -25),
         ])
     }
 }
 
 extension ProfileSettingsViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
         
         if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
             profileImage.image = image
             
-            let data = image.jpegData(compressionQuality: 0.3)
+            let data = image.jpegData(compressionQuality: 0.8)
             
             let metadata = StorageMetadata()
             metadata.contentType = "image/jpg"
             
             if let data = data {
-                FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(data, metadata: metadata) { metadata, error in
-                    guard error == nil else { print(FirebaseErrors.ErrorPutImageToStorage); return }
-                    
-                    print("UserAvatar succesfully uploaded")
+                Task { [weak self] in
+                    self?.loadingIndicator()
+                    await self?.uploadChangedImage(imageData: data)
+                    self?.removeLoadingIndicator()
                 }
             }
-            
-            
+        
         }
         
         dismiss(animated: true)
     }
-    
     
 }

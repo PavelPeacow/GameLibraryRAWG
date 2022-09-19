@@ -10,6 +10,7 @@ import UIKit
 
 extension UIApplication {
     
+    //helper for dark/light mode
     func currentUIWindow() -> UIWindow? {
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         let window = windowScene?.windows.first

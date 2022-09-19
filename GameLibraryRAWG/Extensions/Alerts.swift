@@ -11,7 +11,7 @@ import UIKit
 extension ProfileAlerts where Self: UIViewController {
     
      func showSignInAlert() {
-        let ac = UIAlertController(title: "You are sign in", message: "You are sign in", preferredStyle: .alert)
+        let ac = UIAlertController(title: "You are sign in", message: nil, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "hooray!", style: .default, handler: { [weak self] _ in
             
             let vc = ProfileMainViewController()
@@ -26,8 +26,29 @@ extension ProfileAlerts where Self: UIViewController {
         let ac = UIAlertController(title: "Your account have been created",
                                    message: "Your email: \(email) \nYour password: \(password)", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { [weak self] _ in
-            self?.dismiss(animated: true)
+            
+            let vc = ProfileMainViewController()
+            self?.navigationController?.setViewControllers([vc], animated: true)
+            
         }))
+        
+        present(ac, animated: true)
+    }
+    
+    func showChangeUserDisplayNameAlert(onCompletion: @escaping (String) -> Void) {
+        let ac = UIAlertController(title: "Change nickname",
+                                   message: nil, preferredStyle: .alert)
+        ac.addTextField()
+        
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        ac.addAction(UIAlertAction(title: "Change", style: .default, handler: { _ in
+            guard let nick = ac.textFields?.first?.text else { return }
+            
+            onCompletion(nick)
+            
+        }))
+        
         present(ac, animated: true)
     }
     

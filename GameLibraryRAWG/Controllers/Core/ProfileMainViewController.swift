@@ -77,9 +77,9 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     }
     
     @objc func goToSettingsProfileView() {
-//        guard let url = URL(string: userImageURL) else { return }
+        guard let url = URL(string: userImageURL) else { return }
         let vc = ProfileSettingsViewController()
-//        vc.profileImage.sd_setImage(with: url)
+        vc.profileImage.sd_setImage(with: url)
         vc.displayName.text = userDisplayName
         navigationController?.pushViewController(vc, animated: true)
     }

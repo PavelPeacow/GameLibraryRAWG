@@ -9,10 +9,15 @@ import Foundation
 
 enum FirebaseErrors: Error {
     case UserNotFound
-    case ErrorCreateDocument
-    case ErrorDeleteDocument
     case ErrorCreateUser
-    case ErrorGetUserDocuments
-    case ErrorChangeDisplayName
-    case ErrorPutImageToStorage
+    
+    case ErrorGetUserName
+    case ErrorGetUserImage
+    case ErrorGetGames
+    
+    case ErrorUploadDisplayName
+    case ErrorUploadImageToStorage
+    
+    case ErrorAddGame
+    case ErrorDeleteGame
 }

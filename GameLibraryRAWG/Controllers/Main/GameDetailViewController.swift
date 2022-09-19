@@ -210,44 +210,38 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
     
     //MARK: Saving game to firestore
     @objc func saveGameToFavourite() {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
-        
         //preventing tap multiple time
         navigationItem.rightBarButtonItem?.isEnabled = false
-        loadingIndicator()
-        
-        try? FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).setData(from: game) { [weak self] error in
+
+        Task { [weak self] in
+            self?.loadingIndicator()
+            await addGameToFavourite(add: game)
             self?.removeLoadingIndicator()
             
-            guard error == nil else { print(FirebaseErrors.ErrorCreateDocument); return }
-            
-            let item = UIBarButtonItem(image: UIImage(systemName: "heart.fill")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.deleteGameFromFavourite))
-            
-            self?.navigationItem.rightBarButtonItem = item
-            print("Succes")
+            DispatchQueue.main.async { [weak self] in
+                let item = UIBarButtonItem(image: UIImage(systemName: "heart.fill")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.deleteGameFromFavourite))
+                
+                self?.navigationItem.rightBarButtonItem = item
+            }
         }
-       
     }
     
     //MARK: Deleting game from firestore
     @objc func deleteGameFromFavourite() {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { print(FirebaseErrors.UserNotFound); return }
-        
         //preventing tap multiple time
         navigationItem.rightBarButtonItem?.isEnabled = false
-        loadingIndicator()
-        
-        FirebaseManager.shared.firestore.collection("Users").document(uid).collection("Games").document(game.name).delete { [weak self] error in
+       
+        Task { [weak self] in
+            self?.loadingIndicator()
+            await deleteGameFromFavourite(delete: game)
             self?.removeLoadingIndicator()
             
-            guard error == nil else { print(FirebaseErrors.ErrorDeleteDocument); return }
-            
-            let item = UIBarButtonItem(image: UIImage(systemName: "heart")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.saveGameToFavourite))
-            
-            self?.navigationItem.rightBarButtonItem = item
-            print("Document successfully deleted")
+            DispatchQueue.main.async { [weak self] in
+                let item = UIBarButtonItem(image: UIImage(systemName: "heart")?.withTintColor(.red), style: .plain, target: self, action: #selector(self?.saveGameToFavourite))
+                
+                self?.navigationItem.rightBarButtonItem = item
+            }
         }
-       
     }
         
     //MARK: CONFIGURE
@@ -289,6 +283,29 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         gamePublisher.configure(with: gamePublisherModel)
     }
         
+}
+
+//MARK: Firebase async calls
+extension GameDetailViewController {
+    
+    private func addGameToFavourite(add game: Game) async {
+        do {
+            let result = try await FirebaseManager.shared.addGameToFavourite(add: game)
+            print(result)
+        } catch let error {
+            print(error)
+        }
+    }
+    
+    private func deleteGameFromFavourite(delete game: Game) async {
+        do {
+            let result = try await FirebaseManager.shared.deleteGameFromFavourite(delete: game)
+            print(result)
+        } catch let error {
+            print(error)
+        }
+    }
+    
 }
 
 //MARK: API Results

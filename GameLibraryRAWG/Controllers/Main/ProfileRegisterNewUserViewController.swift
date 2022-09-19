@@ -13,11 +13,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     
     //MARK: PROPERTIES
     private var imageData: Data?
-    
-    //dispatch
-    private let dispatchGroup = DispatchGroup()
-    private let dispatchqQueue = DispatchQueue(label: "registration")
-    
+        
     //MARK: VIEWS
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -27,9 +23,9 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     
     private let profileImage: UIImageView = {
         let profileImage = UIImageView()
-        profileImage.image = UIImage(systemName: "photo")
+        profileImage.image = UIImage(systemName: "photo")?.withTintColor(.blue, renderingMode: .alwaysOriginal)
         profileImage.isUserInteractionEnabled = true
-        profileImage.contentMode = .scaleToFill
+        profileImage.contentMode = .scaleAspectFill
         profileImage.clipsToBounds = true
         profileImage.layer.cornerRadius = 15
         profileImage.translatesAutoresizingMaskIntoConstraints = false
@@ -70,7 +66,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         setDefaultProfileImage()
         
         setProfileImageIcon.addTarget(self, action: #selector(changeProfileImageAction), for: .touchUpInside)
-        registerButton.addTarget(self, action: #selector(addActiontoRegisterButton(_:)), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(registerNewUserAction(_:)), for: .touchUpInside)
         
         setDelegates()
         setConstraints()
@@ -90,7 +86,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     }
     
     private func setDefaultProfileImage() {
-        let data = profileImage.image?.jpegData(compressionQuality: 0.3)
+        let data = profileImage.image?.jpegData(compressionQuality: 0.8)
         imageData = data
     }
     
@@ -111,7 +107,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         present(imagePicker, animated: true)
     }
     
-    @objc private func addActiontoRegisterButton(_ sender: UIButton) {
+    @objc private func registerNewUserAction(_ sender: UIButton) {
         
         //animation
         UIView.animate(withDuration: 0.2) {
@@ -131,23 +127,23 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
             return
         }
         
-        loadingIndicator()
-        
-        Task {
-            await createNewUser(email: email, password: password)
-            await signInUser(email: email, password: password)
-            await uploadUserName(userName: displayName)
-            await uploadUserImage(imageData: imageData ?? Data())
+        Task { [weak self] in
+            self?.loadingIndicator()
             
-            removeLoadingIndicator()
-            showCreateAccountAlert(email: email, password: password)
+            await self?.createNewUser(email: email, password: password)
+            await self?.signInUser(email: email, password: password)
+            await self?.uploadUserName(userName: displayName)
+            await self?.uploadUserImage(imageData: imageData ?? Data())
+            
+            self?.removeLoadingIndicator()
+            self?.showCreateAccountAlert(email: email, password: password)
         }
         
     }
     
 }
 
-//MARK: Firebase user registration
+//MARK: Firebase async user registration
 extension ProfileRegisterNewUserViewController {
     
     private func createNewUser(email: String, password: String) async {
@@ -199,7 +195,7 @@ extension ProfileRegisterNewUserViewController {
             setProfileImageIcon.heightAnchor.constraint(equalToConstant: 30),
             setProfileImageIcon.widthAnchor.constraint(equalToConstant: 30),
             
-            profileImage.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 70),
+            profileImage.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 15),
             profileImage.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             profileImage.widthAnchor.constraint(equalToConstant: 250),
             profileImage.heightAnchor.constraint(equalToConstant: 200),
@@ -228,7 +224,7 @@ extension ProfileRegisterNewUserViewController {
             registerButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             registerButton.heightAnchor.constraint(equalToConstant: 50),
             registerButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            registerButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -200),
+            registerButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -150),
             
         ])
     }
@@ -241,10 +237,8 @@ extension ProfileRegisterNewUserViewController: UIImagePickerControllerDelegate 
             
             profileImage.image = image
             
-            let data = image.jpegData(compressionQuality: 0.3)
+            let data = image.jpegData(compressionQuality: 0.8)
             imageData = data
-        } else {
-            setDefaultProfileImage()
         }
         
         dismiss(animated: true)
