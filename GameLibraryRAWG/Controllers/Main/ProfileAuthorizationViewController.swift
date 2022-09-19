@@ -86,9 +86,16 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
         guard let email = emailTextField.text, !email.isEmpty,
               let password = passwordTextField.text, !password.isEmpty else {
             showEmptyFieldsAlert()
-            return }
+            return
+        }
         
-        authUser(email: email, password: password)
+        loadingIndicator()
+        
+        Task {
+            await authUser(email: email, password: password)
+            removeLoadingIndicator()
+        }
+        
     }
     
     @objc private func showRegistrationSheet() {
@@ -101,21 +108,14 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
 //MARK: Firebase authentification
 extension ProfileAuthorizationViewController {
     
-    private func authUser(email: String, password: String) {
-        loadingIndicator()
-        
-        FirebaseManager.shared.authUser(email: email, password: password) { [weak self] response in
-            
-            self?.removeLoadingIndicator()
-            
-            switch response {
-            case .success(let result):
-                print(result)
-                self?.showSignInAlert()
-            case .failure(let error):
-                print(error)
-                self?.showInvalidUserAlert()
-            }
+    private func authUser(email: String, password: String) async {
+        do {
+            let result = try await FirebaseManager.shared.authUser(email: email, password: password)
+            showSignInAlert()
+            print(result)
+        } catch let error {
+            showInvalidUserAlert()
+            print(error)
         }
     }
     

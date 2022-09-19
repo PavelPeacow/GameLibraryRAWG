@@ -133,101 +133,56 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         
         loadingIndicator()
         
-        createNewUser(email: email, password: password, displayName: displayName)
-                
-        dispatchGroup.notify(queue: .main, execute: { [weak self] in
-            self?.removeLoadingIndicator()
-            self?.showCreateAccountAlert(email: email, password: password)
-        })
+        Task {
+            await createNewUser(email: email, password: password)
+            await signInUser(email: email, password: password)
+            await uploadUserName(userName: displayName)
+            await uploadUserImage(imageData: imageData ?? Data())
+            
+            removeLoadingIndicator()
+            showCreateAccountAlert(email: email, password: password)
+        }
         
     }
-        
+    
 }
 
 //MARK: Firebase user registration
 extension ProfileRegisterNewUserViewController {
     
-    private func createNewUser(email: String, password: String, displayName: String) {
-        
-        dispatchGroup.enter()
-        
-        FirebaseManager.shared.createUser(email: email, password: password) { [weak self] response in
-            switch response {
-                
-            case .success(let result):
-                print(result)
-                
-                FirebaseManager.shared.authUser(email: email, password: password) { response in
-                    switch response {
-                        
-                    case .success(let result):
-                        print(result)
-                        
-                        FirebaseManager.shared.createUserName(displayName: displayName) { response in
-                            switch response {
-                                
-                            case .success(let result):
-                                print(result)
-                                
-                                
-                                FirebaseManager.shared.addImageToStorage(imageData: self?.imageData ?? Data()) { response in
-                                    switch response {
-                                    case .success(let result):
-                                        print(result)
-                                    case .failure(let error):
-                                        print(error)
-                                    }
-                                    self?.dispatchGroup.leave()
-                                }
-                                
-                                
-                            case .failure(let error):
-                                print(error)
-                            }
-                        }
-                    case .failure(let error):
-                        print(error)
-                    }
-                }
-                
-            case .failure(let error):
-                print(error)
-            }
-            
-        }
-        
-    }
-    
-    private func signInUser(email: String, password: String) {
-        FirebaseManager.shared.authUser(email: email, password: password) { response in
-            switch response {
-            case .success(let result):
-                print(result)
-            case .failure(let error):
-                print(error)
-            }
+    private func createNewUser(email: String, password: String) async {
+        do {
+            let result = try await FirebaseManager.shared.createUser(email: email, password: password)
+            print(result)
+        } catch let error {
+            print(error)
         }
     }
     
-    private func uploadUserName(userName: String) {
-        FirebaseManager.shared.createUserName(displayName: userName) { response in
-            switch response {
-            case .success(let result):
-                print(result)
-            case .failure(let error):
-                print(error)
-            }
+    private func signInUser(email: String, password: String) async {
+        do {
+            let result = try await FirebaseManager.shared.authUser(email: email, password: password)
+            print(result)
+        } catch let error {
+            print(error)
         }
     }
     
-    private func uploadUserImage(imageData: Data) {
-        FirebaseManager.shared.addImageToStorage(imageData: imageData) { response in
-            switch response {
-            case .success(let result):
-                print(result)
-            case .failure(let error):
-                print(error)
-            }
+    private func uploadUserName(userName: String) async {
+        do {
+            let result = try await FirebaseManager.shared.createUserName(displayName: userName)
+            print(result)
+        } catch let error {
+            print(error)
+        }
+    }
+    
+    private func uploadUserImage(imageData: Data) async {
+        do {
+            let result = try await FirebaseManager.shared.addImageToStorage(imageData: imageData)
+            print(result)
+        } catch let error {
+            print(error)
         }
     }
     

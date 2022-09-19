@@ -19,62 +19,69 @@ class FirebaseManager {
     let firestore = Firestore.firestore()
     let storage = FirebaseStorage.Storage.storage()
     
-    func createUser(email: String, password: String, onCompletion: @escaping (Result<FirebaseResults, FirebaseErrors>) -> Void) {
-        FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, error in
-            guard error == nil else {
-                onCompletion(.failure(.ErrorCreateUser))
-                return
-            }
-            
-            onCompletion(.success(.UserCreated))
-        }
-    }
-    
-    func authUser(email: String, password: String, onCompletion: @escaping (Result<FirebaseResults, FirebaseErrors>) -> Void) {
+    func createUser(email: String, password: String) async throws -> FirebaseResults {
         
-        FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, error in
- 
-            guard error == nil else {
-                onCompletion(.failure(.UserNotFound))
-                return
+        return try await withCheckedThrowingContinuation { continuation in
+            FirebaseManager.shared.auth.createUser(withEmail: email, password: password) { result, error in
+                guard error == nil else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorCreateUser))
+                    return
+                }
+                
+                continuation.resume(with: .success(FirebaseResults.UserCreated))
             }
-            
-            onCompletion(.success(.UserSigned))
         }
     }
     
-    func addImageToStorage(imageData: Data, onCompletion: @escaping (Result<FirebaseResults, FirebaseErrors>) -> Void) {
+    func authUser(email: String, password: String) async throws -> FirebaseResults {
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            FirebaseManager.shared.auth.signIn(withEmail: email, password: password) { result, error in
+                
+                guard error == nil else {
+                    continuation.resume(with: .failure(FirebaseErrors.UserNotFound))
+                    return
+                }
+                
+                continuation.resume(with: .success(FirebaseResults.UserSigned))
+            }
+        }
+    }
+    
+    func addImageToStorage(imageData: Data) async throws -> FirebaseResults {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            onCompletion(.failure(.UserNotFound))
-            return
+            throw FirebaseErrors.UserNotFound
         }
         
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpg"
         
-        FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(imageData, metadata: metadata) { metadata, error in
-            guard error == nil else {
-                onCompletion(.failure(.ErrorPutImageToStorage))
-                return
+        return try await withCheckedThrowingContinuation { continuation in
+            FirebaseManager.shared.storage.reference().child("Users Images/\(uid)/userAvatar.jpg").putData(imageData, metadata: metadata) { metadata1, error in
+                guard error == nil else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorPutImageToStorage))
+                    return
+                }
+                
+                continuation.resume(with: .success(FirebaseResults.UserImageUploaded))
             }
-            
-            onCompletion(.success(.UserImageUploaded))
         }
     }
     
-    func createUserName(displayName: String, onCompletion: @escaping (Result<FirebaseResults, FirebaseErrors>) -> Void) {
+    func createUserName(displayName: String) async throws -> FirebaseResults {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            onCompletion(.failure(.UserNotFound))
-            return
+            throw FirebaseErrors.UserNotFound
         }
         
-        FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": displayName]) { error in
-            guard error == nil else {
-                onCompletion(.failure(.ErrorCreateDocument))
-                return
+        return try await withCheckedThrowingContinuation { continuation in
+            FirebaseManager.shared.firestore.collection("Users").document(uid).setData(["user_name": displayName]) { error in
+                guard error == nil else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorCreateDocument))
+                    return
+                }
+                
+                continuation.resume(with: .success(FirebaseResults.UserNameUploaded))
             }
-            
-            onCompletion(.success(.UserNameUploaded))
         }
     }
         
