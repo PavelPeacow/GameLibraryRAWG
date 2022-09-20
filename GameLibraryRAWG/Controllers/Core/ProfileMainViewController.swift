@@ -13,10 +13,7 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     private var favouriteGames = [Game]()
     
     private lazy var userDisplayName = ""
-    private lazy var userImageURL = ""
-    
-    //dispatch
-    private let dispatchGroup = DispatchGroup()
+    private lazy var userImageURL = Data()
     
     //MARK: VIEWS
     private let favouriteGamesCollection: UICollectionView = {
@@ -32,7 +29,6 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     //navBar item
     private lazy var settingsNavBarItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(goToSettingsProfileView))
 
-    
     //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,16 +45,12 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         settingsNavBarItem.isEnabled = false
-        
-        loadingIndicator()
-        
-        fetchFirestoreData()
-        fetchUserImageData()
-        fetchUserNameData()
-        
-        dispatchGroup.notify(queue: .main) { [weak self] in
-            self?.removeLoadingIndicator()
+   
+        Task { [weak self] in
+            self?.loadingIndicator()
+            await self?.fetchProfileData()
             self?.settingsNavBarItem.isEnabled = true
+            self?.removeLoadingIndicator()
         }
     }
     
@@ -77,9 +69,8 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     }
     
     @objc func goToSettingsProfileView() {
-        guard let url = URL(string: userImageURL) else { return }
         let vc = ProfileSettingsViewController()
-        vc.profileImage.sd_setImage(with: url)
+        vc.profileImage.image = UIImage(data: userImageURL)
         vc.displayName.text = userDisplayName
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -89,54 +80,26 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
 //MARK: Firebase api calls
 extension ProfileMainViewController {
     
-    private func fetchFirestoreData() {
+    private func fetchProfileData() async {
+        //parallel calls
+        async let firestoreData = FirebaseManager.shared.fetchFirestoreData()
+        async let userImageData = FirebaseManager.shared.fetchUserImage()
+        async let userNameData = FirebaseManager.shared.fetchUserNameDisplay()
         
-        dispatchGroup.enter()
-        
-        FirebaseManager.shared.fetchFirestoreData { [weak self] gameResult in
-            switch gameResult {
-            case .success(let game):
-                DispatchQueue.main.async {
-                    self?.favouriteGames = game
-                    self?.favouriteGamesCollection.reloadData()
-                }
-            case .failure(let error):
-                print(error)
+        do {
+            userDisplayName = try await userNameData
+            userImageURL = try await userImageData
+
+            favouriteGames = try await firestoreData
+            DispatchQueue.main.async { [weak self] in
+                self?.favouriteGamesCollection.reloadData()
             }
-            self?.dispatchGroup.leave()
+            
+        } catch let error {
+            print(error)
         }
+        
     }
-    
-    private func fetchUserImageData() {
-        
-        dispatchGroup.enter()
-        
-        FirebaseManager.shared.fetchUserImage { [weak self] urlResult in
-            switch urlResult {
-            case .success(let url):
-                self?.userImageURL = url.absoluteString
-            case .failure(let error):
-                print(error)
-            }
-            self?.dispatchGroup.leave()
-        }
-    }
-    
-    private func fetchUserNameData() {
-        
-        dispatchGroup.enter()
-        
-        FirebaseManager.shared.fetchUserNameDisplay { [weak self] nameResult in
-            switch nameResult {
-            case .success(let userName):
-                self?.userDisplayName = userName
-            case .failure(let error):
-                print(error)
-            }
-            self?.dispatchGroup.leave()
-        }
-    }
-    
 }
 
 //MARK: CollcetionView settings
@@ -161,7 +124,7 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileCollectionReusableView.identifier, for: indexPath) as! ProfileCollectionReusableView
-        
+
         let model = GameFavouritesProfileViewModel(profileName: userDisplayName, gamesCount: favouriteGames.count, imageData: userImageURL)
         header.configure(with: model)
         

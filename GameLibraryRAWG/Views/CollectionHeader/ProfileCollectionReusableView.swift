@@ -57,9 +57,8 @@ class ProfileCollectionReusableView: UICollectionReusableView {
     public func configure(with model: GameFavouritesProfileViewModel) {
         userProfileName.text = model.profileName
         gamesAddCount.text = "games added: \(model.gamesCount)"
-
-        profileImage.sd_imageIndicator = SDWebImageActivityIndicator.large
-        profileImage.sd_setImage(with: URL(string: model.imageData))
+        
+        profileImage.image = UIImage(data: model.imageData)
     }
 }
 

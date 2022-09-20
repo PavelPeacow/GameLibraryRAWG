@@ -146,64 +146,65 @@ class FirebaseManager {
     }
     
     //MARK: Fetch firestore data
-    func fetchFirestoreData(onCompletion: @escaping (Result<[Game], FirebaseErrors>) -> Void) {
+    func fetchFirestoreData() async throws -> [Game] {
         guard let uid = auth.currentUser?.uid else {
-            onCompletion(.failure(.UserNotFound))
-            return
+            throw FirebaseErrors.UserNotFound
         }
         
-        firestore.collection("Users").document(uid).collection("Games").getDocuments { snapshot, error in
-            guard error == nil, snapshot == snapshot else {
-                onCompletion(.failure(.ErrorGetGames))
-                return
+        return try await withCheckedThrowingContinuation { continuation in
+            firestore.collection("Users").document(uid).collection("Games").getDocuments { snapshot, error in
+                guard error == nil, snapshot == snapshot else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorGetGames))
+                    return
+                }
+                
+                let results = snapshot!.documents.map { doc in
+                    return Game(name: doc["name"] as? String ?? "",
+                                slug: doc["slug"] as? String ?? "",
+                                background_image: doc["background_image"] as? String ?? "",
+                                metacritic: doc["metacritic"] as? Int)
+                }
+                
+                continuation.resume(with: .success(results))
             }
-            
-            var results = [Game]()
-            
-            results = snapshot!.documents.map { doc in
-                return Game(name: doc["name"] as? String ?? "",
-                            slug: doc["slug"] as? String ?? "",
-                            background_image: doc["background_image"] as? String ?? "",
-                            metacritic: doc["metacritic"] as? Int)
+        }
+        
+    }
+    
+    func fetchUserImage() async throws -> Data {
+        guard let uid = auth.currentUser?.uid else {
+            throw FirebaseErrors.UserNotFound
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            let oneMB = 1 * 1024 * 1024
+            storage.reference().child("Users Images/\(uid)/userAvatar.jpg").getData(maxSize: Int64(oneMB)) { data, error in
+                guard error == nil, data == data else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorGetUserImage))
+                    return
+                }
+                
+                continuation.resume(with: .success(data ?? Data()))
             }
-            
-            onCompletion(.success(results))
         }
     }
     
-    func fetchUserImage(onCompletion: @escaping (Result<URL, FirebaseErrors>) -> Void) {
+    func fetchUserNameDisplay() async throws -> String {
         guard let uid = auth.currentUser?.uid else {
-            onCompletion(.failure(.UserNotFound))
-            return
+            throw FirebaseErrors.UserNotFound
         }
         
-        storage.reference().child("Users Images/\(uid)/userAvatar.jpg").downloadURL { url, error in
-            guard error == nil, url == url else {
-                onCompletion(.failure(.ErrorGetUserImage))
-                return
+        return try await withCheckedThrowingContinuation { continuation in
+            firestore.collection("Users").document(uid).getDocument { snapshot, error in
+                guard error == nil, snapshot == snapshot else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorGetUserName))
+                    return
+                }
+                
+                let data = snapshot!.get("user_name") as? String ?? "Unknown"
+                
+                continuation.resume(with: .success(data))
             }
-            
-            onCompletion(.success(url!))
-        }
-    }
-    
-    func fetchUserNameDisplay(onCompletion: @escaping (Result<String, FirebaseErrors>) -> Void) {
-        guard let uid = auth.currentUser?.uid else {
-            onCompletion(.failure(.UserNotFound))
-            return
-        }
-        
-        firestore.collection("Users").document(uid).getDocument { snapshot, error in
-            guard error == nil, snapshot == snapshot else {
-                onCompletion(.failure(.ErrorGetUserName))
-                return
-            }
-            
-            var data: String = ""
-            
-            data = snapshot!.get("user_name") as? String ?? "Unknown"
-            
-            onCompletion(.success(data))
         }
     }
     
