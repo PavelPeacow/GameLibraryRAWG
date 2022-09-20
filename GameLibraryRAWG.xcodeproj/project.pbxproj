@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B5085E8028D8C1F200923A3B /* RandomPageNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5085E7F28D8C1F200923A3B /* RandomPageNumber.swift */; };
 		B52C4EA528CE346B005C5D6C /* ProfileCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52C4EA428CE346B005C5D6C /* ProfileCollectionReusableView.swift */; };
 		B52C4EA728CF2C55005C5D6C /* FirebaseErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52C4EA628CF2C55005C5D6C /* FirebaseErrors.swift */; };
 		B52C4EA928CF3EF4005C5D6C /* SearchGameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52C4EA828CF3EF4005C5D6C /* SearchGameTableViewCell.swift */; };
@@ -69,6 +70,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B5085E7F28D8C1F200923A3B /* RandomPageNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomPageNumber.swift; sourceTree = "<group>"; };
 		B52C4EA428CE346B005C5D6C /* ProfileCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCollectionReusableView.swift; sourceTree = "<group>"; };
 		B52C4EA628CF2C55005C5D6C /* FirebaseErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseErrors.swift; sourceTree = "<group>"; };
 		B52C4EA828CF3EF4005C5D6C /* SearchGameTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGameTableViewCell.swift; sourceTree = "<group>"; };
@@ -156,6 +158,8 @@
 			children = (
 				B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */,
 				B56FA06D28D6263B0074F393 /* StoresCheck.swift */,
+				B56FA06B28D4C7B30074F393 /* GetCurrentUIWindow.swift */,
+				B5085E7F28D8C1F200923A3B /* RandomPageNumber.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -166,6 +170,16 @@
 				B5D7A5D728B77446000504BE /* Assets.xcassets */,
 			);
 			path = Resourses;
+			sourceTree = "<group>";
+		};
+		B570309828D8952200C1F80C /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */,
+				B591DD1328C4B10D00548335 /* ScreenshotPreviewViewController.swift */,
+				B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */,
+			);
+			path = CustomViews;
 			sourceTree = "<group>";
 		};
 		B58FABA628B9034B00E356B1 /* Core */ = {
@@ -198,7 +212,6 @@
 				B5E3A61928CDFAFF00A48CFD /* CompositionalLayoutSections.swift */,
 				B5E3A62128CE047C00A48CFD /* ConstraintPriority.swift */,
 				B52C4EB128CF5E02005C5D6C /* Alerts.swift */,
-				B56FA06B28D4C7B30074F393 /* GetCurrentUIWindow.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -263,9 +276,7 @@
 				B591DD0F28C3A4CB00548335 /* Subclasses */,
 				B5D7ACA128BE2D0000859B03 /* Cells */,
 				B5E3A62328CE04D000A48CFD /* CollectionHeader */,
-				B5BD12E328BDFF5A00BACD4D /* GameFutureView.swift */,
-				B591DD1328C4B10D00548335 /* ScreenshotPreviewViewController.swift */,
-				B5FE7EA728C245E3008B15B8 /* StoreWebViewViewController.swift */,
+				B570309828D8952200C1F80C /* CustomViews */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -447,6 +458,7 @@
 				B52C4EA528CE346B005C5D6C /* ProfileCollectionReusableView.swift in Sources */,
 				B5D050C628BF8A65008DF07C /* SliderCollectionViewCell.swift in Sources */,
 				B5D7A5EA28B77E29000504BE /* SearchViewController.swift in Sources */,
+				B5085E8028D8C1F200923A3B /* RandomPageNumber.swift in Sources */,
 				B5C89E1928BCFBED00B5F0DA /* GameDetailViewController.swift in Sources */,
 				B5E3A61A28CDFAFF00A48CFD /* CompositionalLayoutSections.swift in Sources */,
 				B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */,
