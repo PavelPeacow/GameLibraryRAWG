@@ -24,7 +24,7 @@ class HomeViewController: UIViewController, ActivityIndicator {
     
     private let dispatchGroup = DispatchGroup()
     
-    private var page = 1
+    private var page = randomPageNumber(with: 1...10)
     
     private let sectionTitles = ["Metacritic's choice", "Popular This Year", "Most Anticipated Upcoming Games", "More games to discover"]
     
@@ -59,7 +59,8 @@ class HomeViewController: UIViewController, ActivityIndicator {
         fetchPopularGames()
         fetchMustPlayGames()
         fetchUpcomingGames()
-        fetchDiscoverMoreGames(with: page)
+        fetchDiscoverMoreGames(with: page ?? 1)
+        
         dispatchGroup.notify(queue: .main) { [weak self] in
             self?.removeLoadingIndicator()
         }
@@ -168,8 +169,10 @@ extension HomeViewController {
     private func fetchDiscoverMoreGames(with page: Int) {
         
         dispatchGroup.enter()
+        loadingIndicator()
         
         APICaller.shared.fetchGamesWithPage(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self, pageNumber: page) { [weak self] result in
+            self?.removeLoadingIndicator()
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
@@ -312,13 +315,10 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
         
-        print("offset = \(offsetY)")
-        print("contentHeight = \(contentHeight)")
-        print("height = \(height)")
-        
-        if offsetY > contentHeight - height {
-            page += 1
-            fetchDiscoverMoreGames(with: page)
+        if offsetY > contentHeight - height  {
+            if let page = randomPageNumber(with: 2...100) {
+                fetchDiscoverMoreGames(with: page)
+            }
         }
     }
     
