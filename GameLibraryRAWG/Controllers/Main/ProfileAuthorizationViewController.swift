@@ -25,6 +25,16 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
     
     private let dontHaveAccountButton: ProfileActionButton = ProfileActionButton(configuration: .bordered(), title: "Don't have an account?")
     
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .fill
+        stackView.spacing = 15
+        stackView.alignment = .fill
+        return stackView
+    }()
+    
     //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,10 +43,8 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
         
         view.addSubview(scrollView)
         
-        scrollView.addSubview(emailTextField)
-        scrollView.addSubview(passwordTextField)
-        scrollView.addSubview(signInButton)
-        scrollView.addSubview(dontHaveAccountButton)
+        scrollView.addSubview(stackView)
+        addViewToStackView()
         
         configureNavBar()
         
@@ -52,6 +60,13 @@ class ProfileAuthorizationViewController: UIViewController, ActivityIndicator, P
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scrollView.frame = view.bounds
+    }
+    
+    private func addViewToStackView() {
+        stackView.addArrangedSubview(emailTextField)
+        stackView.addArrangedSubview(passwordTextField)
+        stackView.addArrangedSubview(signInButton)
+        stackView.addArrangedSubview(dontHaveAccountButton)
     }
     
     private func setDelegates() {
@@ -126,26 +141,10 @@ extension ProfileAuthorizationViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             
-            emailTextField.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 70),
-            emailTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            emailTextField.heightAnchor.constraint(equalToConstant: 40),
-            emailTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            
-            passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 30),
-            passwordTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            passwordTextField.heightAnchor.constraint(equalToConstant: 40),
-            passwordTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            
-            signInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 30),
-            signInButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            signInButton.heightAnchor.constraint(equalToConstant: 50),
-            signInButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            
-            dontHaveAccountButton.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 15),
-            dontHaveAccountButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            dontHaveAccountButton.heightAnchor.constraint(equalToConstant: 50),
-            dontHaveAccountButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            dontHaveAccountButton.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -150),
+            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 70),
+            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -150),
         ])
     }
 }

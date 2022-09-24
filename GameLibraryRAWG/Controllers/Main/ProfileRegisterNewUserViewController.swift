@@ -44,6 +44,16 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     
     private let registerButton: ProfileActionButton = ProfileActionButton(configuration: .filled(), title: "Registration")
     
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .fill
+        stackView.spacing = 15
+        stackView.alignment = .fill
+        return stackView
+    }()
+    
     //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,11 +65,8 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         scrollView.addSubview(profileImage)
         profileImage.addSubview(setProfileImageIcon)
         
-        scrollView.addSubview(userDisplayName)
-        scrollView.addSubview(emailTextField)
-        scrollView.addSubview(passwordTextField)
-        scrollView.addSubview(repeatPasswordTextField)
-        scrollView.addSubview(registerButton)
+        scrollView.addSubview(stackView)
+        addViewToStackView()
         
         createGestureRecognizer()
         
@@ -83,6 +90,14 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         emailTextField.delegate = self
         passwordTextField.delegate = self
         repeatPasswordTextField.delegate = self
+    }
+    
+    private func addViewToStackView() {
+        stackView.addArrangedSubview(userDisplayName)
+        stackView.addArrangedSubview(emailTextField)
+        stackView.addArrangedSubview(passwordTextField)
+        stackView.addArrangedSubview(repeatPasswordTextField)
+        stackView.addArrangedSubview(registerButton)
     }
     
     private func setDefaultProfileImage() {
@@ -206,32 +221,10 @@ extension ProfileRegisterNewUserViewController {
             profileImage.widthAnchor.constraint(equalToConstant: 250),
             profileImage.heightAnchor.constraint(equalToConstant: 200),
             
-            userDisplayName.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 30),
-            userDisplayName.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            userDisplayName.heightAnchor.constraint(equalToConstant: 40),
-            userDisplayName.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            
-            emailTextField.topAnchor.constraint(equalTo: userDisplayName.bottomAnchor, constant: 30),
-            emailTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            emailTextField.heightAnchor.constraint(equalToConstant: 40),
-            emailTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            
-            passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 30),
-            passwordTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            passwordTextField.heightAnchor.constraint(equalToConstant: 40),
-            passwordTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            
-            repeatPasswordTextField.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 30),
-            repeatPasswordTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            repeatPasswordTextField.heightAnchor.constraint(equalToConstant: 40),
-            repeatPasswordTextField.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            
-            registerButton.topAnchor.constraint(equalTo: repeatPasswordTextField.bottomAnchor, constant: 30),
-            registerButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            registerButton.heightAnchor.constraint(equalToConstant: 50),
-            registerButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
-            registerButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -150),
-            
+            stackView.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 20),
+            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.7),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -50),
         ])
     }
 }
