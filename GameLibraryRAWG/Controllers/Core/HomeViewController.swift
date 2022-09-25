@@ -87,9 +87,10 @@ class HomeViewController: UIViewController, ActivityIndicator {
         ThemesUserDefaults.shared.theme = Theme(rawValue: 0)!
         UIWindow.animate(withDuration: 0.5) {
             UIApplication.shared.currentUIWindow()!.overrideUserInterfaceStyle = .light
+            self.navigationItem.leftBarButtonItem = self.lightModeNavBarItem
         }
         
-        navigationItem.leftBarButtonItem = darkModeNavBarItem
+        
     }
     
     @objc private func switchToDarkMode() {
@@ -97,9 +98,10 @@ class HomeViewController: UIViewController, ActivityIndicator {
         ThemesUserDefaults.shared.theme = Theme(rawValue: 1)!
         UIWindow.animate(withDuration: 0.5) {
             UIApplication.shared.currentUIWindow()!.overrideUserInterfaceStyle = .dark
+            self.navigationItem.leftBarButtonItem = self.darkModeNavBarItem
         }
 
-        navigationItem.leftBarButtonItem = lightModeNavBarItem
+        
     }
     
     private func setDelegates() {

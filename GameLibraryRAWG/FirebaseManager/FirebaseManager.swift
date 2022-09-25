@@ -177,8 +177,8 @@ class FirebaseManager {
         }
         
         return try await withCheckedThrowingContinuation { continuation in
-            let oneMB = 1 * 1024 * 1024
-            storage.reference().child("Users Images/\(uid)/userAvatar.jpg").getData(maxSize: Int64(oneMB)) { data, error in
+            let tenMB = 10 * 1024 * 1024
+            storage.reference().child("Users Images/\(uid)/userAvatar.jpg").getData(maxSize: Int64(tenMB)) { data, error in
                 guard error == nil, data == data else {
                     continuation.resume(with: .failure(FirebaseErrors.ErrorGetUserImage))
                     return
