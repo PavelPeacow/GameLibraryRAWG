@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum Sections: Int {
+enum Sections: Int, CaseIterable {
     case mustPlay = 0
     case popular = 1
     case upcoming = 2
@@ -187,6 +187,24 @@ extension HomeViewController {
             self?.dispatchGroup.leave()
         }
     }
+    
+    private func fetchMainGameDetail(gameArray: [Game], indexPath: IndexPath) {
+        
+        let vc = GameDetailViewController()
+        
+        APICaller.shared.fetchMainGameDetails(with: gameArray[indexPath.item].slug) { [weak self] result in
+            self?.removeLoadingIndicator()
+            switch result {
+            case .success(let gameDetail):
+                DispatchQueue.main.async {
+                    vc.configure(with: gameDetail, game: gameArray[indexPath.item])
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
 }
 
 
@@ -194,7 +212,7 @@ extension HomeViewController {
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        4
+        Sections.allCases.count
     }
     
     //MARK: Header
@@ -245,67 +263,25 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     //MARK: DID Select
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        let vc = GameDetailViewController()
-        
         loadingIndicator()
         
         switch Sections(rawValue: indexPath.section) {
         case .mustPlay:
-            APICaller.shared.fetchMainGameDetails(with: mustPlay[indexPath.item].slug) { [weak self]result in
-                self?.removeLoadingIndicator()
-                switch result {
-                case .success(let gameDetail):
-                    DispatchQueue.main.async {
-                        vc.configure(with: gameDetail, game: self!.mustPlay[indexPath.item])
-                        self?.navigationController?.pushViewController(vc, animated: true)
-                        print(gameDetail)
-                    }
-                case .failure(let error):
-                    print(error)
-                }
-            }
+            
+            fetchMainGameDetail(gameArray: mustPlay, indexPath: indexPath)
+            
         case .popular:
-            APICaller.shared.fetchMainGameDetails(with: popular[indexPath.item].slug) { [weak self]result in
-                self?.removeLoadingIndicator()
-                switch result {
-                case .success(let gameDetail):
-                    DispatchQueue.main.async {
-                        vc.configure(with: gameDetail, game:  self!.popular[indexPath.item])
-                        self?.navigationController?.pushViewController(vc, animated: true)
-                        print(gameDetail)
-                    }
-                case .failure(let error):
-                    print(error)
-                }
-            }
+            
+            fetchMainGameDetail(gameArray: popular, indexPath: indexPath)
+            
         case .upcoming:
-            APICaller.shared.fetchMainGameDetails(with: upcoming[indexPath.item].slug) { [weak self]result in
-                self?.removeLoadingIndicator()
-                switch result {
-                case .success(let gameDetail):
-                    DispatchQueue.main.async {
-                        vc.configure(with: gameDetail, game:  self!.upcoming[indexPath.item])
-                        self?.navigationController?.pushViewController(vc, animated: true)
-                        print(gameDetail)
-                    }
-                case .failure(let error):
-                    print(error)
-                }
-            }
+            
+            fetchMainGameDetail(gameArray: upcoming, indexPath: indexPath)
+            
         case .discover:
-            APICaller.shared.fetchMainGameDetails(with: discover[indexPath.item].slug) { [weak self]result in
-                self?.removeLoadingIndicator()
-                switch result {
-                case .success(let gameDetail):
-                    DispatchQueue.main.async {
-                        vc.configure(with: gameDetail, game:  self!.discover[indexPath.item])
-                        self?.navigationController?.pushViewController(vc, animated: true)
-                        print(gameDetail)
-                    }
-                case .failure(let error):
-                    print(error)
-                }
-            }
+            
+            fetchMainGameDetail(gameArray: discover, indexPath: indexPath)
+            
         default:
             fatalError("why touching don't work?")
         }
