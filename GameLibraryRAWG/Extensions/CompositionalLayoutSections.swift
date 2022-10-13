@@ -36,18 +36,13 @@ extension NSCollectionLayoutSection {
     
     //Second section layout setup
     static func regularSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        var groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(0.2))
-        
-        if UIDevice.current.orientation.isLandscape {
-            groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(0.5))
-        }
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(230), heightDimension: .fractionalHeight(0.45))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets.trailing = 15
@@ -68,17 +63,17 @@ extension NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.85), heightDimension: .fractionalHeight(0.6))
+
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(270), heightDimension: .fractionalHeight(0.6))
         
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        group.contentInsets.leading = 15
         
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets.leading = 15
         section.contentInsets.trailing = 15
+        section.interGroupSpacing = 15
         
-        section.orthogonalScrollingBehavior = .groupPaging
+        section.orthogonalScrollingBehavior = .groupPagingCentered
         
         let sectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
         
