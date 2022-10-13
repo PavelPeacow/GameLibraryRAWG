@@ -13,7 +13,7 @@ class ProfileSettingIconButton: UIButton {
         super.init(frame: frame)
         
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.backgroundColor = .label
+        self.backgroundColor = .systemFill
         self.layer.cornerRadius = 12
         self.setImage(UIImage(systemName: "gearshape.fill"), for: .normal)
     }

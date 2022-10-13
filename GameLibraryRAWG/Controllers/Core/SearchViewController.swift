@@ -56,12 +56,14 @@ class SearchViewController: UIViewController, ActivityIndicator {
     
     private func fetchGames(with page: Int) {
         loadingIndicator()
+        seacrhController.searchBar.isHidden = true
         APICaller.shared.fetchGamesWithPage(url: APIConstants.DISCOVER_URL, expecting: GamesResponse.self, pageNumber: page) { [weak self] result in
             self?.removeLoadingIndicator()
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
                     self?.games += response.results
+                    self?.seacrhController.searchBar.isHidden = false
                     self?.searchTable.reloadData()
                 }
             case .failure(let error):
