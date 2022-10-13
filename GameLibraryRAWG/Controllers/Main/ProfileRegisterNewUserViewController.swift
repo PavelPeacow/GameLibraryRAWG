@@ -23,7 +23,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     
     private let profileImage: UIImageView = {
         let profileImage = UIImageView()
-        profileImage.image = UIImage(systemName: "photo")?.withTintColor(.blue, renderingMode: .alwaysOriginal)
+        profileImage.image = UIImage(named: "userNoImage")
         profileImage.isUserInteractionEnabled = true
         profileImage.contentMode = .scaleAspectFill
         profileImage.clipsToBounds = true
@@ -134,16 +134,27 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         }
         
         //validation
-        guard let displayName = userDisplayName.text, !displayName.isEmpty,
-              let email = emailTextField.text, !email.isEmpty, email.contains("@"),
-              let password = passwordTextField.text, !password.isEmpty, password.count > 6,
-              let repeatPassword = repeatPasswordTextField.text, password == repeatPassword  else {
-            showRegistrationValidationAlert()
+        guard let displayName = userDisplayName.text, !displayName.isEmpty else {
+            showNicknameInvalidValidationAlert()
+            return
+        }
+        
+        guard let email = emailTextField.text, validateEmail(enteredEmail: emailTextField.text ?? "") else {
+            showEmailInvalidValidationAlert()
+            return
+        }
+        guard  let password = passwordTextField.text, !password.isEmpty, password.count > 6 else {
+            showPasswordInvalidValidationAlert()
+            return
+        }
+        guard let repeatPassword = repeatPasswordTextField.text, password == repeatPassword  else {
+            showPasswordAreNotTheSameValidationAlert()
             return
         }
         
         Task { [weak self] in
             self?.loadingIndicator()
+            navigationItem.setHidesBackButton(true, animated: true)
             
             await self?.createNewUser(email: email, password: password)
             await self?.signInUser(email: email, password: password)
@@ -158,6 +169,8 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
             } else {
                 self?.showInvalidCreateAccountAlert()
             }
+            
+            navigationItem.setHidesBackButton(false, animated: true)
         }
         
     }

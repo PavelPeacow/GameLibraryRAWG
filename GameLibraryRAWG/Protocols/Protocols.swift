@@ -17,5 +17,9 @@ protocol ProfileAlerts {
     func showCreateAccountAlert(email: String, password: String)
     func showEmptyFieldsAlert()
     func showInvalidUserAlert()
-    func showRegistrationValidationAlert()
+    
+    func showNicknameInvalidValidationAlert()
+    func showEmailInvalidValidationAlert()
+    func showPasswordInvalidValidationAlert()
+    func showPasswordAreNotTheSameValidationAlert()
 }

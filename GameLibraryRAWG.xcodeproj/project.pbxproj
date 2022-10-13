@@ -33,6 +33,7 @@
 		B56FA06E28D6263B0074F393 /* StoresCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56FA06D28D6263B0074F393 /* StoresCheck.swift */; };
 		B56FA07028D771B70074F393 /* FirebaseResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56FA06F28D771B70074F393 /* FirebaseResults.swift */; };
 		B578779828C9FEBB00D2B777 /* ProfileAuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B578779728C9FEBB00D2B777 /* ProfileAuthorizationViewController.swift */; };
+		B5799A7928F80B0F00B3164E /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5799A7828F80B0F00B3164E /* Validation.swift */; };
 		B591DD0C28C3914200548335 /* GameStoreCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */; };
 		B591DD0E28C3A45C00548335 /* DynamicCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B591DD0D28C3A45C00548335 /* DynamicCollectionView.swift */; };
 		B591DD1128C47E3400548335 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B591DD1028C47E3400548335 /* ActivityIndicator.swift */; };
@@ -87,6 +88,7 @@
 		B56FA06D28D6263B0074F393 /* StoresCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoresCheck.swift; sourceTree = "<group>"; };
 		B56FA06F28D771B70074F393 /* FirebaseResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseResults.swift; sourceTree = "<group>"; };
 		B578779728C9FEBB00D2B777 /* ProfileAuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAuthorizationViewController.swift; sourceTree = "<group>"; };
+		B5799A7828F80B0F00B3164E /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
 		B591DD0B28C3914200548335 /* GameStoreCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStoreCollectionViewCell.swift; sourceTree = "<group>"; };
 		B591DD0D28C3A45C00548335 /* DynamicCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicCollectionView.swift; sourceTree = "<group>"; };
 		B591DD1028C47E3400548335 /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 				B56FA06D28D6263B0074F393 /* StoresCheck.swift */,
 				B56FA06B28D4C7B30074F393 /* GetCurrentUIWindow.swift */,
 				B5085E7F28D8C1F200923A3B /* RandomPageNumber.swift */,
+				B5799A7828F80B0F00B3164E /* Validation.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -463,6 +466,7 @@
 				B5E3A61A28CDFAFF00A48CFD /* CompositionalLayoutSections.swift in Sources */,
 				B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */,
 				B5D7A5EF28B780AF000504BE /* APIConstants.swift in Sources */,
+				B5799A7928F80B0F00B3164E /* Validation.swift in Sources */,
 				B56FA06C28D4C7B30074F393 /* GetCurrentUIWindow.swift in Sources */,
 				B55BDC6228C7952900EC7DC1 /* GameTrailer.swift in Sources */,
 				B591DD0E28C3A45C00548335 /* DynamicCollectionView.swift in Sources */,

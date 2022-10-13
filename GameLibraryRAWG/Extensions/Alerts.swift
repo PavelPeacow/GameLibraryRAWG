@@ -72,9 +72,30 @@ extension ProfileAlerts where Self: UIViewController {
         present(ac, animated: true)
     }
     
-    func showRegistrationValidationAlert() {
+    func showNicknameInvalidValidationAlert() {
         let ac = UIAlertController(title: "You need to match the requirements",
-                                   message: "You need provide a valid email,\nThe password length must be more than six", preferredStyle: .alert)
+                                   message: "Nickname must be not empty", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
+    }
+    
+    func showEmailInvalidValidationAlert() {
+        let ac = UIAlertController(title: "You need to match the requirements",
+                                   message: "You need provide a valid email", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
+    }
+    
+    func showPasswordInvalidValidationAlert() {
+        let ac = UIAlertController(title: "You need to match the requirements",
+                                   message: "The password length must be more than six", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
+    }
+    
+    func showPasswordAreNotTheSameValidationAlert() {
+        let ac = UIAlertController(title: "You need to match the requirements",
+                                   message: "Passwords do not match", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         present(ac, animated: true)
     }
