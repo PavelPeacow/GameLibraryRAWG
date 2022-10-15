@@ -29,6 +29,8 @@
 		B559E09D28BB72ED00B26A0B /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */; };
 		B55BDC6228C7952900EC7DC1 /* GameTrailer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55BDC6128C7952900EC7DC1 /* GameTrailer.swift */; };
 		B55BDC6428C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55BDC6328C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift */; };
+		B5667CF828FA817700E55A33 /* AddGameStateAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5667CF728FA817700E55A33 /* AddGameStateAlert.swift */; };
+		B5667CFA28FAA04500E55A33 /* GameStateEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5667CF928FAA04500E55A33 /* GameStateEnum.swift */; };
 		B56FA06C28D4C7B30074F393 /* GetCurrentUIWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56FA06B28D4C7B30074F393 /* GetCurrentUIWindow.swift */; };
 		B56FA06E28D6263B0074F393 /* StoresCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56FA06D28D6263B0074F393 /* StoresCheck.swift */; };
 		B56FA07028D771B70074F393 /* FirebaseResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56FA06F28D771B70074F393 /* FirebaseResults.swift */; };
@@ -84,6 +86,8 @@
 		B559E09C28BB72ED00B26A0B /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		B55BDC6128C7952900EC7DC1 /* GameTrailer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTrailer.swift; sourceTree = "<group>"; };
 		B55BDC6328C79CF600EC7DC1 /* GameTrailerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTrailerCollectionViewCell.swift; sourceTree = "<group>"; };
+		B5667CF728FA817700E55A33 /* AddGameStateAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGameStateAlert.swift; sourceTree = "<group>"; };
+		B5667CF928FAA04500E55A33 /* GameStateEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStateEnum.swift; sourceTree = "<group>"; };
 		B56FA06B28D4C7B30074F393 /* GetCurrentUIWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetCurrentUIWindow.swift; sourceTree = "<group>"; };
 		B56FA06D28D6263B0074F393 /* StoresCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoresCheck.swift; sourceTree = "<group>"; };
 		B56FA06F28D771B70074F393 /* FirebaseResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseResults.swift; sourceTree = "<group>"; };
@@ -158,11 +162,12 @@
 		B52EE28F28C22C0E00EB54E8 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */,
+				B5667CFB28FAA0DC00E55A33 /* Enums */,
 				B56FA06D28D6263B0074F393 /* StoresCheck.swift */,
 				B56FA06B28D4C7B30074F393 /* GetCurrentUIWindow.swift */,
 				B5085E7F28D8C1F200923A3B /* RandomPageNumber.swift */,
 				B5799A7828F80B0F00B3164E /* Validation.swift */,
+				B5667CF728FA817700E55A33 /* AddGameStateAlert.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -173,6 +178,15 @@
 				B5D7A5D728B77446000504BE /* Assets.xcassets */,
 			);
 			path = Resourses;
+			sourceTree = "<group>";
+		};
+		B5667CFB28FAA0DC00E55A33 /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				B52EE29228C22E5E00EB54E8 /* StoresEnum.swift */,
+				B5667CF928FAA04500E55A33 /* GameStateEnum.swift */,
+			);
+			path = Enums;
 			sourceTree = "<group>";
 		};
 		B570309828D8952200C1F80C /* CustomViews */ = {
@@ -469,6 +483,7 @@
 				B5799A7928F80B0F00B3164E /* Validation.swift in Sources */,
 				B56FA06C28D4C7B30074F393 /* GetCurrentUIWindow.swift in Sources */,
 				B55BDC6228C7952900EC7DC1 /* GameTrailer.swift in Sources */,
+				B5667CFA28FAA04500E55A33 /* GameStateEnum.swift in Sources */,
 				B591DD0E28C3A45C00548335 /* DynamicCollectionView.swift in Sources */,
 				B5A8053228D4A62100D413CA /* ThemesUserDefaults.swift in Sources */,
 				B5D050CA28BFA9DF008DF07C /* APIEndpoints.swift in Sources */,
@@ -495,6 +510,7 @@
 				B5D7AC9F28BE074E00859B03 /* GameFeaturesViewModel.swift in Sources */,
 				B578779828C9FEBB00D2B777 /* ProfileAuthorizationViewController.swift in Sources */,
 				B5A8052D28D23ACD00D413CA /* GameFavouritesProfileViewModel.swift in Sources */,
+				B5667CF828FA817700E55A33 /* AddGameStateAlert.swift in Sources */,
 				B5E3A62028CDFECA00A48CFD /* ProfileActionButton.swift in Sources */,
 				B5A8052B28D20C2000D413CA /* ProfileSettingIconButton.swift in Sources */,
 				B5D050C828BF8BB6008DF07C /* GameScreenshotModel.swift in Sources */,

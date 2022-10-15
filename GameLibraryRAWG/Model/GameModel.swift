@@ -16,5 +16,6 @@ struct Game: Codable {
     let slug: String
     let background_image: String
     let metacritic: Int?
+    var gameState: String?
 }
 

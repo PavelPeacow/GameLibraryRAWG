@@ -162,7 +162,9 @@ class FirebaseManager {
                     return Game(name: doc["name"] as? String ?? "",
                                 slug: doc["slug"] as? String ?? "",
                                 background_image: doc["background_image"] as? String ?? "",
-                                metacritic: doc["metacritic"] as? Int)
+                                metacritic: doc["metacritic"] as? Int,
+                                gameState: doc["gameState"] as? String
+                    )
                 }
                 
                 continuation.resume(with: .success(results))

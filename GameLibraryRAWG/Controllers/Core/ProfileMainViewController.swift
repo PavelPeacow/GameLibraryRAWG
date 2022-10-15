@@ -10,7 +10,14 @@ import UIKit
 class ProfileMainViewController: UIViewController, ActivityIndicator {
     
     //MARK: PROPERTIES
-    private var favouriteGames = [Game]()
+    private var sortedGames = [Game]()
+    
+    private var allGames = [Game]()
+    private var completedGames = [Game]()
+    private var playingGames = [Game]()
+    private var ownedGames = [Game]()
+    
+    private lazy var segmentedControlItems = ["All", "Completed", "Playing", "Owned"]
     
     private lazy var userDisplayName = ""
     private lazy var userImageURL = Data()
@@ -26,9 +33,18 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
         return gamesFavouritesCollection
     }()
     
+    private lazy var segmentedControl: UISegmentedControl = {
+        let segmentedControl = UISegmentedControl(items: segmentedControlItems)
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentedControl.addTarget(self, action: #selector(sortGamesWithState(_:)), for: .valueChanged)
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.backgroundColor = .systemBackground
+        return segmentedControl
+    }()
+    
     //navBar item
     private lazy var settingsNavBarItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(goToSettingsProfileView))
-
+    
     //MARK: LIFECYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,10 +61,12 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         settingsNavBarItem.isEnabled = false
-   
+        
         Task { [weak self] in
             self?.loadingIndicator()
             await self?.fetchProfileData()
+            
+            sortGames()
             self?.settingsNavBarItem.isEnabled = true
             self?.removeLoadingIndicator()
         }
@@ -58,14 +76,56 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
         super.viewDidLayoutSubviews()
         favouriteGamesCollection.frame = view.bounds
     }
-        
+    
     private func setDelegates() {
         favouriteGamesCollection.delegate = self
         favouriteGamesCollection.dataSource = self
     }
     
     private func configureNavBar() {
+        navigationItem.titleView = segmentedControl
         navigationItem.rightBarButtonItem = settingsNavBarItem
+    }
+    
+    private func sortGames() {
+        for favouriteGame in allGames {
+            
+            switch favouriteGame.gameState {
+            case "completed":
+                if !completedGames.contains(where: { $0.name == favouriteGame.name }) {
+                    completedGames.append(favouriteGame)
+                }
+            case "playing":
+                if !playingGames.contains(where: { $0.name == favouriteGame.name }) {
+                    playingGames.append(favouriteGame)
+                }
+            case "owned":
+                if !ownedGames.contains(where: { $0.name == favouriteGame.name }) {
+                    ownedGames.append(favouriteGame)
+                }
+            default:
+                print("no games to add")
+            }
+        }
+    }
+    
+    @objc func sortGamesWithState(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            sortedGames = allGames
+            favouriteGamesCollection.reloadData()
+        case 1:
+            sortedGames = completedGames
+            favouriteGamesCollection.reloadData()
+        case 2:
+            sortedGames = playingGames
+            favouriteGamesCollection.reloadData()
+        case 3:
+            sortedGames = ownedGames
+            favouriteGamesCollection.reloadData()
+        default:
+            print("no index")
+        }
     }
     
     @objc func goToSettingsProfileView() {
@@ -89,8 +149,30 @@ extension ProfileMainViewController {
         do {
             userDisplayName = try await userNameData
             userImageURL = try await userImageData
-
-            favouriteGames = try await firestoreData
+            
+            allGames = try await firestoreData
+            
+            switch segmentedControl.selectedSegmentIndex {
+            case 0:
+                sortedGames = allGames
+            case 1:
+                sortedGames = completedGames
+            case 2:
+                sortedGames = playingGames
+            case 3:
+                sortedGames = ownedGames
+            default:
+                print("no index")
+            }
+            
+            if allGames.isEmpty {
+                favouriteGamesCollection.setEmptyMessageInCollectionView("No games added yet😉")
+                favouriteGamesCollection.isScrollEnabled = false
+            } else {
+                favouriteGamesCollection.restoreCollectionViewBackground()
+                favouriteGamesCollection.isScrollEnabled = true
+            }
+            
             DispatchQueue.main.async { [weak self] in
                 self?.favouriteGamesCollection.reloadData()
             }
@@ -100,32 +182,27 @@ extension ProfileMainViewController {
         }
         
     }
+    
 }
+
 
 //MARK: CollcetionView settings
 extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if favouriteGames.isEmpty {
-            collectionView.setEmptyMessageInCollectionView("No favourite games added yet😉")
-            collectionView.isScrollEnabled = false
-        } else {
-            collectionView.restoreCollectionViewBackground()
-            collectionView.isScrollEnabled = true
-        }
-        return favouriteGames.count
+        sortedGames.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCollectionViewCell.identifier, for: indexPath) as! GameCollectionViewCell
-        cell.configure(with: favouriteGames[indexPath.item])
+        cell.configure(with: sortedGames[indexPath.item])
         return cell
         
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileCollectionReusableView.identifier, for: indexPath) as! ProfileCollectionReusableView
-
-        let model = GameFavouritesProfileViewModel(profileName: userDisplayName, gamesCount: favouriteGames.count, imageData: userImageURL)
+        
+        let model = GameFavouritesProfileViewModel(profileName: userDisplayName, gamesCount: sortedGames.count, imageData: userImageURL)
         header.configure(with: model)
         
         return header
@@ -137,13 +214,13 @@ extension ProfileMainViewController: UICollectionViewDelegate, UICollectionViewD
         loadingIndicator()
         settingsNavBarItem.isEnabled = false
         
-        APICaller.shared.fetchMainGameDetails(with: favouriteGames[indexPath.item].slug) { [weak self] result in
+        APICaller.shared.fetchMainGameDetails(with: sortedGames[indexPath.item].slug) { [weak self] result in
             self?.removeLoadingIndicator()
             self?.settingsNavBarItem.isEnabled = true
             switch result {
             case .success(let gameDetail):
                 DispatchQueue.main.async {
-                    vc.configure(with: gameDetail, game: self!.favouriteGames[indexPath.item])
+                    vc.configure(with: gameDetail, game: self!.sortedGames[indexPath.item])
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
             case .failure(let error):

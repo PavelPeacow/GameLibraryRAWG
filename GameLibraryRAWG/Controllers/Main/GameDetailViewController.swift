@@ -202,14 +202,16 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         //preventing tap multiple time
         navigationItem.rightBarButtonItem?.isEnabled = false
         
-        Task { [weak self] in
-            self?.loadingIndicator()
-            await addGameToFavourite(add: game)
-            self?.removeLoadingIndicator()
-            navigationItem.rightBarButtonItem?.isEnabled = true
-            
-            self?.navigationItem.rightBarButtonItem = deleteGameNavBarItem
-        }
+        AddGameStateAlert.showGameStateAlert(on: self, with: game, onCompletion: { result in
+            Task { [weak self] in
+                self?.loadingIndicator()
+                await self?.addGameToFavourite(add: result)
+                self?.removeLoadingIndicator()
+                self?.navigationItem.rightBarButtonItem?.isEnabled = true
+    
+                self?.navigationItem.rightBarButtonItem = self?.deleteGameNavBarItem
+            }
+        })
     }
     
     //MARK: Deleting game from firestore
