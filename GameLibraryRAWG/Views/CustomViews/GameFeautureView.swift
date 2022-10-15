@@ -7,9 +7,9 @@
 
 import UIKit
 
-class GameFutureView: UIView {
+class GameFeautureView: UIView {
     
-    private let futureTitle: UILabel = {
+    private let feautureTitle: UILabel = {
         let futureTitle = UILabel()
         futureTitle.textColor = .gray
         futureTitle.font = UIFont.boldSystemFont(ofSize: 12)
@@ -17,7 +17,7 @@ class GameFutureView: UIView {
         return futureTitle
     }()
     
-    private let futureDescr: UILabel = {
+    private let feautureDescr: UILabel = {
         let futureDescr = UILabel()
         futureDescr.numberOfLines = 0
         futureDescr.translatesAutoresizingMaskIntoConstraints = false
@@ -27,8 +27,8 @@ class GameFutureView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubview(futureTitle)
-        addSubview(futureDescr)
+        addSubview(feautureTitle)
+        addSubview(feautureDescr)
         
         self.translatesAutoresizingMaskIntoConstraints = false
         
@@ -40,31 +40,31 @@ class GameFutureView: UIView {
     }
     
     public func configure(with model: GameFeaturesViewModel) {
-        futureTitle.text = model.gameFeatureTitle
+        feautureTitle.text = model.gameFeatureTitle
         
         if model.gameFeatureDescr.isEmpty {
-            futureDescr.text = "TBA"
+            feautureDescr.text = "TBA"
         } else {
-            futureDescr.text = model.gameFeatureDescr
+            feautureDescr.text = model.gameFeatureDescr
         }
     }
     
 }
 
-extension GameFutureView {
+extension GameFeautureView {
     
     func setConstraints() {
         NSLayoutConstraint.activate([
             
-            self.bottomAnchor.constraint(equalTo: futureDescr.bottomAnchor),
+            self.bottomAnchor.constraint(equalTo: feautureDescr.bottomAnchor),
             
-            futureTitle.topAnchor.constraint(equalTo: self.topAnchor),
-            futureTitle.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            futureTitle.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            feautureTitle.topAnchor.constraint(equalTo: self.topAnchor),
+            feautureTitle.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            feautureTitle.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             
-            futureDescr.topAnchor.constraint(equalTo: futureTitle.bottomAnchor, constant: 5),
-            futureDescr.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            futureDescr.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            feautureDescr.topAnchor.constraint(equalTo: feautureTitle.bottomAnchor, constant: 5),
+            feautureDescr.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            feautureDescr.trailingAnchor.constraint(equalTo: self.trailingAnchor),
 
         ])
     }

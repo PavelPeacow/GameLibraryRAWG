@@ -69,15 +69,15 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
         return gameAboutContainer
     }()
     
-    private let gameRelease: GameFutureView = GameFutureView()
+    private let gameRelease: GameFeautureView = GameFeautureView()
     
-    private let gameRating: GameFutureView = GameFutureView()
+    private let gameRating: GameFeautureView = GameFeautureView()
     
-    private let gameGenre: GameFutureView = GameFutureView()
+    private let gameGenre: GameFeautureView = GameFeautureView()
     
-    private let gameDeveloper: GameFutureView = GameFutureView()
+    private let gameDeveloper: GameFeautureView = GameFeautureView()
     
-    private let gamePublisher: GameFutureView = GameFutureView()
+    private let gamePublisher: GameFeautureView = GameFeautureView()
     
     private let imageCollectionSlider: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
