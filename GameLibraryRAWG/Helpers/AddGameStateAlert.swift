@@ -36,7 +36,7 @@ struct AddGameStateAlert {
             onCompletion(game)
         }
         
-        let cancel = UIAlertAction(title: "Cancel", style: .destructive)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
                 
         ac.addAction(completedState)
         ac.addAction(playngState)

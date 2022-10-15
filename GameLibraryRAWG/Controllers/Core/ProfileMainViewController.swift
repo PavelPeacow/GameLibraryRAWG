@@ -17,7 +17,7 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     private var playingGames = [Game]()
     private var ownedGames = [Game]()
     
-    private lazy var segmentedControlItems = ["All", "Completed", "Playing", "Owned"]
+    private lazy var segmentedControlItems = ["All", "Completed", "Playing", "Owned", "Will Play"]
     
     private lazy var userDisplayName = ""
     private lazy var userImageURL = Data()
@@ -67,6 +67,24 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
             await self?.fetchProfileData()
             
             sortGames()
+            
+            switch segmentedControl.selectedSegmentIndex {
+            case 0:
+                sortedGames = allGames
+            case 1:
+                sortedGames = completedGames
+            case 2:
+                sortedGames = playingGames
+            case 3:
+                sortedGames = ownedGames
+            default:
+                print("no index")
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.favouriteGamesCollection.reloadData()
+            }
+            
             self?.settingsNavBarItem.isEnabled = true
             self?.removeLoadingIndicator()
         }
@@ -151,20 +169,10 @@ extension ProfileMainViewController {
             userImageURL = try await userImageData
             
             allGames = try await firestoreData
-            
-            switch segmentedControl.selectedSegmentIndex {
-            case 0:
-                sortedGames = allGames
-            case 1:
-                sortedGames = completedGames
-            case 2:
-                sortedGames = playingGames
-            case 3:
-                sortedGames = ownedGames
-            default:
-                print("no index")
-            }
-            
+            completedGames.removeAll()
+            playingGames.removeAll()
+            ownedGames.removeAll()
+                        
             if allGames.isEmpty {
                 favouriteGamesCollection.setEmptyMessageInCollectionView("No games added yet😉")
                 favouriteGamesCollection.isScrollEnabled = false
@@ -172,11 +180,7 @@ extension ProfileMainViewController {
                 favouriteGamesCollection.restoreCollectionViewBackground()
                 favouriteGamesCollection.isScrollEnabled = true
             }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.favouriteGamesCollection.reloadData()
-            }
-            
+                        
         } catch let error {
             print(error)
         }

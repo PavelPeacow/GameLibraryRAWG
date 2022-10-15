@@ -122,7 +122,7 @@ class FirebaseManager {
     }
     
     //MARK: check game existing in firestore
-    func fetchGameFromFirestore(game: Game) async throws -> Bool {
+    func fetchGameFromFirestore(game: Game) async throws -> Game {
         guard let uid = auth.currentUser?.uid else {
             throw FirebaseErrors.UserNotFound
         }
@@ -136,9 +136,10 @@ class FirebaseManager {
                 
                 if let snapshot = snapshot {
                     if snapshot.exists {
-                        continuation.resume(with: .success(true))
+                        let result = try? snapshot.data(as: Game.self)
+                        continuation.resume(with: .success(result!))
                     } else {
-                        continuation.resume(with: .success(false))
+                        continuation.resume(with: .failure(FirebaseErrors.ErrorGetGames))
                     }
                 }
             }

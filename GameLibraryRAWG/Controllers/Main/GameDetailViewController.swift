@@ -199,16 +199,16 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
     
     //MARK: Saving game to firestore
     @objc func addGame() {
-        //preventing tap multiple time
-        navigationItem.rightBarButtonItem?.isEnabled = false
-        
         AddGameStateAlert.showGameStateAlert(on: self, with: game, onCompletion: { result in
             Task { [weak self] in
+                self?.navigationItem.rightBarButtonItem?.isEnabled = false
                 self?.loadingIndicator()
+                
                 await self?.addGameToFavourite(add: result)
+                self?.game = result
                 self?.removeLoadingIndicator()
                 self?.navigationItem.rightBarButtonItem?.isEnabled = true
-    
+                
                 self?.navigationItem.rightBarButtonItem = self?.deleteGameNavBarItem
             }
         })
@@ -216,16 +216,25 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
     
     //MARK: Deleting game from firestore
     @objc func deleteGame() {
-        //preventing tap multiple time
-        navigationItem.rightBarButtonItem?.isEnabled = false
-        
-        Task { [weak self] in
-            self?.loadingIndicator()
-            await deleteGameFromFavourite(delete: game)
-            self?.removeLoadingIndicator()
-            navigationItem.rightBarButtonItem?.isEnabled = true
-            
-            self?.navigationItem.rightBarButtonItem = addGameNavBarItem
+        RemoveGameStateAlert.showGameStateAlert(on: self, with: game) { result in
+            Task { [weak self] in
+                self?.navigationItem.rightBarButtonItem?.isEnabled = false
+                self?.loadingIndicator()
+                
+                if result.gameState == nil {
+                    await self?.deleteGameFromFavourite(delete: result)
+                    self?.navigationItem.rightBarButtonItem = self?.addGameNavBarItem
+                } else {
+                    await self?.addGameToFavourite(add: result)
+                    self?.navigationItem.rightBarButtonItem = self?.deleteGameNavBarItem
+                }
+                
+                self?.game = result
+                
+                self?.removeLoadingIndicator()
+                self?.navigationItem.rightBarButtonItem?.isEnabled = true
+                
+            }
         }
     }
     
@@ -293,20 +302,20 @@ extension GameDetailViewController {
     
     private func isGameAddedToFavourite(game: Game) async {
         do {
-            let isAdded = try await FirebaseManager.shared.fetchGameFromFirestore(game: game)
+            let result = try await FirebaseManager.shared.fetchGameFromFirestore(game: game)
             
-            if isAdded {
-                DispatchQueue.main.async { [weak self] in
-                    self?.navigationItem.rightBarButtonItem = self?.deleteGameNavBarItem
-                }
-            } else {
-                DispatchQueue.main.async { [weak self] in
-                    self?.navigationItem.rightBarButtonItem = self?.addGameNavBarItem
-                }
+            DispatchQueue.main.async { [weak self] in
+                self?.game = result
+                self?.navigationItem.rightBarButtonItem = self?.deleteGameNavBarItem
             }
             
         } catch let error {
             print(error)
+            if error as! FirebaseErrors == FirebaseErrors.ErrorGetGames {
+                DispatchQueue.main.async { [weak self] in
+                    self?.navigationItem.rightBarButtonItem = self?.addGameNavBarItem
+                }
+            }
         }
     }
     
