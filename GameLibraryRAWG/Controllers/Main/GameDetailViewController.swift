@@ -347,7 +347,7 @@ extension GameDetailViewController {
                     //if game has store, execute
                     if !response.results.isEmpty {
                         let urls = response.results.map({ $0.url })
-                        
+                        print(urls)
                         self?.gamesStoresLinks = urls
                         self?.storeCollection.reloadData()
                     } else {
@@ -526,8 +526,21 @@ extension GameDetailViewController: UICollectionViewDelegate, UICollectionViewDa
             
         case storeCollection:
             let vc = StoreWebViewViewController()
-            vc.storeUrl = gamesStoresLinks[indexPath.item]
-            navigationController?.pushViewController(vc, animated: true)
+            
+            if gamesStoresLinks[indexPath.item].contains(Stores.appleStore.rawValue) {
+                
+                if let range = gamesStoresLinks[indexPath.item].range(of: "id") {
+                    let id = String(gamesStoresLinks[indexPath.item][range.upperBound..<gamesStoresLinks[indexPath.item].lastIndex(of: "?")!])
+                    print(id)
+                    
+                    if let url = URL(string: "itms-apps://itunes.apple.com/app/\(id)") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            } else {
+                vc.storeUrl = gamesStoresLinks[indexPath.item]
+                navigationController?.pushViewController(vc, animated: true)
+            }
             
         case imageCollectionSlider:
             let vc = ScreenshotPreviewViewController()
