@@ -10,6 +10,8 @@ import SDWebImage
 
 class ScreenshotPreviewViewController: UIViewController {
     
+    private let scrollView: UIScrollView = UIScrollView()
+    
     private let screenshotPreview: UIImageView = {
         let screenshotPreview = UIImageView()
         screenshotPreview.contentMode = .scaleAspectFit
@@ -21,12 +23,17 @@ class ScreenshotPreviewViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         
-        view.addSubview(screenshotPreview)
+        view.addSubview(scrollView)
+        scrollView.addSubview(screenshotPreview)
+        
+        setZoomScale()
+        setDelegates()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         screenshotPreview.frame = view.bounds
+        scrollView.frame = view.bounds
     }
     
     public func configure(with image: String) {
@@ -35,4 +42,19 @@ class ScreenshotPreviewViewController: UIViewController {
         screenshotPreview.sd_setImage(with: url)
     }
     
+    private func setDelegates() {
+        scrollView.delegate = self
+    }
+    
+    private func setZoomScale() {
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = 5.0
+    }
+    
+}
+
+extension ScreenshotPreviewViewController: UIScrollViewDelegate {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return screenshotPreview
+    }
 }
