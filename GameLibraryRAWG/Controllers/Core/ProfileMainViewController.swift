@@ -37,6 +37,7 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
         let segmentedControl = UISegmentedControl(items: segmentedControlItems)
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.addTarget(self, action: #selector(sortGamesWithState(_:)), for: .valueChanged)
+        segmentedControl.apportionsSegmentWidthsByContent = true
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.backgroundColor = .systemBackground
         return segmentedControl

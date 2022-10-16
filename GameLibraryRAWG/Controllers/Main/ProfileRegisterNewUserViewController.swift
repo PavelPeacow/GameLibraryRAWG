@@ -134,16 +134,16 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
         }
         
         //validation
-        guard let displayName = userDisplayName.text, !displayName.isEmpty else {
+        guard let displayName = userDisplayName.text, validateUsername(with: userDisplayName.text ?? "") else {
             showNicknameInvalidValidationAlert()
             return
         }
         
-        guard let email = emailTextField.text, validateEmail(enteredEmail: emailTextField.text ?? "") else {
+        guard let email = emailTextField.text, validateEmail(with: emailTextField.text ?? "") else {
             showEmailInvalidValidationAlert()
             return
         }
-        guard  let password = passwordTextField.text, !password.isEmpty, password.count > 6 else {
+        guard  let password = passwordTextField.text, validatePassword(with: passwordTextField.text ?? "") else {
             showPasswordInvalidValidationAlert()
             return
         }
