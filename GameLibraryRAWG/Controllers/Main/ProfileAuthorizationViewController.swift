@@ -128,8 +128,15 @@ extension ProfileAuthorizationViewController {
             showSignInAlert()
             print(result)
         } catch let error {
-            showInvalidUserAlert()
-            print(error)
+            if error.localizedDescription == "The password is invalid or the user does not have a password." {
+                showIncorrectPasswordSignInAlert()
+            } else if error.localizedDescription == "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later." {
+                showAccountDisableSignInAlert()
+            }
+            else {
+                showInvalidUserAlert()
+                print(error)
+            }
         }
     }
     

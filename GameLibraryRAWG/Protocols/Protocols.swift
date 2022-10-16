@@ -14,6 +14,8 @@ protocol ActivityIndicator {
 
 protocol ProfileAlerts {
     func showSignInAlert()
+    func showIncorrectPasswordSignInAlert()
+    func showAccountDisableSignInAlert()
     func showCreateAccountAlert(email: String, password: String)
     func showEmptyFieldsAlert()
     func showInvalidUserAlert()

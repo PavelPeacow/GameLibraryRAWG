@@ -16,6 +16,7 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
     private var completedGames = [Game]()
     private var playingGames = [Game]()
     private var ownedGames = [Game]()
+    private var willPlayGames = [Game]()
     
     private lazy var segmentedControlItems = ["All", "Completed", "Playing", "Owned", "Will Play"]
     
@@ -78,6 +79,8 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
                 sortedGames = playingGames
             case 3:
                 sortedGames = ownedGames
+            case 4:
+                sortedGames = willPlayGames
             default:
                 print("no index")
             }
@@ -122,6 +125,10 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
                 if !ownedGames.contains(where: { $0.name == favouriteGame.name }) {
                     ownedGames.append(favouriteGame)
                 }
+            case "willPlay":
+                if !willPlayGames.contains(where: { $0.name == favouriteGame.name }) {
+                    willPlayGames.append(favouriteGame)
+                }
             default:
                 print("no games to add")
             }
@@ -141,6 +148,9 @@ class ProfileMainViewController: UIViewController, ActivityIndicator {
             favouriteGamesCollection.reloadData()
         case 3:
             sortedGames = ownedGames
+            favouriteGamesCollection.reloadData()
+        case 4:
+            sortedGames = willPlayGames
             favouriteGamesCollection.reloadData()
         default:
             print("no index")
@@ -173,6 +183,7 @@ extension ProfileMainViewController {
             completedGames.removeAll()
             playingGames.removeAll()
             ownedGames.removeAll()
+            willPlayGames.removeAll()
                         
             if allGames.isEmpty {
                 favouriteGamesCollection.setEmptyMessageInCollectionView("No games added yet😉")

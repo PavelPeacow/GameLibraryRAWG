@@ -59,7 +59,7 @@ class FirebaseManager {
             auth.signIn(withEmail: email, password: password) { result, error in
                 
                 guard error == nil else {
-                    continuation.resume(with: .failure(FirebaseErrors.UserNotFound))
+                    continuation.resume(with: .failure(error!))
                     return
                 }
                 

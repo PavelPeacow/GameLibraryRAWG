@@ -78,12 +78,18 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
     }
     
     @objc private func changeUserDisplayNameAction() {
-        showChangeUserDisplayNameAlert { displayName in
-            Task { [weak self] in
-                self?.loadingIndicator()
-                await self?.uploadChangedName(displayName: displayName)
-                self?.removeLoadingIndicator()
+        showChangeUserDisplayNameAlert { [weak self] displayName in
+            
+            if validateUsername(with: displayName) {
+                Task { [weak self] in
+                    self?.loadingIndicator()
+                    await self?.uploadChangedName(displayName: displayName)
+                    self?.removeLoadingIndicator()
+                }
+            } else {
+                self?.showNicknameInvalidValidationAlert()
             }
+            
         }
     }
     

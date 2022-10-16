@@ -22,6 +22,21 @@ extension ProfileAlerts where Self: UIViewController {
         present(ac, animated: true)
     }
     
+    func showIncorrectPasswordSignInAlert() {
+       let ac = UIAlertController(title: "Incorrect password", message: nil, preferredStyle: .alert)
+       ac.addAction(UIAlertAction(title: "OK", style: .default))
+                    
+       present(ac, animated: true)
+   }
+    
+    func showAccountDisableSignInAlert() {
+        let ac = UIAlertController(title: "Account temporarily disable",
+                                   message: "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.", preferredStyle: .alert)
+       ac.addAction(UIAlertAction(title: "OK", style: .default))
+                    
+       present(ac, animated: true)
+   }
+    
     func showCreateAccountAlert(email: String, password: String) {
         let ac = UIAlertController(title: "Your account have been created",
                                    message: "Your email: \(email) \nYour password: \(password)", preferredStyle: .alert)
@@ -82,7 +97,7 @@ extension ProfileAlerts where Self: UIViewController {
     
     func showNicknameInvalidValidationAlert() {
         let ac = UIAlertController(title: "Nickname must meet the following requirements",
-                                   message: "Length must be at least 1 char\nCan contains only _ special symbol", preferredStyle: .alert)
+                                   message: "Length must be at least 1 char and maximum 13\nCan contains only _ special symbol\n", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         present(ac, animated: true)
     }
