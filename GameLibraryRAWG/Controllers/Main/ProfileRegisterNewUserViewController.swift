@@ -13,6 +13,7 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
     
     //MARK: PROPERTIES
     private var imageData: Data?
+    private var isEmailAlreadyUse: Bool!
         
     //MARK: VIEWS
     private let scrollView: UIScrollView = {
@@ -156,21 +157,28 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
             self?.loadingIndicator()
             navigationItem.setHidesBackButton(true, animated: true)
             
-            await self?.createNewUser(email: email, password: password)
-            await self?.signInUser(email: email, password: password)
-            await self?.uploadUserName(userName: displayName)
-            await self?.uploadUserImage(imageData: imageData ?? Data())
+            await self?.isEmailAlreadyInUser(email: email)
             
-            self?.removeLoadingIndicator()
-            
-            //if there are no error when create account, show profileView, if error - show alert
-            if let _ = FirebaseManager.shared.auth.currentUser {
-                self?.showCreateAccountAlert(email: email, password: password)
+            if !isEmailAlreadyUse {
+                
+                await self?.createNewUser(email: email, password: password)
+                await self?.signInUser(email: email, password: password)
+                await self?.uploadUserName(userName: displayName)
+                await self?.uploadUserImage(imageData: imageData ?? Data())
+                
+                //if there are no error when create account, show profileView, if error - show alert
+                if let _ = FirebaseManager.shared.auth.currentUser {
+                    self?.showCreateAccountAlert(email: email, password: password)
+                } else {
+                    self?.showInvalidCreateAccountAlert()
+                }
             } else {
-                self?.showInvalidCreateAccountAlert()
+                self?.showEmailInUseAlert()
             }
-            
+                
+            self?.removeLoadingIndicator()
             navigationItem.setHidesBackButton(false, animated: true)
+
         }
         
     }
@@ -179,6 +187,16 @@ class ProfileRegisterNewUserViewController: UIViewController, ProfileAlerts, Act
 
 //MARK: Firebase async user registration
 extension ProfileRegisterNewUserViewController {
+    
+    private func isEmailAlreadyInUser(email: String) async {
+        do {
+            let result = try await FirebaseManager.shared.isEmailAlreadyInUse(email: email)
+            print(result)
+            isEmailAlreadyUse = result
+        } catch let error {
+            print(error)
+        }
+    }
     
     private func createNewUser(email: String, password: String) async {
         do {

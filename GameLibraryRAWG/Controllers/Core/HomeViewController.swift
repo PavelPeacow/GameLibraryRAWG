@@ -118,7 +118,7 @@ extension HomeViewController {
         
         dispatchGroup.enter()
         
-        APICaller.shared.fetchGames(url: APIConstants.METACRITIC_URL, expecting: GamesResponse.self) { [weak self] result in
+        APICaller.shared.fetchGames(url: APIConstants.METACRITIC_URL, expecting: GamesResponse.self, randomPageNumber: Int.random(in: 4...10)) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
@@ -136,7 +136,7 @@ extension HomeViewController {
         
         dispatchGroup.enter()
         
-        APICaller.shared.fetchGames(url: APIConstants.POPULAR_URL, expecting: GamesResponse.self) { [weak self] result in
+        APICaller.shared.fetchGames(url: APIConstants.POPULAR_URL, expecting: GamesResponse.self, randomPageNumber: Int.random(in: 1...10)) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
@@ -154,7 +154,7 @@ extension HomeViewController {
         
         dispatchGroup.enter()
         
-        APICaller.shared.fetchGames(url: APIConstants.UPCOMING_URL, expecting: GamesResponse.self) { [weak self] result in
+        APICaller.shared.fetchGames(url: APIConstants.UPCOMING_URL, expecting: GamesResponse.self, randomPageNumber: nil) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {

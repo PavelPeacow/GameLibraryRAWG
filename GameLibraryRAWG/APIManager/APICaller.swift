@@ -15,7 +15,12 @@ enum APIError: Error {
 final class APICaller {
     static let shared = APICaller()
     
-    func fetchGames<T: Codable>(url: String, expecting: T.Type, onCompletion: @escaping (Result<T, APIError>) -> Void) {
+    func fetchGames<T: Codable>(url: String, expecting: T.Type, randomPageNumber: Int?, onCompletion: @escaping (Result<T, APIError>) -> Void) {
+        var url = url
+        if let randomPageNumber = randomPageNumber {
+            url = url + "&page=\(randomPageNumber)"
+        }
+            
         guard let url = URL(string: url) else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in

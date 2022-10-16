@@ -34,6 +34,25 @@ class FirebaseManager {
         }
     }
     
+    func isEmailAlreadyInUse(email: String) async throws -> Bool {
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            auth.fetchSignInMethods(forEmail: email) { results, error in
+                guard error == nil else {
+                    continuation.resume(with: .failure(FirebaseErrors.ErrorCreateUser))
+                    return
+                }
+                
+                if let _ = results {
+                    continuation.resume(with: .success(true))
+                } else {
+                    continuation.resume(with: .success(false))
+                }
+                
+            }
+        }
+    }
+    
     func authUser(email: String, password: String) async throws -> FirebaseResults {
         
         return try await withCheckedThrowingContinuation { continuation in
