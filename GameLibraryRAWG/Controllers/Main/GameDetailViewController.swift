@@ -190,11 +190,17 @@ class GameDetailViewController: UIViewController, ActivityIndicator {
     
     //MARK: Checking document existing in firestore
     private func configureNavBar() {
-        Task { [weak self] in
-            self?.loadingIndicator()
-            await isGameAddedToFavourite(game: game)
-            self?.removeLoadingIndicator()
+        title = "Game Detail"
+        navigationItem.largeTitleDisplayMode = .never
+
+        if let _ = FirebaseManager.shared.auth.currentUser {
+            Task { [weak self] in
+                self?.loadingIndicator()
+                await isGameAddedToFavourite(game: game)
+                self?.removeLoadingIndicator()
+            }
         }
+        
     }
     
     //MARK: Saving game to firestore
@@ -390,7 +396,7 @@ extension GameDetailViewController {
             //game image
             gameCover.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             gameCover.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 5),
-            gameCover.heightAnchor.constraint(equalToConstant: 200),
+            gameCover.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2, constant: 200),
             gameCover.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15),
             gameCover.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             

@@ -82,9 +82,11 @@ class ProfileSettingsViewController: UIViewController, ProfileAlerts {
             
             if validateUsername(with: displayName) {
                 Task { [weak self] in
+                    self?.navigationItem.hidesBackButton = true
                     self?.loadingIndicator()
                     await self?.uploadChangedName(displayName: displayName)
                     self?.removeLoadingIndicator()
+                    self?.navigationItem.hidesBackButton = false
                 }
             } else {
                 self?.showNicknameInvalidValidationAlert()
@@ -173,9 +175,11 @@ extension ProfileSettingsViewController: UIImagePickerControllerDelegate & UINav
             
             if let data = data {
                 Task { [weak self] in
+                    self?.navigationItem.hidesBackButton = true
                     self?.loadingIndicator()
                     await self?.uploadChangedImage(imageData: data)
                     self?.removeLoadingIndicator()
+                    self?.navigationItem.hidesBackButton = false
                 }
             }
         
